@@ -237,6 +237,16 @@
           </a>
         </li>
       
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            留言
+          </a>
+        </li>
+      
 
       
     </ul>
@@ -256,6 +266,161 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="连文弘的学习笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/" itemprop="url">Android中多线程通信：Handler的理解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-03-24T23:43:42Z">
+                2022-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Android中Handler在我理解主要是为了解决线程间通信。</p>
+<h2 id="Handler机制组成"><a href="#Handler机制组成" class="headerlink" title="Handler机制组成"></a>Handler机制组成</h2><pre><code>使用Android的Handler机制主要要了解几个类：
+</code></pre>
+<ul>
+<li><strong>Looper</strong>：<br>  一个线程对应一个或者0个Looper，主线程在ActivityThread的时候会默认创建一个Looper，非主线程中需要先通过Looper.prepare()创建，并且通过Looper.loop()开启。</li>
+<li><strong>Message</strong>：<br>  线程间通信的消息载体，Handler利用Message来携带信息给另一个线程，内部包含一个叫sPool的单向链表结构消息缓存池，使用享元模式实现消息的复用防止内存抖动。</li>
+<li><strong>MessageQueue</strong>：<br>  消息队列，与Looper一一对应，每个Looper中维护一个消息队列，此消息队列是一个时间优先级队列，内部是一个单向链表</li>
+<li><strong>Handler</strong>：<br>  有点像是一个工厂里的机器人，不断从这个线程中发送Message或者是Runnable给另一个线程，并放入MessageQueue中</li>
+</ul>
+<p>所以以上是Handler机制的主要4个要素，每个要素之间的关系很清晰明了：<strong>Handler为生产者，Looper为消费者，MessageQueue为容器，而Message为具体的消息载体。</strong></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -362,8 +527,7 @@
 
       
         
-          
-            <p>java的代理模式是很常见的一种设计模式，记录一下我的理解。<a target="_blank" rel="noopener" href="https://github.com/HomerLian/DesignMode/tree/master/ProxyMode">源码</a></p>
+          <p>java的代理模式是很常见的一种设计模式，记录一下我的理解。<a target="_blank" rel="noopener" href="https://github.com/HomerLian/DesignMode/tree/master/ProxyMode">源码</a></p>
 <pre><code>代理模式主要的思想是将委托类（被代理类）和真正使用委托类逻辑的类做一个解耦。
 主要有2个好处：
     1.保护目标对象：被代理类无需对外公开，外部通信仅通过代理类进行沟通
@@ -377,68 +541,13 @@
 <p>对于真正使用代理的场景有很多，例如Android中Resource与ResourceImpl、Retrofit中获取api接口、Collections.synchronizedList实现线程安全数组等场景。这里暂时不展开说明，如有兴趣再行记录。</p>
 <p>举个生活中的例子：</p>
 <p>假设你爸让你帮他买张机票此时你想在你爸不知情的情况下赚点零花钱。你上网查携程上的票价是1000元，你跟你爸说这张票1500，这样你就从中赚取了500零花钱。</p>
-<p>这就是一个典型的代理模式。其中的角色分别是：</p>
-<pre><code>携程         --&gt; 被代理类
-你         --&gt; 代理类
-你爸         --&gt; 用户，享受服务的一方
-</code></pre>
-<p>先试写一下对于这件事我们如何编码，我们使用代理模式是为了让结构更灵活更清晰，所以此时我们的实现思路是这样：</p>
-<ol>
-<li>将买票这个行为抽象出来，不管是哪个角色，最终想要的结果都是买票</li>
-<li>找一个真正买票的地方实现买票服务，也就是创建一个被代理类</li>
-<li>你去把票买了然后把票给你爸，也就是对外提供一个代理类，用户通过这个代理类获得服务。此时这个代理类就是你。</li>
-</ol>
-<p>不管是动态代理还是静态代理，都得实现这几个步骤。</p>
-<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>1.我们要做的是买票，那就把它抽象出一个接口</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 抽象出来的买票服务接口，大家想做的事都是买票这么个事</span><br><span class="line"> */</span><br><span class="line">public interface TicketServer &#123;</span><br><span class="line">    float buyTicket(String dest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.我从携程去买，那就创建一个携程类，然后去实现买票服务</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 被代理类</span><br><span class="line"> * 真正提供服务的地方，干实事的</span><br><span class="line"> */</span><br><span class="line">public class XC implements TicketServer &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public float buyTicket(String dest) &#123;</span><br><span class="line">        System.out.println(&quot;出票成功 机票 To &quot; + dest + &quot; No:&quot; + (int) (Math.random() * 1000));</span><br><span class="line">        return 1000;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>3.创建一个实体对你爸提供服务。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Son implements TicketServer &#123;</span><br><span class="line"></span><br><span class="line">    TicketServer server = new XC();</span><br><span class="line"></span><br><span class="line">    public Son() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public float buyTicket(String dest) &#123;</span><br><span class="line">        float fares = server.buyTicket(dest);</span><br><span class="line">        fares += 500;</span><br><span class="line">        return fares;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到这里你老爸可以通过Son也就是你买到票了，你就是携程的代理，被代理类（目标类）就是携程。</p>
-<p>老爸这个类可以这样子指使你：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Father &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        </span><br><span class="line">        TicketServer son = new XC(); // java多态的体现，你爸是想要买个票，所以让你买也行，让你姐去买也可以</span><br><span class="line">        System.out.println(&quot;票价为：&quot; + son.buyTicket(&quot;北京&quot;) + &quot;元&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>至此静态代理结束，此时你如果发现携程买的票比较贵你可以自己换成去哪儿，换成12306都是OK的，你爸并不知道。</p>
-<p>但是有个问题，如果你爸知道你赚他钱就让你姐去买，那你姐是不是也要和Son这个代理类一样去创建一个Daughter类，然后实现和你一样的功能？这样的话如果你爸再想找别人别人还得创建这个类。明显静态代理的方式虽然能达到我们所要的保护目标和增强目标的2个目的，但是略显冗余了。</p>
-<h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><p>用动态代理实现也是一样的步骤，只不过Son类不需要我们再手动创建，而是调用Proxy的API让系统通过反射替我们动态生成。</p>
-<p>你老爸这样调用你去买票：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Father &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.setProperty(&quot;sun.misc.ProxyGenerator.saveGeneratedFiles&quot;, &quot;true&quot;);</span><br><span class="line">        </span><br><span class="line">        TicketServer son = (TicketServer) Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]&#123;TicketServer.class&#125;, new InvocationHandler() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">                TicketServer xc = new XC();</span><br><span class="line">                float fares = (float) method.invoke(xc, args);</span><br><span class="line">                return fares + 500;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        System.out.println(&quot;票价为：&quot; + son.buyTicket(&quot;北京&quot;) + &quot;元&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到这里静态代理和动态代理的写法都写完了。但是为了结构更清晰，我们把对老爸提供的东西做一个抽取</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class TicketUtils &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 静态代理方式</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static TicketServer staticTicket() &#123;</span><br><span class="line">        return new Son();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 动态代理方式</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static TicketServer dynamicTicket() &#123;</span><br><span class="line">        TicketServer server = new XC();</span><br><span class="line"></span><br><span class="line">        return (TicketServer) Proxy.newProxyInstance(server.getClass().getClassLoader(), server.getClass().getInterfaces(), new InvocationHandler() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">                float fares = (float) method.invoke(server, args);</span><br><span class="line">                fares += 500;</span><br><span class="line">                return fares;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>你爸最后调用你就很简单了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class Father &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // 这段代码可以在ide中输出用户为我们生成的临时类</span><br><span class="line">        System.setProperty(&quot;sun.misc.ProxyGenerator.saveGeneratedFiles&quot;, &quot;true&quot;);</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 静态代理方式</span><br><span class="line">         */</span><br><span class="line">//        TicketServer son = TicketUtils.staticTicket();</span><br><span class="line">//        System.out.println(&quot;票价为：&quot; + son.buyTicket(&quot;北京&quot;) + &quot;元&quot;);</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 动态代理方式</span><br><span class="line">         */</span><br><span class="line">        TicketServer son = TicketUtils.dynamicTicket();</span><br><span class="line">        System.out.println(&quot;票价为：&quot; + son.buyTicket(&quot;北京&quot;) + &quot;元&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上是最最最基础的讲解了。</p>
-<p>接下来我们来看看Proxy这个类如何帮我们完成代理类的创建工作。</p>
-<h2 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a>Proxy</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// loader：类加载器，用于在动态生成类之后将类加载进来</span><br><span class="line">// interfaces：所需要实现的接口，也就是我们抽象出来的公共接口，上例中的TicketServer</span><br><span class="line">// h：执行handler</span><br><span class="line">public static Object newProxyInstance(ClassLoader loader,Class&lt;?&gt;[] interfaces,InvocationHandler h)</span><br></pre></td></tr></table></figure>
-<p>首先我们看一下系统为我们生成的类长什么样子这样才能更好的理解它生成的类是如何为我们工作的。<br>通过<code> System.setProperty(&quot;sun.misc.ProxyGenerator.saveGeneratedFiles&quot;, &quot;true&quot;);</code><br>这段代码会将动态生成的类保留下来，我们可以在ide中看到类：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">// 它实现了TicketServer接口，和我们自己创建代理类时一样</span><br><span class="line">// 它继承了Proxy</span><br><span class="line">public final class $Proxy0 extends Proxy implements TicketServer &#123;</span><br><span class="line">    private static Method m1;</span><br><span class="line">    private static Method m2;</span><br><span class="line">    private static Method m3;</span><br><span class="line">    private static Method m0;</span><br><span class="line"></span><br><span class="line">    public $Proxy0(InvocationHandler var1) throws  &#123;</span><br><span class="line">        super(var1);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    public final float buyTicket(String var1) throws  &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            return (Float)super.h.invoke(this, m3, new Object[]&#123;var1&#125;);</span><br><span class="line">        &#125; catch (RuntimeException | Error var3) &#123;</span><br><span class="line">            throw var3;</span><br><span class="line">        &#125; catch (Throwable var4) &#123;</span><br><span class="line">            throw new UndeclaredThrowableException(var4);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    static &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            m1 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;equals&quot;, Class.forName(&quot;java.lang.Object&quot;));</span><br><span class="line">            m2 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;toString&quot;);</span><br><span class="line">            m3 = Class.forName(&quot;com.lianwenhong.proxydemo.TicketServer&quot;).getMethod(&quot;buyTicket&quot;, Class.forName(&quot;java.lang.String&quot;));</span><br><span class="line">            m0 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;hashCode&quot;);</span><br><span class="line">        &#125; catch (NoSuchMethodException var2) &#123;</span><br><span class="line">            throw new NoSuchMethodError(var2.getMessage());</span><br><span class="line">        &#125; catch (ClassNotFoundException var3) &#123;</span><br><span class="line">            throw new NoClassDefFoundError(var3.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在newProxyInstance（）方法中其实会通过反射调用构造方法，然后将我们传入的h传进来，所以这时候调用到$Proxy0的构造进而调用到父类的构造：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected Proxy(InvocationHandler h) &#123;</span><br><span class="line">  	Objects.requireNonNull(h);</span><br><span class="line">  	this.h = h; // 先记住将h赋值给本地对象</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当我们拿到代理类调用buyTicket()时其内部是<code>return (Float)super.h.invoke(this, m3, new Object[]&#123;var1&#125;);</code>是调用h的invoke()方法，所以这时候也就是调用我们<code>Proxy.newProxyInstance()</code>时传入的InvocationHandler对象。而m3是在静态代码块中赋值的也就是buyTicket()方法。所以到这里就可以理解了为什么最终我们要在InvocationHandler-&gt;invoke()方法中做买票的逻辑了。</p>
-<p>Proxy.newProxyInstance() -&gt; InvocationHandler.invoke()的回调过程已然形成闭环。</p>
-<p>接下来我们看下Proxy.newProxyInstance()是如何返回代理类实例的（也就是$Proxy0）:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static Object newProxyInstance(ClassLoader loader,Class&lt;?&gt;[] interfaces,InvocationHandler h) throws IllegalArgumentException&#123;</span><br><span class="line">		... 做一些前期判空和Access权限校验工作</span><br><span class="line">		</span><br><span class="line">	 // 返回代理类$Proxy0的Class对象（内部逻辑是缓存中有直接返回，否则通过ProxyClassFactory创建一个）</span><br><span class="line">     Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</span><br><span class="line">		...</span><br><span class="line">     try &#123;</span><br><span class="line">		...</span><br><span class="line">		 // 通过反射找到构造方法</span><br><span class="line">         final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</span><br><span class="line">         final InvocationHandler ih = h;</span><br><span class="line">         if (!Modifier.isPublic(cl.getModifiers())) &#123;</span><br><span class="line">             AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() &#123;</span><br><span class="line">                 public Void run() &#123;</span><br><span class="line">                     // 设置构造方法可访问</span><br><span class="line">                     cons.setAccessible(true);</span><br><span class="line">                     return null;</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;);</span><br><span class="line">         &#125;</span><br><span class="line">         // 通过反射new出$Proxy0对象并返回</span><br><span class="line">         return cons.newInstance(new Object[]&#123;h&#125;);</span><br><span class="line">     &#125; catch (...)&#123;</span><br><span class="line">     	...</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>所以具体创建代理Class类的方法是在getProxyClass0()方法：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">private static Class&lt;?&gt; getProxyClass0(ClassLoader loader, Class&lt;?&gt;... interfaces) &#123;</span><br><span class="line">    if (interfaces.length &gt; 65535) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;interface limit exceeded&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   // proxyClassCache是一个缓存结构WeakCache，其使用方式类似map以所要代理的接口interface为key，以ProxyClassFactory为value，如果不存在该key则会通过ProxyClassFactory创建出一个代理类。</span><br><span class="line">    return proxyClassCache.get(loader, interfaces);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首次进入代理类为空，是通过ProxyClassFactory.apply()方法生成的：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">public Class&lt;?&gt; apply(ClassLoader loader, Class&lt;?&gt;[] interfaces) &#123;</span><br><span class="line"></span><br><span class="line">    Map&lt;Class&lt;?&gt;, Boolean&gt; interfaceSet = new IdentityHashMap&lt;&gt;(interfaces.length);</span><br><span class="line">     // 遍历interface，找出代理类所应该继承的所有接口</span><br><span class="line">     for (Class&lt;?&gt; intf : interfaces) &#123;</span><br><span class="line">         Class&lt;?&gt; interfaceClass = null;</span><br><span class="line">         try &#123;</span><br><span class="line">             // 通过反射将接口Class对象加载进来，内部是使用了classloader类加载机制</span><br><span class="line">             interfaceClass = Class.forName(intf.getName(), false, loader);</span><br><span class="line">         &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">         &#125;</span><br><span class="line">         if (interfaceClass != intf) &#123;</span><br><span class="line">             throw new IllegalArgumentException(</span><br><span class="line">                 intf + &quot; is not visible from class loader&quot;);</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">         if (!interfaceClass.isInterface()) &#123;</span><br><span class="line">         	 // 如果传入的不是接口类型，则会在此处抛出IllegalArgumentException异常提示传入的不是一个接口类型</span><br><span class="line">             throw new IllegalArgumentException(</span><br><span class="line">                 interfaceClass.getName() + &quot; is not an interface&quot;);</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">         if (interfaceSet.put(interfaceClass, Boolean.TRUE) != null) &#123;</span><br><span class="line">             throw new IllegalArgumentException(</span><br><span class="line">                 &quot;repeated interface: &quot; + interfaceClass.getName());</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     String proxyPkg = null;     // package to define proxy class in</span><br><span class="line">     int accessFlags = Modifier.PUBLIC | Modifier.FINAL;</span><br><span class="line">    </span><br><span class="line">     for (Class&lt;?&gt; intf : interfaces) &#123;</span><br><span class="line">         int flags = intf.getModifiers();</span><br><span class="line">         if (!Modifier.isPublic(flags)) &#123;</span><br><span class="line">             accessFlags = Modifier.FINAL;</span><br><span class="line">             String name = intf.getName();</span><br><span class="line">             int n = name.lastIndexOf(&#x27;.&#x27;);</span><br><span class="line">             String pkg = ((n == -1) ? &quot;&quot; : name.substring(0, n + 1));</span><br><span class="line">             if (proxyPkg == null) &#123;</span><br><span class="line">                 proxyPkg = pkg;</span><br><span class="line">             &#125; else if (!pkg.equals(proxyPkg)) &#123;</span><br><span class="line">                 throw new IllegalArgumentException(</span><br><span class="line">                     &quot;non-public interfaces from different packages&quot;);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     if (proxyPkg == null) &#123;</span><br><span class="line">         // if no non-public proxy interfaces, use com.sun.proxy package</span><br><span class="line">         // 合成全类名，PROXY_PACKAGE其实是com.sun.proxy</span><br><span class="line">         proxyPkg = ReflectUtil.PROXY_PACKAGE + &quot;.&quot;;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     /*</span><br><span class="line">      * Choose a name for the proxy class to generate.</span><br><span class="line">      */</span><br><span class="line">     long num = nextUniqueNumber.getAndIncrement();</span><br><span class="line">      //  生成文件名，例如$Proxy0，根据不同的需求创建出多个的话根据后面的数字区分</span><br><span class="line">     String proxyName = proxyPkg + proxyClassNamePrefix + num;</span><br><span class="line"></span><br><span class="line">    // 通过ProxyGenerator工具类根据一定规则编写内部逻辑代码并生成类字节数组，其实是一套通用写法</span><br><span class="line">     byte[] proxyClassFile = ProxyGenerator.generateProxyClass(</span><br><span class="line">         proxyName, interfaces, accessFlags);</span><br><span class="line">     try &#123;</span><br><span class="line">         // 调用defineClass0生成真正的class文件并加载进内存（其内部就是调用类加载器生成class文件并加载）</span><br><span class="line">         return defineClass0(loader, proxyName,</span><br><span class="line">                             proxyClassFile, 0, proxyClassFile.length);</span><br><span class="line">     &#125; catch (ClassFormatError e) &#123;</span><br><span class="line">         throw new IllegalArgumentException(e.toString());</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>我们只要了解一下就行。</p>
-<p><strong>newProxyInstance()大致原理就是：</strong></p>
-<ol>
-<li><p>根据传入的接口信息去缓存中获取或创建代理类Class对象。<br><strong>a. 缓存中存在代理类class对象则直接返回</strong></p>
-<p><strong>b. 不存在则根据传入的interface接口通过一系列拼接类名、定义修饰符等操作然后调用ProxyGenerator.generateProxyClass()方法生成字节数组，然后将该字节数组交给ClassLoader底层的defineClass0（native方法）生成一个新的class文件并返回。</strong></p>
-</li>
-<li><p>利用反射机制获取到代理类对象的构造方法并执行生成代理类对象并返回</p>
-</li>
-</ol>
-<p><strong>总结：</strong> 就是根据传入的接口通过反射动态创建一个代理类对象，该对象继承于Proxy并实现代理模式中的接口，然后将创建代理类过程中传入的InvocationHandler对象保存起来，当调用目标方法时是调用保存起来的InvocationHandler对象的invoke()方法回调给使用者。</p>
-<p><strong>By the way:</strong><br>源码中的ProxyClassFactory中是使用<code>sun.misc.ProxyGenerator</code> 类来生class的。生成Class文件的方法不止这一个，我们也可以用 Javassist 技术动态生成class。</p>
-<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>动态代理也可以用于实现AOP切面编程。例如方法的埋点，耗时统计等等。只需在invoke内部实现AOP的业务逻辑即可。这样JVM动态生成代理类时就包含了所需的AOP逻辑。</p>
-<p>参考文章：<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5c8a9a334034">JVM的Proxy.newProxyInstance原理分析</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/349659128">自己实现Java 动态代理 Proxy</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/time_poster/article/details/116140160">Proxy.newProxyInstance源码探究</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1nr4y1y7eZ?p=3&spm_id_from=pageDriver">JDK动态代理底层原理&amp;为什么需要接口?</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -518,7 +627,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
