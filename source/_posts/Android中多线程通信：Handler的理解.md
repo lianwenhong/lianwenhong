@@ -1,7 +1,7 @@
 ---
 title: Android中多线程通信：Handler的理解
 date: 2022-03-24 23:43:42
-categories: Java
+categories: Android
 ---
 
 Android中Handler在我理解主要是为了解决线程间通信。
