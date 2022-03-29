@@ -515,6 +515,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -544,8 +566,28 @@
       
         
           
-            <p><a href=""></a></p>
-
+            <h3 id="Context的使用"><a href="#Context的使用" class="headerlink" title="Context的使用"></a>Context的使用</h3><p>对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：</p>
+<p>startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务</p>
+<p>正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context对象才能满足编码需求，所以又牵扯出了内存泄漏等问题（比如传入了Activity当成Context，在页面生命周期已经结束时由于某些耗时等操作导致引用仍被持有导致无法及时被回收）。</p>
+<p>既然Context是如此重要，那我们就有必要对它做个深入了解。</p>
+<h3 id="Context的设计思想"><a href="#Context的设计思想" class="headerlink" title="Context的设计思想"></a>Context的设计思想</h3><p>Context主要有2层含义</p>
+<ol>
+<li>从字面上来理解他就是一个上下文对象，也就是说是一个运行的环境。可以理解成你游戏运行到一半要临时保存的进度。当你之后要接着来玩儿这个游戏的时候，可以从记录中恢复之前运行的所有元素。Context其实也有点这个意思，例如当你startActivity()跳转到某一页面时，你可以回溯到你是从哪个页面中跳转过来的。</li>
+<li>从具体的源码内容来看，其实Context只是一个抽象类，里面定义了诸多访问应用程序运行所需的接口，例如启动Activity，发送广播等等。其实Android在有意淡化进程的概念，在开发者的开发过程中，通常不需要关心我当前属于哪个进程，只需要表明意图即可，例如打电话，打开网页连接等，当调用系统服务的时候也不需要关心对应接口是属于系统哪个进程，只需要通过Context发起调用，其内部就自动帮你做好了进程之间的调度。所以Context就像是一个运行环境一样，无处不在。有了Context，你的Linux进程就摇身一变成了Android世界的公民，享有Android提供的各种服务。我们来看下Context中提供了一些什么服务：</li>
+</ol>
+<ul>
+<li>获取应用资源，譬如：drawable、string、asset</li>
+<li>操作四大组件，譬如：启动页面，发送广播，开启服务，打开数据库</li>
+<li>操作文件目录，譬如：获取&#x2F;data&#x2F;分区的缓存目录getExternalCacheDir()</li>
+<li>检查授予权限，譬如：checkPermission()</li>
+<li>获取其他服务，譬如：包管理服务，Activity管理服务，窗口管理服务等</li>
+</ul>
+<p>在应用程序中随处都可以访问这些服务，这些服务的访问入口就是Context。所以开发者不用再关系进程，而只需要关心Context提供了哪些接口即可。</p>
+<blockquote>
+<p>Interface to global information about an application environment. This is an abstract class whose implementation is provided by the Android system. It allows access to application-specific resources and classes, as well as up-calls for application-level operations such as launching activities, broadcasting and receiving intents, etc.</p>
+</blockquote>
+<h3 id="Context类关系图"><a href="#Context类关系图" class="headerlink" title="Context类关系图"></a>Context类关系图</h3><p><img src="/./assets/Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" alt="Context.jpg"></p>
+<h3 id="Context的编码设计模式"><a href="#Context的编码设计模式" class="headerlink" title="Context的编码设计模式"></a>Context的编码设计模式</h3><h3 id="Context源码分析"><a href="#Context源码分析" class="headerlink" title="Context源码分析"></a>Context源码分析</h3><h3 id="Context注意事项"><a href="#Context注意事项" class="headerlink" title="Context注意事项"></a>Context注意事项</h3><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3>
           
         
       
