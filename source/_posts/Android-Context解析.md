@@ -54,8 +54,7 @@ Context主要有2层含义
 
 ### Context类关系图以及装饰者模式的应用
 
-![Context.jpg](/images/Context.jpg)
-
+![Context.jpg](Context.jpg)
 
 从Context的类关系我们可以看出，这是一个典型的装饰者模式。
 
