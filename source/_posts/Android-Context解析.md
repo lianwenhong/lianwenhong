@@ -401,10 +401,10 @@ activity.attach(appContext, this, getInstrumentation(), r.token,
     
 在Android开发中在一个Activity中获取Context的方法有很多种：
     
-- **getApplication()**：返回Application对象
-- **getApplicationContext()**：与getApplication()返回同一个对象，只不过其返回的是Context类型，java中向上转型必然会被阉割掉一些子类独有的方法
-- **getBaseContext()**：返回Activity的ContextImpl对象（Application.getBaseContext()：返回Application的ContextImpl对象）
-- **Activity.this**：返回Activity本身
+- getApplication()：返回Application对象
+- getApplicationContext()：与getApplication()返回同一个对象，只不过其返回的是Context类型，java中向上转型必然会被阉割掉一些子类独有的方法
+- getBaseContext()：返回Activity的ContextImpl对象（Application.getBaseContext()：返回Application的ContextImpl对象）
+- Activity.this：返回Activity本身
 
     
     正是ContextImpl被外层装饰器包装了一下才形成了Context不同功能的拓展。
@@ -415,6 +415,6 @@ Context淡化了Android进程的概念，其提供了一个应用的运行环境
 
 其实现上采用了装饰者模式，Activity、Application、Service等都是装饰类，当开发者使用这些装饰者作为Context来使用的时候，其实真正的实现逻辑是在ContextImpl类中。
 
-在Context的使用中要十分注意避免出现内存泄漏问题。
+在Context的使用中要十分注意避免出现内存泄漏问题。_
 
 ---
