@@ -3,7 +3,7 @@ title: Android Context分析
 date: 2022-03-28 17:55:47
 categories: Android
 ---
-### Context的使用
+## Context的使用
 
 对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：
 
@@ -15,7 +15,7 @@ startActivity()：启动Activity、getResource():获取资源、getColor():获�
 
 <!-- more -->
 
-### Context的设计思想
+## Context的设计思想
 
 Context主要有2层含义
 
@@ -96,15 +96,325 @@ public abstract void onReceive(Context var1, Intent var2);
 
 至此我们做个小结：Context在Android中无处不在，它是Android系统为了弱化进程概念而设计出来的一个上下文对象（也可以理解为代表了当前的运行环境）。Context是个抽象类其提供了各种各样的功能接口供开发者使用，例如想获取资源，想跳转页面等等，都可以通过调用Context来获取。Application、Activity、Service均是Context的装饰类，它们分别拓展了不同的功能用于针对不同的应用场景。Context的真正实现其实是在ContextImpl中。
 
-### Context源码分析
+## Context源码分析
+
+> 源码基于API25进行讲解,代码只节选部分重要内容，具体需要自行阅读源码
+
+Context主要有3种：
+- **SystemContext：系统进程SystemServer的Context**
+- **AppContext：应用进程的Context**
+- **ActivityContext：Activity的Context，只有ActivityContext跟界面显示相关，需要传入activityToken和有效的DisplayId**
 
 对于Context的源码分析我们通过2条主线来进行：
 
 1. **Application的Context是如何构建的**
 2. **Activity的Context是如何构建的**
 
-### Context注意事项
+开始前先说明一个概念：Android系统进程与应用进程之间的通信建立在Binder通信之上，而以下两个接口是Android为应用进程与系统进程之间通信而设计的：
 
-### 总结
+* **IApplicationThread**: 作为系统进程请求应用进程的接口
+* **IActivityManager**: 作为应用进程请求系统进程的接口
+
+### Application的Context构建流程
+
+{% asset_img Application的ContextImpl创建流程.jpg Application的ContextImpl创建流程 %}
+
+整个流程分为几大块来讲解：
+
+1. Android开启一个进程时最终是从java层的`ActivityThread.main()` 方法开始的，然后调用`ActivityThread.attach()` 方法。该方法内部会调用`ActivityManagerService.attachApplication(IApplicationThread)`，了解过Binder的就能明白**ActivityManagerService(AMS)** 其实就是Binder通信的实现，此时调用`attachApplication()` 之后就进入系统进程对应用做了一系列的初始化，然后通过传入的`ApplicationThread.bindApplication()` 将初始化的信息回调给用户进程
+
+```
+public static void main(String[] args) {
+    ...
+    // 主线程Lopper  
+    Looper.prepareMainLooper();
+
+    ActivityThread thread = new ActivityThread();
+    // 进入attach()方法中，传入false表示非系统应用
+    thread.attach(false);
+
+    if (sMainThreadHandler == null) {
+        sMainThreadHandler = thread.getHandler();
+    }
+
+    if (false) {
+        Looper.myLooper().setMessageLogging(new
+                LogPrinter(Log.DEBUG, "ActivityThread"));
+    }
+    ...
+    Looper.loop();
+    ...
+}
+```
+
+在attach()方法中，通过以下代码进入AMS进程对应用进行初始化
+
+```
+final IActivityManager mgr = ActivityManagerNative.getDefault();
+try {
+    mgr.attachApplication(mAppThread);
+} catch (RemoteException ex) {
+    throw ex.rethrowFromSystemServer();
+}
+```
+
+此时会回调到**ActivityManagerService**类中，循着方法进入最终调用到`ActivityManagerService.attachApplicationLocked()`方法，对应用做了一系列的初始化赋值并回调给**IApplicationThread** 对象从而进入应用进程
+
+```
+thread.bindApplication(processName, appInfo, providers, app.instrumentationClass,
+        profilerInfo, app.instrumentationArguments, app.instrumentationWatcher,
+        app.instrumentationUiAutomationConnection, testMode,
+        mBinderTransactionTrackingEnabled, enableTrackAllocation,
+        isRestrictedBackupMode || !normalMode, app.persistent,
+        new Configuration(mConfiguration), app.compat,
+        getCommonServicesLocked(app.isolated),
+        mCoreSettingsObserver.getCoreSettingsLocked());
+```
+
+2. 应用进程收到**AMS**的初始化结果之后生成一个临时的存储对象**AppBindData**并最终通过H这个Handler调用到`handleBindApplication()`方法。
+
+```
+public final void bindApplication(String processName, ApplicationInfo appInfo,
+        List<ProviderInfo> providers, ComponentName instrumentationName,
+        ProfilerInfo profilerInfo, Bundle instrumentationArgs,
+        IInstrumentationWatcher instrumentationWatcher,
+        IUiAutomationConnection instrumentationUiConnection, int debugMode,
+        boolean enableBinderTracking, boolean trackAllocation,
+        boolean isRestrictedBackupMode, boolean persistent, Configuration config,
+        CompatibilityInfo compatInfo, Map<String, IBinder> services, Bundle coreSettings) {
+
+    ...
+
+    AppBindData data = new AppBindData();
+    data.processName = processName;
+    data.appInfo = appInfo;
+    data.providers = providers;
+    data.instrumentationName = instrumentationName;
+    data.instrumentationArgs = instrumentationArgs;
+    data.instrumentationWatcher = instrumentationWatcher;
+    data.instrumentationUiAutomationConnection = instrumentationUiConnection;
+    data.debugMode = debugMode;
+    data.enableBinderTracking = enableBinderTracking;
+    data.trackAllocation = trackAllocation;
+    data.restrictedBackupMode = isRestrictedBackupMode;
+    data.persistent = persistent;
+    data.config = config;
+    data.compatInfo = compatInfo;
+    data.initProfilerInfo = profilerInfo;
+    sendMessage(H.BIND_APPLICATION, data);
+}
+```
+
+3. `handleBindApplication()`中首先调用`getPackageInfoNoCheck()`创建出一个**LoadedApk**并将其缓存起来。该对象表示一个已经加载解析过的APK文件。紧接着通过PMS构造出一个**InstrumentationInfo**对象紧接着通过它使用类加载器构建出一个**Instrumentation**对象，该对象其实是对Activity或者Application方法调用的一个统一收口(简单说就是将ActivityThread对Activity和Application的通信都统一规范到这一个类中进行)，期间的通信介质就是**LoadedApk**。
+
+```
+private void handleBindApplication(AppBindData data) {
+    ...
+    // 构建一个LoadedApk对象，该对象其实是应用在内存中的表现形式。
+    data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo);
+
+    ...
+  
+    final InstrumentationInfo ii;
+    if (data.instrumentationName != null) {
+        try {
+            // 内部是通过PackageManagerService(PMS)来创建一个InstrumentationInfo对象，用于后续生成Instrumentation
+            ii = new ApplicationPackageManager(null, getPackageManager())
+                    .getInstrumentationInfo(data.instrumentationName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(
+                    "Unable to find instrumentation info for: " + data.instrumentationName);
+        }
+
+        mInstrumentationPackageName = ii.packageName;
+        mInstrumentationAppDir = ii.sourceDir;
+        mInstrumentationSplitAppDirs = ii.splitSourceDirs;
+        mInstrumentationLibDir = getInstrumentationLibrary(data.appInfo, ii);
+        mInstrumentedAppDir = data.info.getAppDir();
+        mInstrumentedSplitAppDirs = data.info.getSplitAppDirs();
+        mInstrumentedLibDir = data.info.getLibDir();
+    } else {
+        ii = null;
+    }
+
+    ...
+    if (ii != null) {
+        // 这个Context不是Application的Context，本次关注Application的context的创建所以这边咱不关心
+        final ContextImpl instrContext = ContextImpl.createAppContext(this, pi);
+
+        try {
+            final ClassLoader cl = instrContext.getClassLoader();
+            // 创建出Instrumentation对象
+            mInstrumentation = (Instrumentation)
+                cl.loadClass(data.instrumentationName.getClassName()).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(
+                "Unable to instantiate instrumentation "
+                + data.instrumentationName + ": " + e.toString(), e);
+        }
+    
+        final ComponentName component = new ComponentName(ii.packageName, ii.name);
+        mInstrumentation.init(this, instrContext, appContext, component,
+                data.instrumentationWatcher, data.instrumentationUiAutomationConnection);
+        ...
+    } else {
+        mInstrumentation = new Instrumentation();
+    }
+
+    ...
+    try {
+        // 调用LoadedApk的makeApplication()开始了Application的创建流程以及将其与ContextImpl绑定
+        Application app = data.info.makeApplication(data.restrictedBackupMode, null);
+        mInitialApplication = app;
+
+        ...
+        try {
+            mInstrumentation.onCreate(data.instrumentationArgs);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(
+                "Exception thrown in onCreate() of "
+                + data.instrumentationName + ": " + e.toString(), e);
+        }
+
+        try {
+            // 执行Application.onCreate()
+            mInstrumentation.callApplicationOnCreate(app);
+        } catch (Exception e) {
+            if (!mInstrumentation.onException(app, e)) {
+                throw new RuntimeException(
+                    "Unable to create application " + app.getClass().getName()
+                    + ": " + e.toString(), e);
+            }
+        }
+    } finally {
+        StrictMode.setThreadPolicy(savedPolicy);
+    }
+}
+```
+
+通过上面代码可以看到我们有了**LoadedApk(代表整个APK)、Instrumentation(ActivityThread与Application和Activity的通信收口)** 这俩对象，主要创建流程都是在这俩类中进行的。
+LoadedApk中：
+
+```
+public Application makeApplication(boolean forceDefaultAppClass,
+        Instrumentation instrumentation) {
+    ...
+
+    Application app = null;
+
+    String appClass = mApplicationInfo.className;
+    if (forceDefaultAppClass || (appClass == null)) {
+        // 没有自定义Application或者规定了使用默认Application，则初始化的是android.app.Application
+        appClass = "android.app.Application";
+    }
+
+    try {
+        // 获取类加载器
+        java.lang.ClassLoader cl = getClassLoader();
+        ...
+        // 创建出应用Context
+        ContextImpl appContext = ContextImpl.createAppContext(mActivityThread, this);
+        // 执行Instrumentation的newApplication()创建一个Application
+        app = mActivityThread.mInstrumentation.newApplication(
+                cl, appClass, appContext);
+        appContext.setOuterContext(app);
+    } catch (Exception e) {
+        ...
+    }
+    ...
+    return app;
+}
+```
+
+必要的类都创建完毕之后就该开始使用它们了，调用`LoadedApk.makeApplication()`方法来创建出一个**Application**对象(该对象之后再传递给Instrumentation来执行onCreate()等方法从而走到Application的生命周期)，创建Application的过程概括来讲就是调用类加载器将我们AndroidManifest中生命的Application加载进内存，如果我们没有指定自己的Application的话就默认会加载"**android.app.Application**"。
+具体的Application创建流程是首先生成一个ClassLoader，然后通过`ContextImpl.createAppContext()`构造了一个appContext(**应用级别的Context**)，构造时保存了LoadedApk，进程的ActivityThread以及初始化了Resource资源，ApplicationContentResolver对数据库的操作类等等。
+
+4.然后将这两个对象传入应用的`Instrumentation.newApplication()`，其内部使用类加载器+反射生成一个Application，紧接着调用`Application.attach()`将appContext设置给Application这个装饰类
+
+```
+static public Application newApplication(Class<?> clazz, Context context)
+        throws InstantiationException, IllegalAccessException, 
+        ClassNotFoundException {
+    // 反射生成Application对象
+    Application app = (Application)clazz.newInstance();
+    // 将应用Context设置给Application，此时其实就是设置给了ContextWrapper的mBase属性，而Application是ContextWrapper子类所以自然它也就和Context关联起来了。
+    app.attach(context);
+    return app;
+}
+```
+
+这整个流程下来就完成了Application中Context的构建，也就是Application这个装饰类对ContextImpl的装饰。
+
+### Activity的Context构建流程
+
+如果从Activity的启动流程来讲解那将是一篇遥遥无期的文章，这里省去了Activity启动流程中前半部分复杂的逻辑，具体可以参考另外一个文章我会贴链接。
+
+{% asset_img Activity的ContextImpl创建过程.jpg Activity的ContextImpl创建过程 %}
+
+我们通过Activity启动流程中可以知道最终会调用到`ActivityThread.handleLaunchActivity()`方法中来，紧接着在其内部会执行`Activity a = performLaunchActivity(r, customIntent);` 用于创建Activity，然后调用`handleResumeActivity(...);`开始页面的测绘流程等。本篇只为探究Activity的Context创建过程，所以只关心performLaunchActivity()流程。
+
+Activity的Context创建过程比Application中Context流程简单很多。主要分为几步(**以下代码均摘抄自performLaunchActivity()方法**)：
+
+1. 通过ActivityThread中的mInstrumentation对象调用newActivity()生成对应的Activity对象，其内部生成原理就是通过反射创建。而这个mInstrumentation其实在应用启动过程中已经创建完毕，也就是在Application的Context创建流程中。
+```
+// 通过LoadedApk获取ClassLoader
+java.lang.ClassLoader cl = r.packageInfo.getClassLoader();
+// 创建出所需启动的Activity对象，内部是使用反射
+activity = mInstrumentation.newActivity(cl, component.getClassName(), r.intent);
+```
+2. 调用createBaseContextForActivity()方法去创建一个Activity对应的ContextImpl，其内部也是调用的ContextImpl的构造方法创建。
+```
+Context appContext = createBaseContextForActivity(r, activity);
+
+private Context createBaseContextForActivity(ActivityClientRecord r, final Activity activity) {
+    ...
+    // 创建Activity对应的ContextImpl
+    ContextImpl appContext = ContextImpl.createActivityContext(
+            this, r.packageInfo, r.token, displayId, r.overrideConfig);
+    appContext.setOuterContext(activity);
+    Context baseContext = appContext;
+
+    ...
+    return baseContext;
+}
+```
+3. 调用activity.attach(...)方法将创建出来的ContextImpl与Activity绑定起来，当然传递的参数有很多，比如也会将Application传递进去，当然这时候这个对象也已经存在了。紧接着内部还是老配方：执行attachBaseContext(context);将ContextImpl设置给父类ContextWrapper的mBase属性。
+```
+// 将创建出来的ContextImpl关联给Activity，其内部是调用了attachBaseContext(context);将其设置给ContextWrapper.mBase
+// 当然这个方法做了很多很多事，这里不研究别的我们只关心Context的创建流程
+activity.attach(appContext, this, getInstrumentation(), r.token,
+        r.ident, app, r.intent, r.activityInfo, title, r.parent,
+        r.embeddedID, r.lastNonConfigurationInstances, config,
+        r.referrer, r.voiceInteractor, window);
+```
+
+至此流程结束
+
+## Context注意事项
+
+#### 内存泄漏问题：
+**内存泄漏的本质是长生命周期的对象持有了短生命周期对象的引用导致短生命周期对象在无用的情况下不能及时被GC**
+    
+而使用Context导致内存泄漏的情况往往是将Activity这种相对短生命周期的对象传给其他对象使用，可能其他对象中有耗时操作导致Activity无法被及时回收。还有一个典型的场景就是在Android开发中往往在设计很多单例的时候需要传入一个Context，如果此时传入的是Activity那就会造成内存泄漏。因为我们知道通常单例方法是static，其涉及的生命周期是整个进程，所以为了解决这个问题可以考虑传入Application的Context来解决这个问题。
+#### Context的使用：
+    
+在Android开发中在一个Activity中获取Context的方法有很多种：
+    
+- **getApplication()**：返回Application对象
+- **getApplicationContext()**：与getApplication()返回同一个对象，只不过其返回的是Context类型，java中向上转型必然会被阉割掉一些子类独有的方法
+- **getBaseContext()**：返回Activity的ContextImpl对象（Application.getBaseContext()：返回Application的ContextImpl对象）
+- **Activity.this**：返回Activity本身
+
+    
+    正是ContextImpl被外层装饰器包装了一下才形成了Context不同功能的拓展。
+
+## 总结
+
+Context淡化了Android进程的概念，其提供了一个应用的运行环境。Android中它无处不在，开发者可以通过它调用一系列的系统方法比如获取资源，打开页面，打开服务等等。
+
+其实现上采用了装饰者模式，Activity、Application、Service等都是装饰类，当开发者使用这些装饰者作为Context来使用的时候，其实真正的实现逻辑是在ContextImpl类中。
+
+在Context的使用中要十分注意避免出现内存泄漏问题。
 
 ---
