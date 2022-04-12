@@ -94,13 +94,15 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http://example.com/about/index.html">
+<meta name="description" content="gradle插件开发的方式123apply plugin: &amp;#x27;com.android.application&amp;#x27;apply plugin: &amp;#x27;com.android.library&amp;#x27;     方式 说明    Build script脚本 把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件   buildSrc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle插件开发">
+<meta property="og:url" content="http://example.com/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/index.html">
 <meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="gradle插件开发的方式123apply plugin: &amp;#x27;com.android.application&amp;#x27;apply plugin: &amp;#x27;com.android.library&amp;#x27;     方式 说明    Build script脚本 把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件   buildSrc">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-03-24T23:03:02.000Z">
-<meta property="article:modified_time" content="2022-03-24T15:03:02.132Z">
+<meta property="article:published_time" content="2022-04-11T21:50:37.000Z">
+<meta property="article:modified_time" content="2022-04-11T14:52:29.689Z">
 <meta property="article:author" content="lianwenhong">
 <meta name="twitter:card" content="summary">
 
@@ -131,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/about/"/>
+  <link rel="canonical" href="http://example.com/2022/04/12/gradle插件开发/"/>
 
 
 
 
 
-  <title>about | 连文弘的学习笔记</title>
+  <title>gradle插件开发 | 连文弘的学习笔记</title>
   
 
 
@@ -268,33 +270,175 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="连文弘的学习笔记">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">about</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
+          <h1 class="post-title" itemprop="name headline">gradle插件开发</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-12T05:50:37+08:00">
+                2022-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-      </div>
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <hr>
+<h3 id="gradle插件开发的方式"><a href="#gradle插件开发的方式" class="headerlink" title="gradle插件开发的方式"></a>gradle插件开发的方式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#x27;com.android.application&#x27;</span><br><span class="line">apply plugin: &#x27;com.android.library&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Build script脚本</td>
+<td>把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件</td>
+</tr>
+<tr>
+<td>buildSrc目录</td>
+<td>将插件源代码放在buildSrc&#x2F;src&#x2F;main&#x2F;中，作用范围为该项目</td>
+</tr>
+<tr>
+<td>独立项目</td>
+<td>一个独立的java项目&#x2F;模块,可将文件发布到仓库(jcenter)，使其他项目可以方便引入</td>
+</tr>
+</tbody></table>
+<hr>
+<p>任何可以运行在jvm中的语言都能用来开发gradle插件，比如groovy最终编译产物也是.class文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1、aapt 打包资源文件 阶段</span><br><span class="line">2、aidl 转 java 文件 阶段</span><br><span class="line">3、Java 编译（Compilers）生成.class 文件 阶段</span><br><span class="line">4、dex（生成 dex 文件）阶段</span><br><span class="line">5、apkbuilder（生成未签名 apk）阶段</span><br><span class="line">6、Jarsigner（签名）阶段</span><br><span class="line">7、zipalign（对齐） 阶段</span><br><span class="line">[https://juejin.cn/post/6844903850453762055#heading-6](https://juejin.cn/post/6844903850453762055#heading-6)</span><br></pre></td></tr></table></figure>
+
       
     </div>
     
     
     
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/images/wechat-qcode.jpeg" alt=" wechat" style="width: 200px; max-width: 100%;"/>
+    <div>如需指正或者有任何其他需求请扫码添加个人微信</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/" rel="next" title="Android版本号对应关系">
+                <i class="fa fa-chevron-left"></i> Android版本号对应关系
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/" rel="prev" title="android热修复小记">
+                android热修复小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -327,8 +471,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -381,6 +534,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">gradle插件开发的方式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -494,10 +663,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-  
+
 
   
 
