@@ -280,6 +280,132 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="连文弘的学习笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/" itemprop="url">System.load()与System.loadLibrary()实现及so热修复</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-13T09:40:10Z">
+                2022-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>文章基于API25分析，源码地址：<a target="_blank" rel="noopener" href="http://androidxref.com/7.1.1_r6/">http://androidxref.com/7.1.1_r6/</a></p>
+<h3 id="ClassLoader简单复习（必要前提）"><a href="#ClassLoader简单复习（必要前提）" class="headerlink" title="ClassLoader简单复习（必要前提）"></a>ClassLoader简单复习（必要前提）</h3><p>在分析System类之前，先简单复习一下ClassLoader的类加载机制。</p>
+<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg" class="" title="ClassLoader类结构关系图以及替换dexElements实现热修复原理">
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1283,7 +1409,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

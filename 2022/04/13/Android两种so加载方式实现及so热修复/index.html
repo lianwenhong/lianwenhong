@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="文章基于API25分析，源码地址：http:&#x2F;&#x2F;androidxref.com&#x2F;7.1.1_r6&#x2F; ClassLoader简单复习（必要前提）在分析System类之前，先简单复习一下ClassLoader的类加载机制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System.load()与System.loadLibrary()实现及so热修复">
+<meta property="og:url" content="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/index.html">
+<meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="文章基于API25分析，源码地址：http:&#x2F;&#x2F;androidxref.com&#x2F;7.1.1_r6&#x2F; ClassLoader简单复习（必要前提）在分析System类之前，先简单复习一下ClassLoader的类加载机制。">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg">
+<meta property="og:image" content="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/Tinker%E7%83%AD%E4%BF%AE%E5%A4%8Dso%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png">
+<meta property="article:published_time" content="2022-04-13T09:40:10.000Z">
+<meta property="article:modified_time" content="2022-04-13T01:49:19.714Z">
+<meta property="article:author" content="lianwenhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2022/04/13/Android两种so加载方式实现及so热修复/"/>
+
+
+
+
+
+  <title>System.load()与System.loadLibrary()实现及so热修复 | 连文弘的学习笔记</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">连文弘的学习笔记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            留言
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="连文弘的学习笔记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">System.load()与System.loadLibrary()实现及so热修复</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-13T17:40:10+08:00">
+                2022-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>文章基于API25分析，源码地址：<a target="_blank" rel="noopener" href="http://androidxref.com/7.1.1_r6/">http://androidxref.com/7.1.1_r6/</a></p>
+<h3 id="ClassLoader简单复习（必要前提）"><a href="#ClassLoader简单复习（必要前提）" class="headerlink" title="ClassLoader简单复习（必要前提）"></a>ClassLoader简单复习（必要前提）</h3><p>在分析System类之前，先简单复习一下ClassLoader的类加载机制。</p>
+<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg" class="" title="ClassLoader类结构关系图以及替换dexElements实现热修复原理">
+
+<span id="more"></span>
+
+<p>Android应用中模式使用的类加载器是<strong>PathClassLoader</strong>。想要了解可简单看下<strong>Application.getClassLoader()</strong> 的调用栈。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Application.getClassLoader() -&gt; ContextImpl.getClassLoader -&gt;</span><br><span class="line">LoadedApk.getClassLoader() -&gt; ... -&gt; ClassLoader.createSystemClassLoader() -&gt; new PathClassLoader(...)</span><br></pre></td></tr></table></figure>
+<p>而<strong>PathClassLoader</strong>只是重载了几个构造方法，真正的代码实现都在父类<strong>BaseDexClassLoader</strong>中。</p>
+<p>BaseDexClassLoader中pathList:DexPathList类说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">final class DexPathList &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // List of dex/resource (class path) elements.意思是class文件转化结果:dex文件集合</span><br><span class="line">    private Element[] dexElements;</span><br><span class="line"></span><br><span class="line">    // List of native library path elements. 意思是native层so文件集合  </span><br><span class="line">    // 在热修复技术中so修复可以将新的so库路径追加到此数组之前达到热修效果，其实它是将例如xxx/xxx/abc.so分别以dir:xxx/xxx/、zip:abc.so这样区分存储而已，为了使用方便</span><br><span class="line">    private final Element[] nativeLibraryPathElements;</span><br><span class="line"></span><br><span class="line">    // List of application native library directories. 意思是native层so文件的路径集合，只表示路径。</span><br><span class="line">    private final List&lt;File&gt; nativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    // List of system native library directories.意思是系统so文件路径集合</span><br><span class="line">    private final List&lt;File&gt; systemNativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static class Element &#123;</span><br><span class="line">    private final File dir; // 路径</span><br><span class="line">    private final boolean isDirectory; // 该Element是否是文件夹</span><br><span class="line">    private final File zip; // 路径下对应的文件</span><br><span class="line">    private final DexFile dexFile; // 路径下对应的dex文件</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类加载机制了解简单了解完开始分析<strong>System</strong>类。</p>
+<h3 id="System-load"><a href="#System-load" class="headerlink" title="System.load():"></a>System.load():</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static void load(String filename) &#123;</span><br><span class="line">    Runtime.getRuntime().load0(VMStack.getStackClass1(), filename);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用Runtime类中的load0()方法将文件名传入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">synchronized void load0(Class fromClass, String filename) &#123;</span><br><span class="line">    if (!(new File(filename).isAbsolute())) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">            &quot;Expecting an absolute path of the library: &quot; + filename);</span><br><span class="line">    &#125;</span><br><span class="line">    if (filename == null) &#123;</span><br><span class="line">        throw new NullPointerException(&quot;filename == null&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    // 最终调用此方法去load so文件，其内部是去调用native方法</span><br><span class="line">    String error = doLoad(filename, fromClass.getClassLoader());</span><br><span class="line">    if (error != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 注释大概意思是我们日常应用进程是从Zygote进程fork出来的所以都是公用的同一个LD_LIBRARY_PATH路径。</span><br><span class="line"> * 开放这个方法是为了用户能动态的加载不同路径下的so库而不是只有启动的时候从单一的目录加载一次。</span><br><span class="line"> * 理由是因为一个进程可能会运行多个apk并且用户可能会手动实现自己的BaseDexClassLoader，</span><br><span class="line"> * 所以有必要为用户提供一个差异化so加载的能力</span><br><span class="line"> */</span><br><span class="line">private String doLoad(String name, ClassLoader loader) &#123;</span><br><span class="line">    // Android apps are forked from the zygote, so they can&#x27;t have a custom LD_LIBRARY_PATH,</span><br><span class="line">    // which means that by default an app&#x27;s shared library directory isn&#x27;t on LD_LIBRARY_PATH.</span><br><span class="line"></span><br><span class="line">    // The PathClassLoader set up by frameworks/base knows the appropriate path, so we can load</span><br><span class="line">    // libraries with no dependencies just fine, but an app that has multiple libraries that</span><br><span class="line">    // depend on each other needed to load them in most-dependent-first order.</span><br><span class="line"></span><br><span class="line">    // We added API to Android&#x27;s dynamic linker so we can update the library path used for</span><br><span class="line">    // the currently-running process. We pull the desired path out of the ClassLoader here</span><br><span class="line">    // and pass it to nativeLoad so that it can call the private dynamic linker API.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just change frameworks/base to update the LD_LIBRARY_PATH once at the</span><br><span class="line">    // beginning because multiple apks can run in the same process and third party code can</span><br><span class="line">    // use its own BaseDexClassLoader.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just add a dlopen_with_custom_LD_LIBRARY_PATH call because we wanted any</span><br><span class="line">    // dlopen(3) calls made from a .so&#x27;s JNI_OnLoad to work too.</span><br><span class="line"></span><br><span class="line">    // So, find out what the native library search path is for the ClassLoader in question...</span><br><span class="line">    String librarySearchPath = null;</span><br><span class="line">    if (loader != null &amp;&amp; loader instanceof BaseDexClassLoader) &#123;</span><br><span class="line">        BaseDexClassLoader dexClassLoader = (BaseDexClassLoader) loader;</span><br><span class="line">        // 调用BaseDexClassLoader中的方法用于将所有native的lib路径以：拼接在一起然后给native层去load so文件</span><br><span class="line">        librarySearchPath = dexClassLoader.getLdLibraryPath();</span><br><span class="line">    &#125;</span><br><span class="line">    // nativeLoad should be synchronized so there&#x27;s only one LD_LIBRARY_PATH in use regardless</span><br><span class="line">    // of how many ClassLoaders are in the system, but dalvik doesn&#x27;t support synchronized</span><br><span class="line">    // internal natives.</span><br><span class="line">    synchronized (this) &#123;</span><br><span class="line">        // 最终调用native方法去load so库。Android所有的so库都是通过这个方法加载进内存的</span><br><span class="line">        return nativeLoad(name, loader, librarySearchPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// TODO: should be synchronized, but dalvik doesn&#x27;t support synchronized internal natives.</span><br><span class="line">    private static native String nativeLoad(String filename, ClassLoader loader,</span><br><span class="line">                                            String librarySearchPath);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>以上是<strong>System.load()</strong> 的全部流程。</p>
+<h3 id="System-loadLibrary"><a href="#System-loadLibrary" class="headerlink" title="System.loadLibrary()"></a>System.loadLibrary()</h3><p>System.loadLibrary()相比System.load()会复杂一些。因为它不再是从你随便指定的路径中去加载so，而是从系统给你的路径中加载。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public static void loadLibrary(String libname) &#123;</span><br><span class="line">    Runtime.getRuntime().loadLibrary0(VMStack.getCallingClassLoader(), libname);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>一样是走到Runtime类中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">synchronized void loadLibrary0(ClassLoader loader, String libname) &#123;</span><br><span class="line">    if (libname.indexOf((int)File.separatorChar) != -1) &#123;</span><br><span class="line">        // 如果传入的是带/的文件路径则抛异常，这个类型的异常如果进行ndk相关开发肯定见过</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">&quot;Directory separator should not appear in library name: &quot; + libname);</span><br><span class="line">    &#125;</span><br><span class="line">    String libraryName = libname;</span><br><span class="line">    if (loader != null) &#123;</span><br><span class="line"></span><br><span class="line">        // 从类加载器中查找so文件名并以全路径返回，类加载器中查找so时的路径是在其构造的时候指定的。</span><br><span class="line">        String filename = loader.findLibrary(libraryName);</span><br><span class="line">        if (filename == null) &#123;</span><br><span class="line">            // It&#x27;s not necessarily true that the ClassLoader used</span><br><span class="line">            // System.mapLibraryName, but the default setup does, and it&#x27;s</span><br><span class="line">            // misleading to say we didn&#x27;t find &quot;libMyLibrary.so&quot; when we</span><br><span class="line">            // actually searched for &quot;liblibMyLibrary.so.so&quot;.</span><br><span class="line">            throw new UnsatisfiedLinkError(loader + &quot; couldn&#x27;t find \&quot;&quot; +</span><br><span class="line">                                           System.mapLibraryName(libraryName) + &quot;\&quot;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        // 找到就加载</span><br><span class="line">        String error = doLoad(filename, loader);</span><br><span class="line">        if (error != null) &#123;</span><br><span class="line">            throw new UnsatisfiedLinkError(error);</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果类加载器为空，则获取到比如xxx.so，然后从系统提供的目录中查找(例如：/vendor/lib:/system/lib)，一样判断是否只读如果是则调用doLoad()加载</span><br><span class="line">    String filename = System.mapLibraryName(libraryName);</span><br><span class="line">    List&lt;String&gt; candidates = new ArrayList&lt;String&gt;();</span><br><span class="line">    String lastError = null;</span><br><span class="line">    for (String directory : getLibPaths()) &#123;</span><br><span class="line">        String candidate = directory + filename;</span><br><span class="line">        candidates.add(candidate);</span><br><span class="line"></span><br><span class="line">        if (IoUtils.canOpenReadOnly(candidate)) &#123;</span><br><span class="line">            String error = doLoad(candidate, loader);</span><br><span class="line">            if (error == null) &#123;</span><br><span class="line">                return; // We successfully loaded the library. Job done.</span><br><span class="line">            &#125;</span><br><span class="line">            lastError = error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (lastError != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(lastError);</span><br><span class="line">    &#125;</span><br><span class="line">    throw new UnsatisfiedLinkError(&quot;Library &quot; + libraryName + &quot; not found; tried &quot; + candidates);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当类加载器不是空的时候，调用<code> load.findLibrary(libraryName)</code>最终会调用到DexPathList中去:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public String findLibrary(String libraryName) &#123;</span><br><span class="line">    String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">    for (Element element : nativeLibraryPathElements) &#123;</span><br><span class="line">        String path = element.findNativeLibrary(fileName);</span><br><span class="line"></span><br><span class="line">        if (path != null) &#123;</span><br><span class="line">            return path;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以这里我们就可以跟做Dex补丁一样的方式在这个Element数组前面插入补丁SO文件, 这样在findLibrary的时候就会优先返回插入的SO文件, 并执行doLoad加载插入的SO文件. 那插入的时机是什么时候? findLibrary的动作是在调用了System.loadLibrary后才执行的,所以插入补丁的动作应该是要放在System.loadLibrary之前才能确保加载的时候更新SO文件.</p>
+<p>所以到最后其实System.loadLibrary()只是从特定的路径中去加载so库最终还是回调给Runtime.doLoad()，然后再调用Runtime.nativeLoad()这个native方法来执行的so加载。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>System.load()和System.loadLibrary()方法其实最终原理都一样，是通过调用Runtime.doLoad()最终Runtime.nativeLoad()调用到native层实现的so库加载，两者的区别在于查找so库的路径上。</p>
+<p>关于热更新so库有两种实现</p>
+<ol>
+<li>和dex热更新一样，将补丁包的路径插入到DexPathList.nativeLibraryPathElements属性的最前面达到抢先加载的目的。这样的好处是开发者在加载so库的时候和往常一样直接System.loadLibrary(xxx)即可，缺点是需要考虑到Android系统不断在更新可能导致的api变动，毕竟这种方案是通过反射来修改的值。并且还需要考虑不同cpu架构插入不同so的问题，比如arm&#x2F;intel</li>
+<li>使用System.load(xxx)去直接加载补丁包路径下的so，这种方式的好处在于你不需要去关心系统版本兼容和cpu架构等问题，缺点是开发者使用的时候需要改成System.load(xxx)这种加载方式，对于开发者不够透明。</li>
+</ol>
+<p>附上so热修复实现图：</p>
+<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/Tinker%E7%83%AD%E4%BF%AE%E5%A4%8Dso%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png" class="" title="Tinker热修复so修复原理图">
+
+
+<p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/l2show/article/details/53573945">https://blog.csdn.net/l2show/article/details/53573945</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/images/wechat-qcode.jpeg" alt=" wechat" style="width: 200px; max-width: 100%;"/>
+    <div>如需指正或者有任何其他需求请扫码添加个人微信</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/" rel="next" title="android热修复小记">
+                <i class="fa fa-chevron-left"></i> android热修复小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ClassLoader%E7%AE%80%E5%8D%95%E5%A4%8D%E4%B9%A0%EF%BC%88%E5%BF%85%E8%A6%81%E5%89%8D%E6%8F%90%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">ClassLoader简单复习（必要前提）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#System-load"><span class="nav-number">2.</span> <span class="nav-text">System.load():</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#System-loadLibrary"><span class="nav-number">3.</span> <span class="nav-text">System.loadLibrary()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lianwenhong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
