@@ -102,7 +102,7 @@
 <meta property="og:description" content="认识热修复由于Android应用程序需要手动安装apk包的特性，如果应用发布上线之后发现有bug只能再下载新包来修复。这样一来影响用户体验，二来是否下载新包的主动权在用户，所以开发者对bug无法把控。 主流热修复方案 腾讯Tinker 腾讯QZone 阿里sophix 美团Robust">
 <meta property="og:locale">
 <meta property="article:published_time" content="2022-04-12T17:55:47.000Z">
-<meta property="article:modified_time" content="2022-04-12T14:51:45.278Z">
+<meta property="article:modified_time" content="2022-04-13T02:01:13.548Z">
 <meta property="article:author" content="lianwenhong">
 <meta name="twitter:card" content="summary">
 
@@ -449,8 +449,11 @@
 <blockquote>
 <ol>
 <li>Hack方式：通过反射将补丁so插入到类加载器(这里我们拿到的就是BaseDexClassLoader)的DexPathList.nativeLibraryPathElements的数组最前面,这样做的好处是开发者只需像往常一样使用System.loadLibrary()来加载so，对开发者完全透明。缺点是是线上需要考虑系统版本兼容，毕竟用到了反射。</li>
-<li>System.load()方式：可以加载任意路径下的so，好处是没有用到反射所以没有系统版本兼容问题，但是开发者使用时候加载so库的时候就需要调用System.load()方式而不是System.loadLibrary()。<br>关于so的加载load逻辑可以参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/l2show/article/details/53573945">https://blog.csdn.net/l2show/article/details/53573945</a></li>
+<li>System.load()方式：可以加载任意路径下的so，好处是没有用到反射所以没有系统版本兼容问题，但是开发者使用时候加载so库的时候就需要调用System.load()方式而不是System.loadLibrary()。</li>
 </ol>
+</blockquote>
+<blockquote>
+<p>关于so的加载load逻辑可以参考文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/#more">http://lianwenhong.top/2022/04/13/Android两种so加载方式实现及so热修复/#more</a></p>
 </blockquote>
 <p>CustomTinker代码仓库：<a target="_blank" rel="noopener" href="https://github.com/lianwenhong/CustomTinker.git">https://github.com/lianwenhong/CustomTinker.git</a><br>本工程模拟了dexElements插队实现类修复、AssetManager替换实现资源修复、未模拟so库修复，并且未做差分包，补丁校验等逻辑。仅用于学习。</p>
 <h3 id="QZone"><a href="#QZone" class="headerlink" title="QZone"></a>QZone</h3><p>Multidex方案是基于ClassLoader的<strong>纯java实现</strong>的<strong>重启生效</strong>的热修复方案。</p>
