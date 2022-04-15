@@ -575,9 +575,18 @@
 
       
         
-          
-            
-          
+          <h2 id="Android中的默认类加载器："><a href="#Android中的默认类加载器：" class="headerlink" title="Android中的默认类加载器："></a>Android中的默认类加载器：</h2><p>Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制）</p>
+<p>如果对jvm的类加载流程不熟悉可以阅读另一篇文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/#more">java类加载原理(ClassLoader工作原理)</a></p>
+<p>Android类加载器之相较于Java类加载器的最大区别在于：</p>
+<p>java类加载器是从某个目录中去直接加载.class文件或者是从目录下的zip、jar包等归档文件中加载.class文件</p>
+<p>而Android类加载器是从某个目录下去直接加载.dex文件或者是从目录下的zip、jar、apk等文件中的.dex文件中去加载.class文件，如果不是.dex文件的话加载不了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
