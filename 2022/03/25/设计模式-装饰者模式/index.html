@@ -94,13 +94,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="连文弘的学习笔记">
-<meta property="og:url" content="http://example.com/archives/index.html">
+<meta name="description" content="简述装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式-装饰者模式">
+<meta property="og:url" content="http://example.com/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/index.html">
 <meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="简述装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。">
 <meta property="og:locale">
+<meta property="og:image" content="http://example.com/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png">
+<meta property="article:published_time" content="2022-03-24T22:55:19.000Z">
+<meta property="article:modified_time" content="2022-04-15T07:40:23.731Z">
 <meta property="article:author" content="lianwenhong">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png">
 
 
 
@@ -129,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/archives/"/>
+  <link rel="canonical" href="http://example.com/2022/03/25/设计模式-装饰者模式/"/>
 
 
 
 
 
-  <title>归档 | 连文弘的学习笔记</title>
+  <title>设计模式-装饰者模式 | 连文弘的学习笔记</title>
   
 
 
@@ -160,7 +166,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -298,411 +304,216 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="连文弘的学习笔记">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">设计模式-装饰者模式</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-03-25T06:55:19+08:00">
+                2022-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 11 篇日志。 继续努力。
-      </span>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h2 class="archive-year motion-element" id="archive-year-2022">2022</h2>
-          </div>
-        
-        
 
-        
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2022/03/25/设计模式-装饰者模式/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" itemprop="url">
-              
-                <span itemprop="name">java类加载原理(ClassLoader工作原理)</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-15T18:51:47Z"
-              content="2022-04-15" >
-          04-15
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/" itemprop="url">
-              
-                <span itemprop="name">Android源码解析-App的ClassLoader</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-14T15:36:02Z"
-              content="2022-04-14" >
-          04-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/" itemprop="url">
-              
-                <span itemprop="name">Android源码小记-LoadedApk</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-14T15:35:23Z"
-              content="2022-04-14" >
-          04-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
+      
+        <h3 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h3><p>装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。</p>
+<img src="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png" class="" title="装饰者设计模式">
 
-        
-        
+<span id="more"></span>
 
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/" itemprop="url">
-              
-                <span itemprop="name">System.load()与System.loadLibrary()实现及so热修复</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-13T09:40:10Z"
-              content="2022-04-13" >
-          04-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+<ul>
+<li>Component：抽象组件（可以是抽象类或者接口），被装饰的原始对象</li>
+<li>ConcreteComponent：具体实现类，被装饰的具体对象</li>
+<li>Decorator：抽象装饰者，职责就是为了装饰我们的组件对象，内部一定要有一个指向组件对象的引用</li>
+<li>ConcreteDecoratorA：装饰者具体实现类，只对抽象装饰者做出具体实现</li>
+<li>ConcreteDecoratorB：同上</li>
+</ul>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>人定义为抽象类，有一个抽象方法eat()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Person &#123;</span><br><span class="line">    public abstract void eat();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着创建一个NormalPerson类继承Person，对eat()方法有了具体实现；NormalPerson类就是我们需要装饰的对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class NormalPerson extends Person &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        System.out.println(&quot;吃饭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里定义一个PersonFood类来表示装饰者的抽象类，保持了一个对Person的引用，可以方便调用具体被装饰的对象方法，这样就可以方便的对其进行扩展功能，并且不改变原类的层次结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class PersonFood extends Person &#123;</span><br><span class="line">    private Person person;</span><br><span class="line"></span><br><span class="line">    public PersonFood(Person person)&#123;</span><br><span class="line">        this.person = person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        person.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着就是具体的装饰类了，这两个类没有本质上的区别，都是为了扩展NormalPerson类，不修改原有类的方法和结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public class ExpensiveFood extends PersonFood &#123;</span><br><span class="line">    public ExpensiveFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatSteak();</span><br><span class="line">        drinkRedWine();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatSteak()&#123;</span><br><span class="line">        System.out.println(&quot;吃牛排&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void drinkRedWine()&#123;</span><br><span class="line">        System.out.println(&quot;喝拉菲&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheapFood extends PersonFood &#123;</span><br><span class="line">    public CheapFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatNoodles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatNoodles()&#123;</span><br><span class="line">        System.out.println(&quot;吃面条&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用装饰者代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Person person = new NormalPerson();</span><br><span class="line"></span><br><span class="line">        PersonFood cheapFood = new CheapFood(person);</span><br><span class="line">        cheapFood.eat();</span><br><span class="line"></span><br><span class="line">        PersonFood expensiveFood = new ExpensiveFood(person);</span><br><span class="line">        expensiveFood.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="android中的装饰者模式"><a href="#android中的装饰者模式" class="headerlink" title="android中的装饰者模式"></a>android中的装饰者模式</h3><p>在android中，Context就是典型的装饰者模式，Context是抽象类，真实的功能实现实在ComtextImpl中完成，ComtextImpl就是Context的实现类；然后看源码会发现Activity是继承于ContextThemeWrapper而不是直接继承于Context。其中ContextThemeWrapper继承于ContextWrapper，而ContextWrapper继承于Context。这里就可以看出来一点装饰者模式了，其中装饰者所调用的方法就是startActivity方法，在ContextWrapper中会发现startActivity方法调用了ComtextImpl中对应的方法，实质上ContextWrapper中所有方法都仅仅是调用了ComtextImpl中的方法，这就和装饰者模式基本就对应上了。<br>想具体了解Context机制可以看我另一篇文章：<a target="_blank" rel="noopener" href="https://lianwenhong.top/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/#more">Android源码小记-Context解析</a></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>装饰者模式与继承关系的目的都是要扩展对象的功能，但是装饰者模式可以提供比继承更多的灵活性。</li>
+<li>通过使用不同的具体装饰类以及这些装饰类的排列组合，设计师可以创造出很多不同行为的组合。<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4></li>
+<li>这种比继承更加灵活机动的特性，也同时意味着更加多的复杂性。</li>
+<li>装饰模式会导致设计中出现许多小类，如果过度使用，会使程序变得很复杂。</li>
+<li>装饰模式是针对抽象组件（Component）类型编程。但是，如果你要针对具体组件编程时，就应该重新思考你的应用架构，以及装饰者是否合适。当然也可以改变Component接口，增加新的公开的行为，实现“半透明”的装饰者模式。在实际项目中要做出最佳选择。</li>
+</ul>
+<h3 id="装饰者模式与代理模式对比"><a href="#装饰者模式与代理模式对比" class="headerlink" title="装饰者模式与代理模式对比"></a>装饰者模式与代理模式对比</h3><p>其实装饰者模式和代理模式很像，但是两者的目的不尽相同。装饰者模式是以对客户端透明的方式扩展对象的功能，是继承关系的一个替代方案；而代理模式则是一个给对象提供一个代理对象，并由代理对象来控制对原有对象的引用。<br>装饰者模式为本装饰的对象进行功能扩展；代理模式对代理对象进行控制，但不做功能扩展</p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/" itemprop="url">
-              
-                <span itemprop="name">android热修复小记</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-12T17:55:47Z"
-              content="2022-04-12" >
-          04-12
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" itemprop="url">
-              
-                <span itemprop="name">gradle插件开发</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-04-11T21:50:37Z"
-              content="2022-04-11" >
-          04-11
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/" itemprop="url">
-              
-                <span itemprop="name">Android版本号对应关系</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-03-28T20:09:07Z"
-              content="2022-03-28" >
-          03-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/" itemprop="url">
-              
-                <span itemprop="name">Android源码小记-Context解析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-03-28T17:55:47Z"
-              content="2022-03-28" >
-          03-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/" itemprop="url">
-              
-                <span itemprop="name">Android中多线程通信：Handler的理解</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-03-24T23:43:42Z"
-              content="2022-03-24" >
-          03-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" itemprop="url">
-              
-                <span itemprop="name">设计模式-装饰者模式</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2022-03-24T22:55:19Z"
-              content="2022-03-24" >
-          03-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/images/wechat-qcode.jpeg" alt=" wechat" style="width: 200px; max-width: 100%;"/>
+    <div>如需指正或者有任何其他需求请扫码添加个人微信</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" rel="next" title="设计模式-代理模式">
+                <i class="fa fa-chevron-left"></i> 设计模式-代理模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/" rel="prev" title="Android中多线程通信：Handler的理解">
+                Android中多线程通信：Handler的理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/">&lt;i class&#x3D;&quot;fa fa-angle-right&quot;&gt;&lt;&#x2F;i&gt;</a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -710,6 +521,17 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -730,8 +552,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.jpeg"
@@ -784,6 +615,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90"><span class="nav-number">2.</span> <span class="nav-text">举个栗子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#android%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">android中的装饰者模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E4%B8%8E%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">5.</span> <span class="nav-text">装饰者模式与代理模式对比</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -897,11 +744,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
 
 
   
@@ -920,6 +765,18 @@
       <script id="dsq-count-scr" src="https://your-disqus-shortname.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://example.com/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/';
+          this.page.identifier = '2022/03/25/设计模式-装饰者模式/';
+          this.page.title = '设计模式-装饰者模式';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://your-disqus-shortname.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   

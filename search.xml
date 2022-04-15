@@ -101,6 +101,88 @@
       </categories>
   </entry>
   <entry>
+    <title>Android版本号对应关系</title>
+    <url>/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</url>
+    <content><![CDATA[<h3 id="Android系统版本对应API"><a href="#Android系统版本对应API" class="headerlink" title="Android系统版本对应API"></a>Android系统版本对应API</h3><table>
+<thead>
+<tr>
+<th align="left">API版本号</th>
+<th align="right">版本名称（英&#x2F;汉）</th>
+<th align="center">发布时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API 31</td>
+<td align="right">android 12.0 Snow Cone</td>
+<td align="center">2021.10</td>
+</tr>
+<tr>
+<td align="left">API 30</td>
+<td align="right">android 11.0 R</td>
+<td align="center">2020.9</td>
+</tr>
+<tr>
+<td align="left">API 29</td>
+<td align="right">android 10.0 Q</td>
+<td align="center">2019.8</td>
+</tr>
+<tr>
+<td align="left">API 28</td>
+<td align="right">android 9.0 Pie&#x2F;馅饼</td>
+<td align="center">2018.8</td>
+</tr>
+<tr>
+<td align="left">API 27</td>
+<td align="right">android 8.1 Oreo&#x2F;奥利奥</td>
+<td align="center">2017.12</td>
+</tr>
+<tr>
+<td align="left">API 26</td>
+<td align="right">android 8.0 Oreo&#x2F;奥利奥</td>
+<td align="center">2017.8</td>
+</tr>
+<tr>
+<td align="left">API 25</td>
+<td align="right">android 7.1 Nougat&#x2F;牛轧糖</td>
+<td align="center">2016.10</td>
+</tr>
+<tr>
+<td align="left">API 24</td>
+<td align="right">android 7.0 Nougat&#x2F;牛轧糖</td>
+<td align="center">2016.8</td>
+</tr>
+<tr>
+<td align="left">API 23</td>
+<td align="right">android 6.0 Marshmallow&#x2F;棉花糖</td>
+<td align="center">2015.8</td>
+</tr>
+<tr>
+<td align="left">API 22</td>
+<td align="right">android 5.1 Lollipop&#x2F;棒棒糖</td>
+<td align="center">2014.12</td>
+</tr>
+<tr>
+<td align="left">API 21</td>
+<td align="right">android 5.0 Lollipop&#x2F;棒棒糖</td>
+<td align="center">2014.10</td>
+</tr>
+<tr>
+<td align="left">API 20</td>
+<td align="right">android 4.4W KitKat&#x2F;奇巧巧克力棒</td>
+<td align="center">2013底</td>
+</tr>
+<tr>
+<td align="left">API 19</td>
+<td align="right">android 4.4 KitKat&#x2F;奇巧巧克力棒</td>
+<td align="center">2013.11</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+  </entry>
+  <entry>
     <title>android热修复小记</title>
     <url>/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="认识热修复"><a href="#认识热修复" class="headerlink" title="认识热修复"></a>认识热修复</h2><p>由于Android应用程序需要手动安装apk包的特性，如果应用发布上线之后发现有bug只能再下载新包来修复。这样一来影响用户体验，二来是否下载新包的主动权在用户，所以开发者对bug无法把控。</p>
@@ -215,88 +297,6 @@
       </categories>
   </entry>
   <entry>
-    <title>Android版本号对应关系</title>
-    <url>/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</url>
-    <content><![CDATA[<h3 id="Android系统版本对应API"><a href="#Android系统版本对应API" class="headerlink" title="Android系统版本对应API"></a>Android系统版本对应API</h3><table>
-<thead>
-<tr>
-<th align="left">API版本号</th>
-<th align="right">版本名称（英&#x2F;汉）</th>
-<th align="center">发布时间</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">API 31</td>
-<td align="right">android 12.0 Snow Cone</td>
-<td align="center">2021.10</td>
-</tr>
-<tr>
-<td align="left">API 30</td>
-<td align="right">android 11.0 R</td>
-<td align="center">2020.9</td>
-</tr>
-<tr>
-<td align="left">API 29</td>
-<td align="right">android 10.0 Q</td>
-<td align="center">2019.8</td>
-</tr>
-<tr>
-<td align="left">API 28</td>
-<td align="right">android 9.0 Pie&#x2F;馅饼</td>
-<td align="center">2018.8</td>
-</tr>
-<tr>
-<td align="left">API 27</td>
-<td align="right">android 8.1 Oreo&#x2F;奥利奥</td>
-<td align="center">2017.12</td>
-</tr>
-<tr>
-<td align="left">API 26</td>
-<td align="right">android 8.0 Oreo&#x2F;奥利奥</td>
-<td align="center">2017.8</td>
-</tr>
-<tr>
-<td align="left">API 25</td>
-<td align="right">android 7.1 Nougat&#x2F;牛轧糖</td>
-<td align="center">2016.10</td>
-</tr>
-<tr>
-<td align="left">API 24</td>
-<td align="right">android 7.0 Nougat&#x2F;牛轧糖</td>
-<td align="center">2016.8</td>
-</tr>
-<tr>
-<td align="left">API 23</td>
-<td align="right">android 6.0 Marshmallow&#x2F;棉花糖</td>
-<td align="center">2015.8</td>
-</tr>
-<tr>
-<td align="left">API 22</td>
-<td align="right">android 5.1 Lollipop&#x2F;棒棒糖</td>
-<td align="center">2014.12</td>
-</tr>
-<tr>
-<td align="left">API 21</td>
-<td align="right">android 5.0 Lollipop&#x2F;棒棒糖</td>
-<td align="center">2014.10</td>
-</tr>
-<tr>
-<td align="left">API 20</td>
-<td align="right">android 4.4W KitKat&#x2F;奇巧巧克力棒</td>
-<td align="center">2013底</td>
-</tr>
-<tr>
-<td align="left">API 19</td>
-<td align="right">android 4.4 KitKat&#x2F;奇巧巧克力棒</td>
-<td align="center">2013.11</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>Android</category>
-      </categories>
-  </entry>
-  <entry>
     <title>gradle插件开发</title>
     <url>/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</url>
     <content><![CDATA[<hr>
@@ -395,6 +395,118 @@
 <p><strong>By the way:</strong><br>源码中的ProxyClassFactory中是使用<code>sun.misc.ProxyGenerator</code> 类来生class的。生成Class文件的方法不止这一个，我们也可以用 Javassist 技术动态生成class。</p>
 <h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>动态代理也可以用于实现AOP切面编程。例如方法的埋点，耗时统计等等。只需在invoke内部实现AOP的业务逻辑即可。这样JVM动态生成代理类时就包含了所需的AOP逻辑。</p>
 <p>参考文章：<br><a href="https://www.jianshu.com/p/5c8a9a334034">JVM的Proxy.newProxyInstance原理分析</a><br><a href="https://zhuanlan.zhihu.com/p/349659128">自己实现Java 动态代理 Proxy</a><br><a href="https://blog.csdn.net/time_poster/article/details/116140160">Proxy.newProxyInstance源码探究</a><br><a href="https://www.bilibili.com/video/BV1nr4y1y7eZ?p=3&spm_id_from=pageDriver">JDK动态代理底层原理&amp;为什么需要接口?</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>java类加载原理(ClassLoader工作原理)</title>
+    <url>/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<h2 id="什么是类加载"><a href="#什么是类加载" class="headerlink" title="什么是类加载"></a>什么是类加载</h2><p>在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。</p>
+<p>当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&gt; javac -&gt; MainActivity.class。当我们程序中要使用MainActivity的时候，肯定要将这个文件加载到内存中来变成一个类对象这样才能去使用它。</p>
+<span id="more"></span>
+
+<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86.png" class="" title="类加载原理">
+
+<p><strong>具体来说类加载就是将类的.class文件转为二进制数据读取到虚拟机内存的方法区中，当对象实例进行创建的时候会在堆内存中创建这个类的class对象，用来封装类在方法区中的数据结构。</strong></p>
+<p><strong>类加载最终的产物就是这个类对应的Class对象，它封装了方法区中的类的数据结构，并向程序员提供了访问接口。</strong></p>
+<h2 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h2><p>java的类加载分为3个步骤：</p>
+<ol>
+<li>装载（Load)：查找并加载类的二进制字节码(.class)文件。</li>
+<li>链接（Link）</li>
+<li>初始化（Initialize）：<strong>对类的静态变量、静态代码块执行初始化操作</strong>。</li>
+</ol>
+<p>对于链接这一过程分为3个子过程：</p>
+<ol>
+<li>验证：确保被加载的类的正确性</li>
+<li>准备：为类的静态变量分配内存并初始化为默认值（这个初始化与初始化流程中的初始化不一样，这里是初始化为默认值，下一个流程中是初始化为指定值）</li>
+<li>解析：把类中的符号引用转换为直接引用</li>
+</ol>
+<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg" class="" title="java类加载过程">
+
+<h4 id="思考1-为什么要有验证阶段？"><a href="#思考1-为什么要有验证阶段？" class="headerlink" title="思考1:为什么要有验证阶段？"></a>思考1:为什么要有验证阶段？</h4><p>由Java编译器编译生成的.class文件一定是符合JVM字节码格式的，由JVM加载并运行，为了避免人为写一个.class文件，用于恶意用途，就需要有验证，不符合格式的不让它继续运行，确保安全。</p>
+<h4 id="思考2-链接中的准备过程和初始化过程有什么区别？"><a href="#思考2-链接中的准备过程和初始化过程有什么区别？" class="headerlink" title="思考2:链接中的准备过程和初始化过程有什么区别？"></a>思考2:链接中的准备过程和初始化过程有什么区别？</h4><p>准备过程是初始化为默认值，而初始化过程是将变量赋予正确的值。</p>
+<h4 id="什么情况会导致类的初始化？"><a href="#什么情况会导致类的初始化？" class="headerlink" title="什么情况会导致类的初始化？"></a>什么情况会导致类的初始化？</h4><ul>
+<li>创建类实例时（也就是new）</li>
+<li>访问某个类或者接口的静态变量时（其实接口中的变量都是public final static的），或者是对该静态变量进行赋值时</li>
+<li>调用类的静态方法</li>
+<li>反射时（Class.forName(clzName)），这种情况下面会有说明</li>
+<li>初始化一个类的子类(会首先初始化其父类)</li>
+<li>JVM启动时表明的启动类，即文件名和类名相同的那个类</li>
+</ul>
+<h4 id="系统为我们提供了2种类加载方式："><a href="#系统为我们提供了2种类加载方式：" class="headerlink" title="系统为我们提供了2种类加载方式："></a>系统为我们提供了2种类加载方式：</h4><ul>
+<li>Class.forName(clzName)</li>
+<li>ClassLoader.loadClass(clzName)</li>
+</ul>
+<h4 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h4><p>类加载器是系统为我们提供的加载类的工具类，基类是ClassLoader，在Java中默认提供了：</p>
+<ul>
+<li>BootStrap:引导类加载器（启动类加载器）</li>
+<li>ExtClassLoader:拓展类加载器</li>
+<li>AppClassLoader：系统类加载器<br>除了这几个默认的之外我们也可以自定义一个类加载器去加载指定目录中的类。例如Android中定义了：</li>
+<li>BootClassLoader:加载AndroidFramework层class文件（Android系统类）</li>
+<li>BaseDexClassLoader(其子类有PathClassLoader、DexClassLoader用于加载指定目录虾的.dex文件中的class类)</li>
+</ul>
+<p><strong>归根结底其实类加载器就是一个加载类的工具，而不同类加载器的区别就是加载的类所处的目录不同而已</strong>，具体原因后续讲双亲委托机制时详述。</p>
+<h4 id="思考3-类加载也是类，那类加载器被谁加载？"><a href="#思考3-类加载也是类，那类加载器被谁加载？" class="headerlink" title="思考3:类加载也是类，那类加载器被谁加载？"></a>思考3:类加载也是类，那类加载器被谁加载？</h4><p>BootStrap不是java类，它是c&#x2F;c++写的，是jvm内核的组成部分，它主要用于加载jvm运行必须的类。而ExtClassLoader和AppClassLoadeer是java类，他们是被BootStrap所加载。BootStrap是无法被java程序直接引用的。</p>
+<h2 id="双亲委托机制"><a href="#双亲委托机制" class="headerlink" title="双亲委托机制"></a>双亲委托机制</h2><img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6.jpg" class="" title="双亲委托机制">
+
+<h4 id="类加载器的父子结构"><a href="#类加载器的父子结构" class="headerlink" title="类加载器的父子结构"></a>类加载器的父子结构</h4><p>jvm所有的类加载器都采用父子关系的树形结构进行组织（但是注意不是java语法上的父子关系，不是继承），它的原理是在实例化每个类加载器的时候都得为其指定一个父类加载器对象或者默认采用系统类加载器为其父类加载器。（类加载器中有一个parent属性，组织父子结构是通过为parent赋值来实现的）</p>
+<p>每个类加载器都有自己的加载区域，它只能在自己的加载区域中寻找类。</p>
+<h4 id="双亲委托机制工作原理"><a href="#双亲委托机制工作原理" class="headerlink" title="双亲委托机制工作原理"></a>双亲委托机制工作原理</h4><p><strong>当使用某个类加载器去加载一个类的时候，首先会委托给其父类去加载，当父类还有父类的时候会一层层向上委托直至没有父类。也就是说父类相对于子类来说具有绝对的优先加载权。因此，所有的类加载请求都应该被传递到顶层的引导类加载器中，如果父类加载器加载到类了那就直接返回该类，只有当父类加载器在它的加载区域中找不到所要加载的类时，才会把加载权再归还给子类去加载。</strong></p>
+<p>这就是大名鼎鼎的双亲委托机制。</p>
+<p>这么设计有什么好处呢？</p>
+<ol>
+<li>保证了同一个类不会被重复加载（不会被多个类加载器加载）</li>
+<li>保证了类加载的安全性（例如假如有人自己创建了一个java.lang.String类也无法替换掉系统中的java.lang.String类，因为类加载会最终委托到父类加载器中，所以系统中的java.lang.String一定是先被找到的）</li>
+</ol>
+<p><strong>类加载器加载一个类的时候会首先从缓存中找，如果找到了就直接返回类，如果没找到才会继续向上委托。当成功加载到某个类的时候，会将得到的Class对象缓存起来用于下次加载这个类的时候直接返回。</strong><br>不信可以看看java ClassLoader类的loadClass()实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">protected Class&lt;?&gt; loadClass(String name, boolean resolve)</span><br><span class="line">        throws ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    synchronized (getClassLoadingLock(name)) &#123;</span><br><span class="line">        // First, check if the class has already been loaded</span><br><span class="line">        // 找缓存</span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">        // 缓存中没有，则开始双亲委托机制</span><br><span class="line">        if (c == null) &#123;</span><br><span class="line">            long t0 = System.nanoTime();</span><br><span class="line">            try &#123;</span><br><span class="line">                if (parent != null) &#123;</span><br><span class="line">                    // 从父类加载器加载</span><br><span class="line">                    c = parent.loadClass(name, false);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    // 没有父说明这个已经是Bootstrap</span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">                // ClassNotFoundException thrown if class not found</span><br><span class="line">                // from the non-null parent class loader</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            // 没有加载到，则在自己的区域中寻找类</span><br><span class="line">            if (c == null) &#123;</span><br><span class="line">                // If still not found, then invoke findClass in order</span><br><span class="line">                // to find the class.</span><br><span class="line">                long t1 = System.nanoTime();</span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                // this is the defining class loader; record the stats</span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        return c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="思考4-为什么静态元素和静态代码块在虚拟机种只会执行一次？"><a href="#思考4-为什么静态元素和静态代码块在虚拟机种只会执行一次？" class="headerlink" title="思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？"></a>思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？</h4><p>因为默认情况下赋值静态域的过程（初始化）或者是执行静态代码块是在类加载流程中执行的，而同一个类根据双亲委托机制只会被加载一次，如果第二次加载它会直接从缓存中取。当然如果你自己定义了一个类加载器再去手动加载它的话就另当别论了（假设加载类A，正常代码中类在AppClassLoader中被加载成功，此时你自定义一个类加载器并且它的加载区域中也有类A一样的class，并且把它的父类加载器设置成ExtClassLoader，那么肯定这时候通过自定义类加载器去加载那也能加载出一个类A，此时类A中的静态代码也会执行，<strong>但是，但是，但是这个但是很重要，但是此时加载出来的这俩类A不是同一个类</strong>）。</p>
+<h4 id="届定2个类是不是同一个类对象"><a href="#届定2个类是不是同一个类对象" class="headerlink" title="届定2个类是不是同一个类对象"></a>届定2个类是不是同一个类对象</h4><p><strong>这也就是思考4中的但是，2个类对象是否是同一个取决于：类的全类名、加载它的类加载器以及类加载器的实例这三个条件，这三个条件中只要有一个不相同，加载后生成的Class对象就不是同一个，最终生成的类的实例的类型也不相同。</strong></p>
+<h4 id="Class-forName-clzName-的原理"><a href="#Class-forName-clzName-的原理" class="headerlink" title="Class.forName(clzName)的原理"></a>Class.forName(clzName)的原理</h4><p>直接上代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static Class&lt;?&gt; forName(String className)</span><br><span class="line">            throws ClassNotFoundException &#123;</span><br><span class="line">    Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">    // 内部也是使用ClassLoader进行类加载，只是加载完成之后会自动执行初始化，同时forName0()的initialize参数决定</span><br><span class="line">    return forName0(className, true, ClassLoader.getClassLoader(caller), caller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static native Class&lt;?&gt; forName0(String name, boolean initialize,</span><br><span class="line">                                    ClassLoader loader,</span><br><span class="line">                                    Class&lt;?&gt; caller)</span><br><span class="line">throws ClassNotFoundException;</span><br></pre></td></tr></table></figure>
+<p>所以Class.forName(clzName)本质上也是通过ClassLoader.loadClass(clzName)进行类加载，只是它会执行初始化，而直接通过ClassLoader.loadClass(clzName) 加载的类只有达到上面说的几个条件才会执行初始化流程</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>设计模式-装饰者模式</title>
+    <url>/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h3><p>装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。</p>
+<img src="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png" class="" title="装饰者设计模式">
+
+<span id="more"></span>
+
+<ul>
+<li>Component：抽象组件（可以是抽象类或者接口），被装饰的原始对象</li>
+<li>ConcreteComponent：具体实现类，被装饰的具体对象</li>
+<li>Decorator：抽象装饰者，职责就是为了装饰我们的组件对象，内部一定要有一个指向组件对象的引用</li>
+<li>ConcreteDecoratorA：装饰者具体实现类，只对抽象装饰者做出具体实现</li>
+<li>ConcreteDecoratorB：同上</li>
+</ul>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>人定义为抽象类，有一个抽象方法eat()</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public abstract class Person &#123;</span><br><span class="line">    public abstract void eat();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着创建一个NormalPerson类继承Person，对eat()方法有了具体实现；NormalPerson类就是我们需要装饰的对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class NormalPerson extends Person &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        System.out.println(&quot;吃饭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里定义一个PersonFood类来表示装饰者的抽象类，保持了一个对Person的引用，可以方便调用具体被装饰的对象方法，这样就可以方便的对其进行扩展功能，并且不改变原类的层次结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class PersonFood extends Person &#123;</span><br><span class="line">    private Person person;</span><br><span class="line"></span><br><span class="line">    public PersonFood(Person person)&#123;</span><br><span class="line">        this.person = person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        person.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着就是具体的装饰类了，这两个类没有本质上的区别，都是为了扩展NormalPerson类，不修改原有类的方法和结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class ExpensiveFood extends PersonFood &#123;</span><br><span class="line">    public ExpensiveFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatSteak();</span><br><span class="line">        drinkRedWine();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatSteak()&#123;</span><br><span class="line">        System.out.println(&quot;吃牛排&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void drinkRedWine()&#123;</span><br><span class="line">        System.out.println(&quot;喝拉菲&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheapFood extends PersonFood &#123;</span><br><span class="line">    public CheapFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatNoodles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatNoodles()&#123;</span><br><span class="line">        System.out.println(&quot;吃面条&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用装饰者代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Person person = new NormalPerson();</span><br><span class="line"></span><br><span class="line">        PersonFood cheapFood = new CheapFood(person);</span><br><span class="line">        cheapFood.eat();</span><br><span class="line"></span><br><span class="line">        PersonFood expensiveFood = new ExpensiveFood(person);</span><br><span class="line">        expensiveFood.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="android中的装饰者模式"><a href="#android中的装饰者模式" class="headerlink" title="android中的装饰者模式"></a>android中的装饰者模式</h3><p>在android中，Context就是典型的装饰者模式，Context是抽象类，真实的功能实现实在ComtextImpl中完成，ComtextImpl就是Context的实现类；然后看源码会发现Activity是继承于ContextThemeWrapper而不是直接继承于Context。其中ContextThemeWrapper继承于ContextWrapper，而ContextWrapper继承于Context。这里就可以看出来一点装饰者模式了，其中装饰者所调用的方法就是startActivity方法，在ContextWrapper中会发现startActivity方法调用了ComtextImpl中对应的方法，实质上ContextWrapper中所有方法都仅仅是调用了ComtextImpl中的方法，这就和装饰者模式基本就对应上了。<br>想具体了解Context机制可以看我另一篇文章：<a href="https://lianwenhong.top/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/#more">Android源码小记-Context解析</a></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>装饰者模式与继承关系的目的都是要扩展对象的功能，但是装饰者模式可以提供比继承更多的灵活性。</li>
+<li>通过使用不同的具体装饰类以及这些装饰类的排列组合，设计师可以创造出很多不同行为的组合。<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4></li>
+<li>这种比继承更加灵活机动的特性，也同时意味着更加多的复杂性。</li>
+<li>装饰模式会导致设计中出现许多小类，如果过度使用，会使程序变得很复杂。</li>
+<li>装饰模式是针对抽象组件（Component）类型编程。但是，如果你要针对具体组件编程时，就应该重新思考你的应用架构，以及装饰者是否合适。当然也可以改变Component接口，增加新的公开的行为，实现“半透明”的装饰者模式。在实际项目中要做出最佳选择。</li>
+</ul>
+<h3 id="装饰者模式与代理模式对比"><a href="#装饰者模式与代理模式对比" class="headerlink" title="装饰者模式与代理模式对比"></a>装饰者模式与代理模式对比</h3><p>其实装饰者模式和代理模式很像，但是两者的目的不尽相同。装饰者模式是以对客户端透明的方式扩展对象的功能，是继承关系的一个替代方案；而代理模式则是一个给对象提供一个代理对象，并由代理对象来控制对原有对象的引用。<br>装饰者模式为本装饰的对象进行功能扩展；代理模式对代理对象进行控制，但不做功能扩展</p>
 ]]></content>
       <categories>
         <category>Java</category>
