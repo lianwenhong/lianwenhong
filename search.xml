@@ -1,6 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Android-Resource解析</title>
+    <url>/2022/04/02/Android-Resource%E8%A7%A3%E6%9E%90/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Android版本号对应关系</title>
+    <url>/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</url>
+    <content><![CDATA[<h3 id="Android系统版本对应API"><a href="#Android系统版本对应API" class="headerlink" title="Android系统版本对应API"></a>Android系统版本对应API</h3><table>
+<thead>
+<tr>
+<th align="left">API版本号</th>
+<th align="right">版本名称（英&#x2F;汉）</th>
+<th align="center">发布时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">API 31</td>
+<td align="right">android 12.0 Snow Cone</td>
+<td align="center">2021.10</td>
+</tr>
+<tr>
+<td align="left">API 30</td>
+<td align="right">android 11.0 R</td>
+<td align="center">2020.9</td>
+</tr>
+<tr>
+<td align="left">API 29</td>
+<td align="right">android 10.0 Q</td>
+<td align="center">2019.8</td>
+</tr>
+<tr>
+<td align="left">API 28</td>
+<td align="right">android 9.0 Pie&#x2F;馅饼</td>
+<td align="center">2018.8</td>
+</tr>
+<tr>
+<td align="left">API 27</td>
+<td align="right">android 8.1 Oreo&#x2F;奥利奥</td>
+<td align="center">2017.12</td>
+</tr>
+<tr>
+<td align="left">API 26</td>
+<td align="right">android 8.0 Oreo&#x2F;奥利奥</td>
+<td align="center">2017.8</td>
+</tr>
+<tr>
+<td align="left">API 25</td>
+<td align="right">android 7.1 Nougat&#x2F;牛轧糖</td>
+<td align="center">2016.10</td>
+</tr>
+<tr>
+<td align="left">API 24</td>
+<td align="right">android 7.0 Nougat&#x2F;牛轧糖</td>
+<td align="center">2016.8</td>
+</tr>
+<tr>
+<td align="left">API 23</td>
+<td align="right">android 6.0 Marshmallow&#x2F;棉花糖</td>
+<td align="center">2015.8</td>
+</tr>
+<tr>
+<td align="left">API 22</td>
+<td align="right">android 5.1 Lollipop&#x2F;棒棒糖</td>
+<td align="center">2014.12</td>
+</tr>
+<tr>
+<td align="left">API 21</td>
+<td align="right">android 5.0 Lollipop&#x2F;棒棒糖</td>
+<td align="center">2014.10</td>
+</tr>
+<tr>
+<td align="left">API 20</td>
+<td align="right">android 4.4W KitKat&#x2F;奇巧巧克力棒</td>
+<td align="center">2013底</td>
+</tr>
+<tr>
+<td align="left">API 19</td>
+<td align="right">android 4.4 KitKat&#x2F;奇巧巧克力棒</td>
+<td align="center">2013.11</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Android源码解析-App的ClassLoader</title>
     <url>/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/</url>
     <content><![CDATA[<h2 id="Android中的默认类加载器："><a href="#Android中的默认类加载器：" class="headerlink" title="Android中的默认类加载器："></a>Android中的默认类加载器：</h2><p>Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制）</p>
@@ -36,51 +126,6 @@
 <h2 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h2><p>在Activity中调用getClassLoader()返回的是PathClassLoader,它的父类加载器是系统的类加载器也是个PathClassLoader，再往上是BootClassLoader。</p>
 <p>温馨提示：</p>
 <p>要清楚明白的知道ActivityThread、Activity、Application、Context、LoadedApk、Instrumentation这些类的关系对阅读Android源码很有帮助。</p>
-]]></content>
-      <categories>
-        <category>Android</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>System.load()与System.loadLibrary()实现及so热修复</title>
-    <url>/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/</url>
-    <content><![CDATA[<p>文章基于API25分析，源码地址：<a href="http://androidxref.com/7.1.1_r6/">http://androidxref.com/7.1.1_r6/</a></p>
-<h3 id="ClassLoader简单复习（必要前提）"><a href="#ClassLoader简单复习（必要前提）" class="headerlink" title="ClassLoader简单复习（必要前提）"></a>ClassLoader简单复习（必要前提）</h3><p>在分析System类之前，先简单复习一下ClassLoader的类加载机制。</p>
-<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg" class="" title="ClassLoader类结构关系图以及替换dexElements实现热修复原理">
-
-<span id="more"></span>
-
-<p>Android应用中模式使用的类加载器是<strong>PathClassLoader</strong>。想要了解可简单看下<strong>Application.getClassLoader()</strong> 的调用栈。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Application.getClassLoader() -&gt; ContextImpl.getClassLoader -&gt;</span><br><span class="line">LoadedApk.getClassLoader() -&gt; ... -&gt; ClassLoader.createSystemClassLoader() -&gt; new PathClassLoader(...)</span><br></pre></td></tr></table></figure>
-<p>而<strong>PathClassLoader</strong>只是重载了几个构造方法，真正的代码实现都在父类<strong>BaseDexClassLoader</strong>中。</p>
-<p>BaseDexClassLoader中pathList:DexPathList类说明：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">final class DexPathList &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // List of dex/resource (class path) elements.意思是class文件转化结果:dex文件集合</span><br><span class="line">    private Element[] dexElements;</span><br><span class="line"></span><br><span class="line">    // List of native library path elements. 意思是native层so文件集合  </span><br><span class="line">    // 在热修复技术中so修复可以将新的so库路径追加到此数组之前达到热修效果，其实它是将例如xxx/xxx/abc.so分别以dir:xxx/xxx/、zip:abc.so这样区分存储而已，为了使用方便</span><br><span class="line">    private final Element[] nativeLibraryPathElements;</span><br><span class="line"></span><br><span class="line">    // List of application native library directories. 意思是native层so文件的路径集合，只表示路径。</span><br><span class="line">    private final List&lt;File&gt; nativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    // List of system native library directories.意思是系统so文件路径集合</span><br><span class="line">    private final List&lt;File&gt; systemNativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static class Element &#123;</span><br><span class="line">    private final File dir; // 路径</span><br><span class="line">    private final boolean isDirectory; // 该Element是否是文件夹</span><br><span class="line">    private final File zip; // 路径下对应的文件</span><br><span class="line">    private final DexFile dexFile; // 路径下对应的dex文件</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类加载机制了解简单了解完开始分析<strong>System</strong>类。</p>
-<h3 id="System-load"><a href="#System-load" class="headerlink" title="System.load():"></a>System.load():</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static void load(String filename) &#123;</span><br><span class="line">    Runtime.getRuntime().load0(VMStack.getStackClass1(), filename);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用Runtime类中的load0()方法将文件名传入：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">synchronized void load0(Class fromClass, String filename) &#123;</span><br><span class="line">    if (!(new File(filename).isAbsolute())) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">            &quot;Expecting an absolute path of the library: &quot; + filename);</span><br><span class="line">    &#125;</span><br><span class="line">    if (filename == null) &#123;</span><br><span class="line">        throw new NullPointerException(&quot;filename == null&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    // 最终调用此方法去load so文件，其内部是去调用native方法</span><br><span class="line">    String error = doLoad(filename, fromClass.getClassLoader());</span><br><span class="line">    if (error != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 注释大概意思是我们日常应用进程是从Zygote进程fork出来的所以都是公用的同一个LD_LIBRARY_PATH路径。</span><br><span class="line"> * 开放这个方法是为了用户能动态的加载不同路径下的so库而不是只有启动的时候从单一的目录加载一次。</span><br><span class="line"> * 理由是因为一个进程可能会运行多个apk并且用户可能会手动实现自己的BaseDexClassLoader，</span><br><span class="line"> * 所以有必要为用户提供一个差异化so加载的能力</span><br><span class="line"> */</span><br><span class="line">private String doLoad(String name, ClassLoader loader) &#123;</span><br><span class="line">    // Android apps are forked from the zygote, so they can&#x27;t have a custom LD_LIBRARY_PATH,</span><br><span class="line">    // which means that by default an app&#x27;s shared library directory isn&#x27;t on LD_LIBRARY_PATH.</span><br><span class="line"></span><br><span class="line">    // The PathClassLoader set up by frameworks/base knows the appropriate path, so we can load</span><br><span class="line">    // libraries with no dependencies just fine, but an app that has multiple libraries that</span><br><span class="line">    // depend on each other needed to load them in most-dependent-first order.</span><br><span class="line"></span><br><span class="line">    // We added API to Android&#x27;s dynamic linker so we can update the library path used for</span><br><span class="line">    // the currently-running process. We pull the desired path out of the ClassLoader here</span><br><span class="line">    // and pass it to nativeLoad so that it can call the private dynamic linker API.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just change frameworks/base to update the LD_LIBRARY_PATH once at the</span><br><span class="line">    // beginning because multiple apks can run in the same process and third party code can</span><br><span class="line">    // use its own BaseDexClassLoader.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just add a dlopen_with_custom_LD_LIBRARY_PATH call because we wanted any</span><br><span class="line">    // dlopen(3) calls made from a .so&#x27;s JNI_OnLoad to work too.</span><br><span class="line"></span><br><span class="line">    // So, find out what the native library search path is for the ClassLoader in question...</span><br><span class="line">    String librarySearchPath = null;</span><br><span class="line">    if (loader != null &amp;&amp; loader instanceof BaseDexClassLoader) &#123;</span><br><span class="line">        BaseDexClassLoader dexClassLoader = (BaseDexClassLoader) loader;</span><br><span class="line">        // 调用BaseDexClassLoader中的方法用于将所有native的lib路径以：拼接在一起然后给native层去load so文件</span><br><span class="line">        librarySearchPath = dexClassLoader.getLdLibraryPath();</span><br><span class="line">    &#125;</span><br><span class="line">    // nativeLoad should be synchronized so there&#x27;s only one LD_LIBRARY_PATH in use regardless</span><br><span class="line">    // of how many ClassLoaders are in the system, but dalvik doesn&#x27;t support synchronized</span><br><span class="line">    // internal natives.</span><br><span class="line">    synchronized (this) &#123;</span><br><span class="line">        // 最终调用native方法去load so库。Android所有的so库都是通过这个方法加载进内存的</span><br><span class="line">        return nativeLoad(name, loader, librarySearchPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// TODO: should be synchronized, but dalvik doesn&#x27;t support synchronized internal natives.</span><br><span class="line">    private static native String nativeLoad(String filename, ClassLoader loader,</span><br><span class="line">                                            String librarySearchPath);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>以上是<strong>System.load()</strong> 的全部流程。</p>
-<h3 id="System-loadLibrary"><a href="#System-loadLibrary" class="headerlink" title="System.loadLibrary()"></a>System.loadLibrary()</h3><p>System.loadLibrary()相比System.load()会复杂一些。因为它不再是从你随便指定的路径中去加载so，而是从系统给你的路径中加载。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static void loadLibrary(String libname) &#123;</span><br><span class="line">    Runtime.getRuntime().loadLibrary0(VMStack.getCallingClassLoader(), libname);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>一样是走到Runtime类中</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">synchronized void loadLibrary0(ClassLoader loader, String libname) &#123;</span><br><span class="line">    if (libname.indexOf((int)File.separatorChar) != -1) &#123;</span><br><span class="line">        // 如果传入的是带/的文件路径则抛异常，这个类型的异常如果进行ndk相关开发肯定见过</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">&quot;Directory separator should not appear in library name: &quot; + libname);</span><br><span class="line">    &#125;</span><br><span class="line">    String libraryName = libname;</span><br><span class="line">    if (loader != null) &#123;</span><br><span class="line"></span><br><span class="line">        // 从类加载器中查找so文件名并以全路径返回，类加载器中查找so时的路径是在其构造的时候指定的。</span><br><span class="line">        String filename = loader.findLibrary(libraryName);</span><br><span class="line">        if (filename == null) &#123;</span><br><span class="line">            // It&#x27;s not necessarily true that the ClassLoader used</span><br><span class="line">            // System.mapLibraryName, but the default setup does, and it&#x27;s</span><br><span class="line">            // misleading to say we didn&#x27;t find &quot;libMyLibrary.so&quot; when we</span><br><span class="line">            // actually searched for &quot;liblibMyLibrary.so.so&quot;.</span><br><span class="line">            throw new UnsatisfiedLinkError(loader + &quot; couldn&#x27;t find \&quot;&quot; +</span><br><span class="line">                                           System.mapLibraryName(libraryName) + &quot;\&quot;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        // 找到就加载</span><br><span class="line">        String error = doLoad(filename, loader);</span><br><span class="line">        if (error != null) &#123;</span><br><span class="line">            throw new UnsatisfiedLinkError(error);</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果类加载器为空，则获取到比如xxx.so，然后从系统提供的目录中查找(例如：/vendor/lib:/system/lib)，一样判断是否只读如果是则调用doLoad()加载</span><br><span class="line">    String filename = System.mapLibraryName(libraryName);</span><br><span class="line">    List&lt;String&gt; candidates = new ArrayList&lt;String&gt;();</span><br><span class="line">    String lastError = null;</span><br><span class="line">    for (String directory : getLibPaths()) &#123;</span><br><span class="line">        String candidate = directory + filename;</span><br><span class="line">        candidates.add(candidate);</span><br><span class="line"></span><br><span class="line">        if (IoUtils.canOpenReadOnly(candidate)) &#123;</span><br><span class="line">            String error = doLoad(candidate, loader);</span><br><span class="line">            if (error == null) &#123;</span><br><span class="line">                return; // We successfully loaded the library. Job done.</span><br><span class="line">            &#125;</span><br><span class="line">            lastError = error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (lastError != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(lastError);</span><br><span class="line">    &#125;</span><br><span class="line">    throw new UnsatisfiedLinkError(&quot;Library &quot; + libraryName + &quot; not found; tried &quot; + candidates);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当类加载器不是空的时候，调用<code> load.findLibrary(libraryName)</code>最终会调用到DexPathList中去:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public String findLibrary(String libraryName) &#123;</span><br><span class="line">    String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">    for (Element element : nativeLibraryPathElements) &#123;</span><br><span class="line">        String path = element.findNativeLibrary(fileName);</span><br><span class="line"></span><br><span class="line">        if (path != null) &#123;</span><br><span class="line">            return path;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>所以这里我们就可以跟做Dex补丁一样的方式在这个Element数组前面插入补丁SO文件, 这样在findLibrary的时候就会优先返回插入的SO文件, 并执行doLoad加载插入的SO文件. 那插入的时机是什么时候? findLibrary的动作是在调用了System.loadLibrary后才执行的,所以插入补丁的动作应该是要放在System.loadLibrary之前才能确保加载的时候更新SO文件.</p>
-<p>所以到最后其实System.loadLibrary()只是从特定的路径中去加载so库最终还是回调给Runtime.doLoad()，然后再调用Runtime.nativeLoad()这个native方法来执行的so加载。</p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>System.load()和System.loadLibrary()方法其实最终原理都一样，是通过调用Runtime.doLoad()最终Runtime.nativeLoad()调用到native层实现的so库加载，两者的区别在于查找so库的路径上。</p>
-<p>关于热更新so库有两种实现</p>
-<ol>
-<li>和dex热更新一样，将补丁包的路径插入到DexPathList.nativeLibraryPathElements属性的最前面达到抢先加载的目的。这样的好处是开发者在加载so库的时候和往常一样直接System.loadLibrary(xxx)即可，缺点是需要考虑到Android系统不断在更新可能导致的api变动，毕竟这种方案是通过反射来修改的值。并且还需要考虑不同cpu架构插入不同so的问题，比如arm&#x2F;intel</li>
-<li>使用System.load(xxx)去直接加载补丁包路径下的so，这种方式的好处在于你不需要去关心系统版本兼容和cpu架构等问题，缺点是开发者使用的时候需要改成System.load(xxx)这种加载方式，对于开发者不够透明。</li>
-</ol>
-<p>附上so热修复实现图：</p>
-<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/Tinker%E7%83%AD%E4%BF%AE%E5%A4%8Dso%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png" class="" title="Tinker热修复so修复原理图">
-
-
-<p>参考文章：<a href="https://blog.csdn.net/l2show/article/details/53573945">https://blog.csdn.net/l2show/article/details/53573945</a></p>
 ]]></content>
       <categories>
         <category>Android</category>
@@ -128,6 +173,51 @@
 <li>在正常情况下同一个安装包下的Activity和Application等这些组件都是公用的一个LoadedApk对象。</li>
 <li>在任何场景下只要获取了LoadedApk对象就能获取到应用的信息，例如Activity中获取资源其实也是通过ContextImpl获取了应用的LoadedApk对象实例然后去调用的<code>ActivityThread.getTopLevelResources();</code>方法。</li>
 </ol>
+]]></content>
+      <categories>
+        <category>Android</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>System.load()与System.loadLibrary()实现及so热修复</title>
+    <url>/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/</url>
+    <content><![CDATA[<p>文章基于API25分析，源码地址：<a href="http://androidxref.com/7.1.1_r6/">http://androidxref.com/7.1.1_r6/</a></p>
+<h3 id="ClassLoader简单复习（必要前提）"><a href="#ClassLoader简单复习（必要前提）" class="headerlink" title="ClassLoader简单复习（必要前提）"></a>ClassLoader简单复习（必要前提）</h3><p>在分析System类之前，先简单复习一下ClassLoader的类加载机制。</p>
+<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/ClassLoader%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E6%9B%BF%E6%8D%A2dexElements%E5%AE%9E%E7%8E%B0%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86.jpg" class="" title="ClassLoader类结构关系图以及替换dexElements实现热修复原理">
+
+<span id="more"></span>
+
+<p>Android应用中模式使用的类加载器是<strong>PathClassLoader</strong>。想要了解可简单看下<strong>Application.getClassLoader()</strong> 的调用栈。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Application.getClassLoader() -&gt; ContextImpl.getClassLoader -&gt;</span><br><span class="line">LoadedApk.getClassLoader() -&gt; ... -&gt; ClassLoader.createSystemClassLoader() -&gt; new PathClassLoader(...)</span><br></pre></td></tr></table></figure>
+<p>而<strong>PathClassLoader</strong>只是重载了几个构造方法，真正的代码实现都在父类<strong>BaseDexClassLoader</strong>中。</p>
+<p>BaseDexClassLoader中pathList:DexPathList类说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">final class DexPathList &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // List of dex/resource (class path) elements.意思是class文件转化结果:dex文件集合</span><br><span class="line">    private Element[] dexElements;</span><br><span class="line"></span><br><span class="line">    // List of native library path elements. 意思是native层so文件集合  </span><br><span class="line">    // 在热修复技术中so修复可以将新的so库路径追加到此数组之前达到热修效果，其实它是将例如xxx/xxx/abc.so分别以dir:xxx/xxx/、zip:abc.so这样区分存储而已，为了使用方便</span><br><span class="line">    private final Element[] nativeLibraryPathElements;</span><br><span class="line"></span><br><span class="line">    // List of application native library directories. 意思是native层so文件的路径集合，只表示路径。</span><br><span class="line">    private final List&lt;File&gt; nativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    // List of system native library directories.意思是系统so文件路径集合</span><br><span class="line">    private final List&lt;File&gt; systemNativeLibraryDirectories;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static class Element &#123;</span><br><span class="line">    private final File dir; // 路径</span><br><span class="line">    private final boolean isDirectory; // 该Element是否是文件夹</span><br><span class="line">    private final File zip; // 路径下对应的文件</span><br><span class="line">    private final DexFile dexFile; // 路径下对应的dex文件</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类加载机制了解简单了解完开始分析<strong>System</strong>类。</p>
+<h3 id="System-load"><a href="#System-load" class="headerlink" title="System.load():"></a>System.load():</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static void load(String filename) &#123;</span><br><span class="line">    Runtime.getRuntime().load0(VMStack.getStackClass1(), filename);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用Runtime类中的load0()方法将文件名传入：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">synchronized void load0(Class fromClass, String filename) &#123;</span><br><span class="line">    if (!(new File(filename).isAbsolute())) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">            &quot;Expecting an absolute path of the library: &quot; + filename);</span><br><span class="line">    &#125;</span><br><span class="line">    if (filename == null) &#123;</span><br><span class="line">        throw new NullPointerException(&quot;filename == null&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    // 最终调用此方法去load so文件，其内部是去调用native方法</span><br><span class="line">    String error = doLoad(filename, fromClass.getClassLoader());</span><br><span class="line">    if (error != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 注释大概意思是我们日常应用进程是从Zygote进程fork出来的所以都是公用的同一个LD_LIBRARY_PATH路径。</span><br><span class="line"> * 开放这个方法是为了用户能动态的加载不同路径下的so库而不是只有启动的时候从单一的目录加载一次。</span><br><span class="line"> * 理由是因为一个进程可能会运行多个apk并且用户可能会手动实现自己的BaseDexClassLoader，</span><br><span class="line"> * 所以有必要为用户提供一个差异化so加载的能力</span><br><span class="line"> */</span><br><span class="line">private String doLoad(String name, ClassLoader loader) &#123;</span><br><span class="line">    // Android apps are forked from the zygote, so they can&#x27;t have a custom LD_LIBRARY_PATH,</span><br><span class="line">    // which means that by default an app&#x27;s shared library directory isn&#x27;t on LD_LIBRARY_PATH.</span><br><span class="line"></span><br><span class="line">    // The PathClassLoader set up by frameworks/base knows the appropriate path, so we can load</span><br><span class="line">    // libraries with no dependencies just fine, but an app that has multiple libraries that</span><br><span class="line">    // depend on each other needed to load them in most-dependent-first order.</span><br><span class="line"></span><br><span class="line">    // We added API to Android&#x27;s dynamic linker so we can update the library path used for</span><br><span class="line">    // the currently-running process. We pull the desired path out of the ClassLoader here</span><br><span class="line">    // and pass it to nativeLoad so that it can call the private dynamic linker API.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just change frameworks/base to update the LD_LIBRARY_PATH once at the</span><br><span class="line">    // beginning because multiple apks can run in the same process and third party code can</span><br><span class="line">    // use its own BaseDexClassLoader.</span><br><span class="line"></span><br><span class="line">    // We didn&#x27;t just add a dlopen_with_custom_LD_LIBRARY_PATH call because we wanted any</span><br><span class="line">    // dlopen(3) calls made from a .so&#x27;s JNI_OnLoad to work too.</span><br><span class="line"></span><br><span class="line">    // So, find out what the native library search path is for the ClassLoader in question...</span><br><span class="line">    String librarySearchPath = null;</span><br><span class="line">    if (loader != null &amp;&amp; loader instanceof BaseDexClassLoader) &#123;</span><br><span class="line">        BaseDexClassLoader dexClassLoader = (BaseDexClassLoader) loader;</span><br><span class="line">        // 调用BaseDexClassLoader中的方法用于将所有native的lib路径以：拼接在一起然后给native层去load so文件</span><br><span class="line">        librarySearchPath = dexClassLoader.getLdLibraryPath();</span><br><span class="line">    &#125;</span><br><span class="line">    // nativeLoad should be synchronized so there&#x27;s only one LD_LIBRARY_PATH in use regardless</span><br><span class="line">    // of how many ClassLoaders are in the system, but dalvik doesn&#x27;t support synchronized</span><br><span class="line">    // internal natives.</span><br><span class="line">    synchronized (this) &#123;</span><br><span class="line">        // 最终调用native方法去load so库。Android所有的so库都是通过这个方法加载进内存的</span><br><span class="line">        return nativeLoad(name, loader, librarySearchPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// TODO: should be synchronized, but dalvik doesn&#x27;t support synchronized internal natives.</span><br><span class="line">    private static native String nativeLoad(String filename, ClassLoader loader,</span><br><span class="line">                                            String librarySearchPath);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>以上是<strong>System.load()</strong> 的全部流程。</p>
+<h3 id="System-loadLibrary"><a href="#System-loadLibrary" class="headerlink" title="System.loadLibrary()"></a>System.loadLibrary()</h3><p>System.loadLibrary()相比System.load()会复杂一些。因为它不再是从你随便指定的路径中去加载so，而是从系统给你的路径中加载。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static void loadLibrary(String libname) &#123;</span><br><span class="line">    Runtime.getRuntime().loadLibrary0(VMStack.getCallingClassLoader(), libname);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>一样是走到Runtime类中</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">synchronized void loadLibrary0(ClassLoader loader, String libname) &#123;</span><br><span class="line">    if (libname.indexOf((int)File.separatorChar) != -1) &#123;</span><br><span class="line">        // 如果传入的是带/的文件路径则抛异常，这个类型的异常如果进行ndk相关开发肯定见过</span><br><span class="line">        throw new UnsatisfiedLinkError(</span><br><span class="line">&quot;Directory separator should not appear in library name: &quot; + libname);</span><br><span class="line">    &#125;</span><br><span class="line">    String libraryName = libname;</span><br><span class="line">    if (loader != null) &#123;</span><br><span class="line"></span><br><span class="line">        // 从类加载器中查找so文件名并以全路径返回，类加载器中查找so时的路径是在其构造的时候指定的。</span><br><span class="line">        String filename = loader.findLibrary(libraryName);</span><br><span class="line">        if (filename == null) &#123;</span><br><span class="line">            // It&#x27;s not necessarily true that the ClassLoader used</span><br><span class="line">            // System.mapLibraryName, but the default setup does, and it&#x27;s</span><br><span class="line">            // misleading to say we didn&#x27;t find &quot;libMyLibrary.so&quot; when we</span><br><span class="line">            // actually searched for &quot;liblibMyLibrary.so.so&quot;.</span><br><span class="line">            throw new UnsatisfiedLinkError(loader + &quot; couldn&#x27;t find \&quot;&quot; +</span><br><span class="line">                                           System.mapLibraryName(libraryName) + &quot;\&quot;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        // 找到就加载</span><br><span class="line">        String error = doLoad(filename, loader);</span><br><span class="line">        if (error != null) &#123;</span><br><span class="line">            throw new UnsatisfiedLinkError(error);</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果类加载器为空，则获取到比如xxx.so，然后从系统提供的目录中查找(例如：/vendor/lib:/system/lib)，一样判断是否只读如果是则调用doLoad()加载</span><br><span class="line">    String filename = System.mapLibraryName(libraryName);</span><br><span class="line">    List&lt;String&gt; candidates = new ArrayList&lt;String&gt;();</span><br><span class="line">    String lastError = null;</span><br><span class="line">    for (String directory : getLibPaths()) &#123;</span><br><span class="line">        String candidate = directory + filename;</span><br><span class="line">        candidates.add(candidate);</span><br><span class="line"></span><br><span class="line">        if (IoUtils.canOpenReadOnly(candidate)) &#123;</span><br><span class="line">            String error = doLoad(candidate, loader);</span><br><span class="line">            if (error == null) &#123;</span><br><span class="line">                return; // We successfully loaded the library. Job done.</span><br><span class="line">            &#125;</span><br><span class="line">            lastError = error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (lastError != null) &#123;</span><br><span class="line">        throw new UnsatisfiedLinkError(lastError);</span><br><span class="line">    &#125;</span><br><span class="line">    throw new UnsatisfiedLinkError(&quot;Library &quot; + libraryName + &quot; not found; tried &quot; + candidates);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当类加载器不是空的时候，调用<code> load.findLibrary(libraryName)</code>最终会调用到DexPathList中去:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public String findLibrary(String libraryName) &#123;</span><br><span class="line">    String fileName = System.mapLibraryName(libraryName);</span><br><span class="line"></span><br><span class="line">    for (Element element : nativeLibraryPathElements) &#123;</span><br><span class="line">        String path = element.findNativeLibrary(fileName);</span><br><span class="line"></span><br><span class="line">        if (path != null) &#123;</span><br><span class="line">            return path;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以这里我们就可以跟做Dex补丁一样的方式在这个Element数组前面插入补丁SO文件, 这样在findLibrary的时候就会优先返回插入的SO文件, 并执行doLoad加载插入的SO文件. 那插入的时机是什么时候? findLibrary的动作是在调用了System.loadLibrary后才执行的,所以插入补丁的动作应该是要放在System.loadLibrary之前才能确保加载的时候更新SO文件.</p>
+<p>所以到最后其实System.loadLibrary()只是从特定的路径中去加载so库最终还是回调给Runtime.doLoad()，然后再调用Runtime.nativeLoad()这个native方法来执行的so加载。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>System.load()和System.loadLibrary()方法其实最终原理都一样，是通过调用Runtime.doLoad()最终Runtime.nativeLoad()调用到native层实现的so库加载，两者的区别在于查找so库的路径上。</p>
+<p>关于热更新so库有两种实现</p>
+<ol>
+<li>和dex热更新一样，将补丁包的路径插入到DexPathList.nativeLibraryPathElements属性的最前面达到抢先加载的目的。这样的好处是开发者在加载so库的时候和往常一样直接System.loadLibrary(xxx)即可，缺点是需要考虑到Android系统不断在更新可能导致的api变动，毕竟这种方案是通过反射来修改的值。并且还需要考虑不同cpu架构插入不同so的问题，比如arm&#x2F;intel</li>
+<li>使用System.load(xxx)去直接加载补丁包路径下的so，这种方式的好处在于你不需要去关心系统版本兼容和cpu架构等问题，缺点是开发者使用的时候需要改成System.load(xxx)这种加载方式，对于开发者不够透明。</li>
+</ol>
+<p>附上so热修复实现图：</p>
+<img src="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/Tinker%E7%83%AD%E4%BF%AE%E5%A4%8Dso%E4%BF%AE%E5%A4%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png" class="" title="Tinker热修复so修复原理图">
+
+
+<p>参考文章：<a href="https://blog.csdn.net/l2show/article/details/53573945">https://blog.csdn.net/l2show/article/details/53573945</a></p>
 ]]></content>
       <categories>
         <category>Android</category>
@@ -248,6 +338,37 @@
       </categories>
   </entry>
   <entry>
+    <title>gradle插件开发</title>
+    <url>/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</url>
+    <content><![CDATA[<hr>
+<h3 id="gradle插件开发的方式"><a href="#gradle插件开发的方式" class="headerlink" title="gradle插件开发的方式"></a>gradle插件开发的方式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apply plugin: &#x27;com.android.application&#x27;</span><br><span class="line">apply plugin: &#x27;com.android.library&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Build script脚本</td>
+<td>把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件</td>
+</tr>
+<tr>
+<td>buildSrc目录</td>
+<td>将插件源代码放在buildSrc&#x2F;src&#x2F;main&#x2F;中，作用范围为该项目</td>
+</tr>
+<tr>
+<td>独立项目</td>
+<td>一个独立的java项目&#x2F;模块,可将文件发布到仓库(jcenter)，使其他项目可以方便引入</td>
+</tr>
+</tbody></table>
+<hr>
+<p>任何可以运行在jvm中的语言都能用来开发gradle插件，比如groovy最终编译产物也是.class文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、aapt 打包资源文件 阶段</span><br><span class="line">2、aidl 转 java 文件 阶段</span><br><span class="line">3、Java 编译（Compilers）生成.class 文件 阶段</span><br><span class="line">4、dex（生成 dex 文件）阶段</span><br><span class="line">5、apkbuilder（生成未签名 apk）阶段</span><br><span class="line">6、Jarsigner（签名）阶段</span><br><span class="line">7、zipalign（对齐） 阶段</span><br><span class="line">[https://juejin.cn/post/6844903850453762055#heading-6](https://juejin.cn/post/6844903850453762055#heading-6)</span><br></pre></td></tr></table></figure>
+]]></content>
+  </entry>
+  <entry>
     <title>java类加载原理(ClassLoader工作原理)</title>
     <url>/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<h2 id="什么是类加载"><a href="#什么是类加载" class="headerlink" title="什么是类加载"></a>什么是类加载</h2><p>在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。</p>
@@ -323,117 +444,74 @@
       </categories>
   </entry>
   <entry>
-    <title>Android版本号对应关系</title>
-    <url>/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</url>
-    <content><![CDATA[<h3 id="Android系统版本对应API"><a href="#Android系统版本对应API" class="headerlink" title="Android系统版本对应API"></a>Android系统版本对应API</h3><table>
-<thead>
-<tr>
-<th align="left">API版本号</th>
-<th align="right">版本名称（英&#x2F;汉）</th>
-<th align="center">发布时间</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">API 31</td>
-<td align="right">android 12.0 Snow Cone</td>
-<td align="center">2021.10</td>
-</tr>
-<tr>
-<td align="left">API 30</td>
-<td align="right">android 11.0 R</td>
-<td align="center">2020.9</td>
-</tr>
-<tr>
-<td align="left">API 29</td>
-<td align="right">android 10.0 Q</td>
-<td align="center">2019.8</td>
-</tr>
-<tr>
-<td align="left">API 28</td>
-<td align="right">android 9.0 Pie&#x2F;馅饼</td>
-<td align="center">2018.8</td>
-</tr>
-<tr>
-<td align="left">API 27</td>
-<td align="right">android 8.1 Oreo&#x2F;奥利奥</td>
-<td align="center">2017.12</td>
-</tr>
-<tr>
-<td align="left">API 26</td>
-<td align="right">android 8.0 Oreo&#x2F;奥利奥</td>
-<td align="center">2017.8</td>
-</tr>
-<tr>
-<td align="left">API 25</td>
-<td align="right">android 7.1 Nougat&#x2F;牛轧糖</td>
-<td align="center">2016.10</td>
-</tr>
-<tr>
-<td align="left">API 24</td>
-<td align="right">android 7.0 Nougat&#x2F;牛轧糖</td>
-<td align="center">2016.8</td>
-</tr>
-<tr>
-<td align="left">API 23</td>
-<td align="right">android 6.0 Marshmallow&#x2F;棉花糖</td>
-<td align="center">2015.8</td>
-</tr>
-<tr>
-<td align="left">API 22</td>
-<td align="right">android 5.1 Lollipop&#x2F;棒棒糖</td>
-<td align="center">2014.12</td>
-</tr>
-<tr>
-<td align="left">API 21</td>
-<td align="right">android 5.0 Lollipop&#x2F;棒棒糖</td>
-<td align="center">2014.10</td>
-</tr>
-<tr>
-<td align="left">API 20</td>
-<td align="right">android 4.4W KitKat&#x2F;奇巧巧克力棒</td>
-<td align="center">2013底</td>
-</tr>
-<tr>
-<td align="left">API 19</td>
-<td align="right">android 4.4 KitKat&#x2F;奇巧巧克力棒</td>
-<td align="center">2013.11</td>
-</tr>
-</tbody></table>
+    <title>设计模式-装饰者模式</title>
+    <url>/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h3><p>装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。</p>
+<img src="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png" class="" title="装饰者设计模式">
+
+<span id="more"></span>
+
+<ul>
+<li>Component：抽象组件（可以是抽象类或者接口），被装饰的原始对象</li>
+<li>ConcreteComponent：具体实现类，被装饰的具体对象</li>
+<li>Decorator：抽象装饰者，职责就是为了装饰我们的组件对象，内部一定要有一个指向组件对象的引用</li>
+<li>ConcreteDecoratorA：装饰者具体实现类，只对抽象装饰者做出具体实现</li>
+<li>ConcreteDecoratorB：同上</li>
+</ul>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>人定义为抽象类，有一个抽象方法eat()</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public abstract class Person &#123;</span><br><span class="line">    public abstract void eat();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着创建一个NormalPerson类继承Person，对eat()方法有了具体实现；NormalPerson类就是我们需要装饰的对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class NormalPerson extends Person &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        System.out.println(&quot;吃饭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里定义一个PersonFood类来表示装饰者的抽象类，保持了一个对Person的引用，可以方便调用具体被装饰的对象方法，这样就可以方便的对其进行扩展功能，并且不改变原类的层次结构。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class PersonFood extends Person &#123;</span><br><span class="line">    private Person person;</span><br><span class="line"></span><br><span class="line">    public PersonFood(Person person)&#123;</span><br><span class="line">        this.person = person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        person.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着就是具体的装饰类了，这两个类没有本质上的区别，都是为了扩展NormalPerson类，不修改原有类的方法和结构</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class ExpensiveFood extends PersonFood &#123;</span><br><span class="line">    public ExpensiveFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatSteak();</span><br><span class="line">        drinkRedWine();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatSteak()&#123;</span><br><span class="line">        System.out.println(&quot;吃牛排&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void drinkRedWine()&#123;</span><br><span class="line">        System.out.println(&quot;喝拉菲&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheapFood extends PersonFood &#123;</span><br><span class="line">    public CheapFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatNoodles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatNoodles()&#123;</span><br><span class="line">        System.out.println(&quot;吃面条&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用装饰者代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Person person = new NormalPerson();</span><br><span class="line"></span><br><span class="line">        PersonFood cheapFood = new CheapFood(person);</span><br><span class="line">        cheapFood.eat();</span><br><span class="line"></span><br><span class="line">        PersonFood expensiveFood = new ExpensiveFood(person);</span><br><span class="line">        expensiveFood.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="android中的装饰者模式"><a href="#android中的装饰者模式" class="headerlink" title="android中的装饰者模式"></a>android中的装饰者模式</h3><p>在android中，Context就是典型的装饰者模式，Context是抽象类，真实的功能实现实在ComtextImpl中完成，ComtextImpl就是Context的实现类；然后看源码会发现Activity是继承于ContextThemeWrapper而不是直接继承于Context。其中ContextThemeWrapper继承于ContextWrapper，而ContextWrapper继承于Context。这里就可以看出来一点装饰者模式了，其中装饰者所调用的方法就是startActivity方法，在ContextWrapper中会发现startActivity方法调用了ComtextImpl中对应的方法，实质上ContextWrapper中所有方法都仅仅是调用了ComtextImpl中的方法，这就和装饰者模式基本就对应上了。<br>想具体了解Context机制可以看我另一篇文章：<a href="https://lianwenhong.top/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/#more">Android源码小记-Context解析</a></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>装饰者模式与继承关系的目的都是要扩展对象的功能，但是装饰者模式可以提供比继承更多的灵活性。</li>
+<li>通过使用不同的具体装饰类以及这些装饰类的排列组合，设计师可以创造出很多不同行为的组合。<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4></li>
+<li>这种比继承更加灵活机动的特性，也同时意味着更加多的复杂性。</li>
+<li>装饰模式会导致设计中出现许多小类，如果过度使用，会使程序变得很复杂。</li>
+<li>装饰模式是针对抽象组件（Component）类型编程。但是，如果你要针对具体组件编程时，就应该重新思考你的应用架构，以及装饰者是否合适。当然也可以改变Component接口，增加新的公开的行为，实现“半透明”的装饰者模式。在实际项目中要做出最佳选择。</li>
+</ul>
+<h3 id="装饰者模式与代理模式对比"><a href="#装饰者模式与代理模式对比" class="headerlink" title="装饰者模式与代理模式对比"></a>装饰者模式与代理模式对比</h3><p>其实装饰者模式和代理模式很像，但是两者的目的不尽相同。装饰者模式是以对客户端透明的方式扩展对象的功能，是继承关系的一个替代方案；而代理模式则是一个给对象提供一个代理对象，并由代理对象来控制对原有对象的引用。<br>装饰者模式为本装饰的对象进行功能扩展；代理模式对代理对象进行控制，但不做功能扩展</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>linux名词解释</title>
+    <url>/2022/04/18/linux%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/</url>
+    <content><![CDATA[<p>对linux操作系统中的一些名词或者方法做简单记录，旨在为后续Android学习提供前提铺垫。例如学习binder时，学习多线程时。</p>
+<blockquote>
+<p>在Linux中，一切皆对象。也就是说皆可以通过一套统一的接口来控制。</p>
+</blockquote>
+<span id="more"></span>
+
+<h3 id="什么是设备节点："><a href="#什么是设备节点：" class="headerlink" title="什么是设备节点："></a>什么是设备节点：</h3><p>Linux系统，除了网络接口卡(网卡)之外，其他的所有设备都被视为文件，<strong>并统一在&#x2F;dev下有对应的所谓节点文件</strong>。</p>
+<p>拓展：</p>
+<p>&#x2F;dev目录下的文件节点被称为<strong>特殊设备节点</strong>，要么是<strong>字符设备</strong>节点，要么是<strong>块设备</strong>节点。</p>
+<ul>
+<li>字符设备：如键盘。提供连续数据流（字节或字符），应用可顺序读取，但不支持随机存取。</li>
+<li>块设备：如硬盘等存储设备。应用可随机存取设备上的任意位置的数据。</li>
+</ul>
+<p>所以2者的最大区别在于是否能随机存取设备上任意位置的数据。</p>
+<p><strong>而所谓的节点指的是一个操作入口，我们可以通过这样的入口来达到对设备的读写等操作。</strong>之所以要在&#x2F;dev下搞那么多所谓“入口”是因为Linux系统提供<strong>虚拟文件系统</strong>，它可以帮助我们使用一套一致的函数接口(如open()、read()、write()、close()…)来操作各种不同的设备，这样大大降低了应用程序访问Linux设备的复杂度。</p>
+<h3 id="虚拟设备"><a href="#虚拟设备" class="headerlink" title="虚拟设备"></a>虚拟设备</h3><p>个人理解虚拟设备是系统为用户提供了某一块内存将需要虚拟的设备程序放在这个位置，然后创建出针对此虚拟设备的节点。当用户操作这个虚拟设备节点时就是对虚拟设备程序进行操作，最终的操作位置也就是系统提供的那一块内存。</p>
+<h3 id="什么是驱动"><a href="#什么是驱动" class="headerlink" title="什么是驱动"></a>什么是驱动</h3><p>驱动程序一般指的是<strong>设备驱动程序，是一种可以使计算机和设备进行相互通信的特殊程序</strong>。相当于硬件的接口，操作系统只有通过这个接口才能控制硬件设备的工作。假设某设备的驱动程序未能正确安装则设备便不能正常工作。因此，驱动程序是硬件和系统之间的桥梁。</p>
+<h3 id="Android中的Binder"><a href="#Android中的Binder" class="headerlink" title="Android中的Binder"></a>Android中的Binder</h3><ul>
+<li>机制：Binder是一种IPC（进程间通信）机制</li>
+<li>驱动：Binder是一个虚拟物理设备的驱动</li>
+<li>应用层：Binder是一个能发起进程间通信的java类</li>
+</ul>
+<p><strong>并不存在真实的Binder物理设备，Binder所驱动的是&#x2F;dev&#x2F;binder这个虚拟设备。</strong></p>
 ]]></content>
       <categories>
         <category>Android</category>
       </categories>
-  </entry>
-  <entry>
-    <title>gradle插件开发</title>
-    <url>/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</url>
-    <content><![CDATA[<hr>
-<h3 id="gradle插件开发的方式"><a href="#gradle插件开发的方式" class="headerlink" title="gradle插件开发的方式"></a>gradle插件开发的方式</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apply plugin: &#x27;com.android.application&#x27;</span><br><span class="line">apply plugin: &#x27;com.android.library&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Build script脚本</td>
-<td>把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件</td>
-</tr>
-<tr>
-<td>buildSrc目录</td>
-<td>将插件源代码放在buildSrc&#x2F;src&#x2F;main&#x2F;中，作用范围为该项目</td>
-</tr>
-<tr>
-<td>独立项目</td>
-<td>一个独立的java项目&#x2F;模块,可将文件发布到仓库(jcenter)，使其他项目可以方便引入</td>
-</tr>
-</tbody></table>
-<hr>
-<p>任何可以运行在jvm中的语言都能用来开发gradle插件，比如groovy最终编译产物也是.class文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、aapt 打包资源文件 阶段</span><br><span class="line">2、aidl 转 java 文件 阶段</span><br><span class="line">3、Java 编译（Compilers）生成.class 文件 阶段</span><br><span class="line">4、dex（生成 dex 文件）阶段</span><br><span class="line">5、apkbuilder（生成未签名 apk）阶段</span><br><span class="line">6、Jarsigner（签名）阶段</span><br><span class="line">7、zipalign（对齐） 阶段</span><br><span class="line">[https://juejin.cn/post/6844903850453762055#heading-6](https://juejin.cn/post/6844903850453762055#heading-6)</span><br></pre></td></tr></table></figure>
-]]></content>
   </entry>
   <entry>
     <title>设计模式-代理模式</title>
@@ -503,45 +581,6 @@
 <p><strong>By the way:</strong><br>源码中的ProxyClassFactory中是使用<code>sun.misc.ProxyGenerator</code> 类来生class的。生成Class文件的方法不止这一个，我们也可以用 Javassist 技术动态生成class。</p>
 <h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>动态代理也可以用于实现AOP切面编程。例如方法的埋点，耗时统计等等。只需在invoke内部实现AOP的业务逻辑即可。这样JVM动态生成代理类时就包含了所需的AOP逻辑。</p>
 <p>参考文章：<br><a href="https://www.jianshu.com/p/5c8a9a334034">JVM的Proxy.newProxyInstance原理分析</a><br><a href="https://zhuanlan.zhihu.com/p/349659128">自己实现Java 动态代理 Proxy</a><br><a href="https://blog.csdn.net/time_poster/article/details/116140160">Proxy.newProxyInstance源码探究</a><br><a href="https://www.bilibili.com/video/BV1nr4y1y7eZ?p=3&spm_id_from=pageDriver">JDK动态代理底层原理&amp;为什么需要接口?</a></p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>设计模式-装饰者模式</title>
-    <url>/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h3 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h3><p>装饰者模式（Decorator Pattern）也称为包装模式（Wrapper Pattern），以透明动态的方式来动态扩展对象的功能，也是继承关系的一种代替方案。</p>
-<img src="/2022/03/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/%E8%A3%85%E9%A5%B0%E8%80%85%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.png" class="" title="装饰者设计模式">
-
-<span id="more"></span>
-
-<ul>
-<li>Component：抽象组件（可以是抽象类或者接口），被装饰的原始对象</li>
-<li>ConcreteComponent：具体实现类，被装饰的具体对象</li>
-<li>Decorator：抽象装饰者，职责就是为了装饰我们的组件对象，内部一定要有一个指向组件对象的引用</li>
-<li>ConcreteDecoratorA：装饰者具体实现类，只对抽象装饰者做出具体实现</li>
-<li>ConcreteDecoratorB：同上</li>
-</ul>
-<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>人定义为抽象类，有一个抽象方法eat()</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public abstract class Person &#123;</span><br><span class="line">    public abstract void eat();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接着创建一个NormalPerson类继承Person，对eat()方法有了具体实现；NormalPerson类就是我们需要装饰的对象。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class NormalPerson extends Person &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        System.out.println(&quot;吃饭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里定义一个PersonFood类来表示装饰者的抽象类，保持了一个对Person的引用，可以方便调用具体被装饰的对象方法，这样就可以方便的对其进行扩展功能，并且不改变原类的层次结构。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class PersonFood extends Person &#123;</span><br><span class="line">    private Person person;</span><br><span class="line"></span><br><span class="line">    public PersonFood(Person person)&#123;</span><br><span class="line">        this.person = person;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        person.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接着就是具体的装饰类了，这两个类没有本质上的区别，都是为了扩展NormalPerson类，不修改原有类的方法和结构</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class ExpensiveFood extends PersonFood &#123;</span><br><span class="line">    public ExpensiveFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatSteak();</span><br><span class="line">        drinkRedWine();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatSteak()&#123;</span><br><span class="line">        System.out.println(&quot;吃牛排&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void drinkRedWine()&#123;</span><br><span class="line">        System.out.println(&quot;喝拉菲&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class CheapFood extends PersonFood &#123;</span><br><span class="line">    public CheapFood(Person person) &#123;</span><br><span class="line">        super(person);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void eat() &#123;</span><br><span class="line">        super.eat();</span><br><span class="line">        eatNoodles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void eatNoodles()&#123;</span><br><span class="line">        System.out.println(&quot;吃面条&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用装饰者代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Person person = new NormalPerson();</span><br><span class="line"></span><br><span class="line">        PersonFood cheapFood = new CheapFood(person);</span><br><span class="line">        cheapFood.eat();</span><br><span class="line"></span><br><span class="line">        PersonFood expensiveFood = new ExpensiveFood(person);</span><br><span class="line">        expensiveFood.eat();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="android中的装饰者模式"><a href="#android中的装饰者模式" class="headerlink" title="android中的装饰者模式"></a>android中的装饰者模式</h3><p>在android中，Context就是典型的装饰者模式，Context是抽象类，真实的功能实现实在ComtextImpl中完成，ComtextImpl就是Context的实现类；然后看源码会发现Activity是继承于ContextThemeWrapper而不是直接继承于Context。其中ContextThemeWrapper继承于ContextWrapper，而ContextWrapper继承于Context。这里就可以看出来一点装饰者模式了，其中装饰者所调用的方法就是startActivity方法，在ContextWrapper中会发现startActivity方法调用了ComtextImpl中对应的方法，实质上ContextWrapper中所有方法都仅仅是调用了ComtextImpl中的方法，这就和装饰者模式基本就对应上了。<br>想具体了解Context机制可以看我另一篇文章：<a href="https://lianwenhong.top/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/#more">Android源码小记-Context解析</a></p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
-<li>装饰者模式与继承关系的目的都是要扩展对象的功能，但是装饰者模式可以提供比继承更多的灵活性。</li>
-<li>通过使用不同的具体装饰类以及这些装饰类的排列组合，设计师可以创造出很多不同行为的组合。<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4></li>
-<li>这种比继承更加灵活机动的特性，也同时意味着更加多的复杂性。</li>
-<li>装饰模式会导致设计中出现许多小类，如果过度使用，会使程序变得很复杂。</li>
-<li>装饰模式是针对抽象组件（Component）类型编程。但是，如果你要针对具体组件编程时，就应该重新思考你的应用架构，以及装饰者是否合适。当然也可以改变Component接口，增加新的公开的行为，实现“半透明”的装饰者模式。在实际项目中要做出最佳选择。</li>
-</ul>
-<h3 id="装饰者模式与代理模式对比"><a href="#装饰者模式与代理模式对比" class="headerlink" title="装饰者模式与代理模式对比"></a>装饰者模式与代理模式对比</h3><p>其实装饰者模式和代理模式很像，但是两者的目的不尽相同。装饰者模式是以对客户端透明的方式扩展对象的功能，是继承关系的一个替代方案；而代理模式则是一个给对象提供一个代理对象，并由代理对象来控制对原有对象的引用。<br>装饰者模式为本装饰的对象进行功能扩展；代理模式对代理对象进行控制，但不做功能扩展</p>
 ]]></content>
       <categories>
         <category>Java</category>
