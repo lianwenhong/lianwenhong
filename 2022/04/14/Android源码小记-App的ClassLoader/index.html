@@ -1,100 +1,22 @@
+
+
 <!DOCTYPE html>
+<html lang="zh-Hans" data-default-color-scheme=auto>
 
 
 
-  
-
-
-<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="lianwenhong">
+  <meta name="keywords" content="">
   
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-  
-  
-  
-  
-
-  
-    
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    
-    
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-  
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
-
-
-
-
-
-
-<meta name="description" content="Android中的默认类加载器：Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制） 如果对jvm的类加载流程不熟悉可以阅读另一篇文章：java类加载原理(ClassLoader工作原理) Android类加载器之相较于Java类加载器的最大区别在于： java类加载器是从某个目录中去直接加载.class文件或者是">
+    <meta name="description" content="Android中的默认类加载器：Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制） 如果对jvm的类加载流程不熟悉可以阅读另一篇文章：java类加载原理(ClassLoader工作原理) Android类加载器之相较于Java类加载器的最大区别在于： java类加载器是从某个目录中去直接加载.class文件或者是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android源码解析-App的ClassLoader">
 <meta property="og:url" content="http://example.com/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/index.html">
@@ -105,1036 +27,448 @@
 <meta property="article:published_time" content="2022-04-14T15:36:02.000Z">
 <meta property="article:modified_time" content="2022-04-15T16:37:32.694Z">
 <meta property="article:author" content="lianwenhong">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/Android%E9%BB%98%E8%AE%A4%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg">
+  
+  
+  <title>Android源码解析-App的ClassLoader - 连文弘的学习笔记</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
 
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
 
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '',
-    scheme: 'Mist',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: true,
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
 
-
-
-  <link rel="canonical" href="http://example.com/2022/04/14/Android源码小记-App的ClassLoader/"/>
-
-
-
-
-
-  <title>Android源码解析-App的ClassLoader | 连文弘的学习笔记</title>
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
   
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
 
 
 
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
 
 
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
 
 
-
-
-
-
-
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 5.4.1"></head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-  
-  
-    
-  
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
 
-  <div class="container sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">连文弘的学习笔记</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle"></p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
     </button>
-  </div>
-</div>
 
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-guestbook">
-          <a href="/guestbook/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
-            
-            留言
-          </a>
-        </li>
-      
-
-      
-        <li class="menu-item menu-item-search">
           
-            <a href="javascript:;" class="popup-trigger">
           
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
-            
-            搜索
-          </a>
-        </li>
-      
-    </ul>
-  
-
-  
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="搜索..." spellcheck="false"
-             type="text" id="local-search-input">
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-
-    </div>
-  
 </nav>
 
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="连文弘的学习笔记">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">Android源码解析-App的ClassLoader</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-14T23:36:02+08:00">
-                2022-04-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Android源码解析-App的ClassLoader">
               
             </span>
-          
 
-          
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2022/04/14/Android源码小记-App的ClassLoader/" itemprop="commentCount"></span>
-                </a>
-              </span>
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-04-14 15:36" pubdate>
+        April 14, 2022 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      59 分钟
+    </span>
+  
+
+  
+  
+</div>
+
             
-          
+          </div>
 
           
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      </div>
+    </div>
+  </header>
 
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
-      
-        <h2 id="Android中的默认类加载器："><a href="#Android中的默认类加载器：" class="headerlink" title="Android中的默认类加载器："></a>Android中的默认类加载器：</h2><p>Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制）</p>
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Android源码解析-App的ClassLoader</h1>
+            
+            <div class="markdown-body">
+              <h2 id="Android中的默认类加载器："><a href="#Android中的默认类加载器：" class="headerlink" title="Android中的默认类加载器："></a>Android中的默认类加载器：</h2><p>Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制）</p>
 <p>如果对jvm的类加载流程不熟悉可以阅读另一篇文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/#more">java类加载原理(ClassLoader工作原理)</a></p>
 <p>Android类加载器之相较于Java类加载器的最大区别在于：</p>
 <p>java类加载器是从某个目录中去直接加载.class文件或者是从目录下的zip、jar包等归档文件中加载.class文件</p>
 <p>而Android类加载器是从某个目录下去直接加载.dex文件或者是从目录下的zip、jar、apk等文件中的.dex文件中去加载.class文件，如果不是.dex文件的话加载不了。</p>
 <span id="more"></span>
 
-<img src="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/Android%E9%BB%98%E8%AE%A4%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" class="" title="Android默认类加载器关系图">
+<img src="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/Android%E9%BB%98%E8%AE%A4%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" srcset="/img/loading.gif" lazyload class="" title="Android默认类加载器关系图">
 
 <p>以上类关系图清楚的描述了Android中的默认类加载器以及它们的父子关系。<br>图中有涉及到了DexPathList这个类简单来说是存放该类加载器的加载区域中的所有dex文件，在Android的插件化方案和热修复方案中经常会使用将补丁包或者插件包中的dex插入这个数组的第一个来实现热修复或者加载插件的功能。具体详情可看另一个文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/#more">android热修复小记</a></p>
 <h2 id="app中的类加载器"><a href="#app中的类加载器" class="headerlink" title="app中的类加载器"></a>app中的类加载器</h2><p>在Android开发中例如在Activity中会调用getClassLoader()来获取类加载器，这时候这个类加载器是怎么来的呢？来分析一下</p>
 <p>Activity类中并没有getClassLoader()，从继承关系上可以知道最终调用的是<code>ContextWrapper.getClassLoader()</code>，最终的实现在<strong>ContextImpl</strong>中。如果不知道的话可以看下我另外一篇文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/#more">Android源码小记-Context解析</a>，可以清楚了解Context的继承关系以及Activity和Context之间是如何关联以及与ContextImpl之间的联系。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ContextImpl.java</span><br><span class="line"></span><br><span class="line">public ClassLoader getClassLoader() &#123;</span><br><span class="line">    return mPackageInfo != null ?</span><br><span class="line">            mPackageInfo.getClassLoader() : ClassLoader.getSystemClassLoader();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><pre><code class="hljs csharp">ContextImpl.<span class="hljs-function">java</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-keyword">public</span> ClassLoader <span class="hljs-title">getClassLoader</span>()</span> &#123;<br>    <span class="hljs-keyword">return</span> mPackageInfo != <span class="hljs-literal">null</span> ?<br>            mPackageInfo.getClassLoader() : ClassLoader.getSystemClassLoader();<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>这个mPackageInfo对象是一个LoadedApk，持有apk的所有信息，是apk在内存中的表现形态。（<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/">ANdroid源码小记-LoadedApk</a>）,而它是在构造ContextImpl的时候传进来并赋值的。</p>
 <p>在启动Activity时，最终会走ActivityThread中的handleLaunchActivity()方法，这个方法里就会最终调用到先知性Instrumentation.newActivity()通过类加载器创建一个Activity实例，然后调用createBaseContextForActivity()去创建一个处理提供Activity运行环境的ContextImpl，此时就会给mPackageInfo赋值。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">private Context createBaseContextForActivity(ActivityClientRecord r, final Activity activity) &#123;</span><br><span class="line">    int displayId = Display.DEFAULT_DISPLAY;</span><br><span class="line">    try &#123;</span><br><span class="line">        displayId = ActivityManagerNative.getDefault().getActivityDisplayId(r.token);</span><br><span class="line">    &#125; catch (RemoteException e) &#123;</span><br><span class="line">        throw e.rethrowFromSystemServer();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 创建提供Activity运行环境的ContextImpl用于之后attach给Activity，此时传入的LoadedApk是r.packageInfo</span><br><span class="line">    ContextImpl appContext = ContextImpl.createActivityContext(</span><br><span class="line">            this, r.packageInfo, r.token, displayId, r.overrideConfig);</span><br><span class="line">    appContext.setOuterContext(activity);</span><br><span class="line">    Context baseContext = appContext;</span><br><span class="line"></span><br><span class="line">    final DisplayManagerGlobal dm = DisplayManagerGlobal.getInstance();</span><br><span class="line">    // For debugging purposes, if the activity&#x27;s package name contains the value of</span><br><span class="line">    // the &quot;debug.use-second-display&quot; system property as a substring, then show</span><br><span class="line">    // its content on a secondary display if there is one.</span><br><span class="line">    String pkgName = SystemProperties.get(&quot;debug.second-display.pkg&quot;);</span><br><span class="line">    if (pkgName != null &amp;&amp; !pkgName.isEmpty()</span><br><span class="line">            &amp;&amp; r.packageInfo.mPackageName.contains(pkgName)) &#123;</span><br><span class="line">        for (int id : dm.getDisplayIds()) &#123;</span><br><span class="line">            if (id != Display.DEFAULT_DISPLAY) &#123;</span><br><span class="line">                Display display =</span><br><span class="line">                        dm.getCompatibleDisplay(id, appContext.getDisplayAdjustments(id));</span><br><span class="line">                baseContext = appContext.createDisplayContext(display);</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return baseContext;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> Context <span class="hljs-title function_">createBaseContextForActivity</span><span class="hljs-params">(ActivityClientRecord r, <span class="hljs-keyword">final</span> Activity activity)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">displayId</span> <span class="hljs-operator">=</span> Display.DEFAULT_DISPLAY;<br>    <span class="hljs-keyword">try</span> &#123;<br>        displayId = ActivityManagerNative.getDefault().getActivityDisplayId(r.token);<br>    &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>        <span class="hljs-keyword">throw</span> e.rethrowFromSystemServer();<br>    &#125;<br><br>    <span class="hljs-comment">// 创建提供Activity运行环境的ContextImpl用于之后attach给Activity，此时传入的LoadedApk是r.packageInfo</span><br>    <span class="hljs-type">ContextImpl</span> <span class="hljs-variable">appContext</span> <span class="hljs-operator">=</span> ContextImpl.createActivityContext(<br>            <span class="hljs-built_in">this</span>, r.packageInfo, r.token, displayId, r.overrideConfig);<br>    appContext.setOuterContext(activity);<br>    <span class="hljs-type">Context</span> <span class="hljs-variable">baseContext</span> <span class="hljs-operator">=</span> appContext;<br><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">DisplayManagerGlobal</span> <span class="hljs-variable">dm</span> <span class="hljs-operator">=</span> DisplayManagerGlobal.getInstance();<br>    <span class="hljs-comment">// For debugging purposes, if the activity&#x27;s package name contains the value of</span><br>    <span class="hljs-comment">// the &quot;debug.use-second-display&quot; system property as a substring, then show</span><br>    <span class="hljs-comment">// its content on a secondary display if there is one.</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">pkgName</span> <span class="hljs-operator">=</span> SystemProperties.get(<span class="hljs-string">&quot;debug.second-display.pkg&quot;</span>);<br>    <span class="hljs-keyword">if</span> (pkgName != <span class="hljs-literal">null</span> &amp;&amp; !pkgName.isEmpty()<br>            &amp;&amp; r.packageInfo.mPackageName.contains(pkgName)) &#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> id : dm.getDisplayIds()) &#123;<br>            <span class="hljs-keyword">if</span> (id != Display.DEFAULT_DISPLAY) &#123;<br>                <span class="hljs-type">Display</span> <span class="hljs-variable">display</span> <span class="hljs-operator">=</span><br>                        dm.getCompatibleDisplay(id, appContext.getDisplayAdjustments(id));<br>                baseContext = appContext.createDisplayContext(display);<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> baseContext;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>这个<strong>r.packageInfo</strong>其实就是在应用刚启动时在**ActivityThread.handleBindApplication()<strong>方法中的</strong>data.info &#x3D; getPackageInfoNoCheck(data.appInfo, data.compatInfo);**这里创建的，这时候创建出一个表示本应用的LoadedApk,正常情况下全局都共用这个LoadedApk对象，创建Activity的ContextImpl时也不例外。</p>
 <p>回到ContextImpl.getClassLoader()中，mPackageInfo已经知道怎么来了，那再来看代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public ClassLoader getClassLoader() &#123;</span><br><span class="line">    return mPackageInfo != null ?</span><br><span class="line">            mPackageInfo.getClassLoader() : ClassLoader.getSystemClassLoader();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> ClassLoader <span class="hljs-title">getClassLoader</span>()</span> &#123;<br>    <span class="hljs-keyword">return</span> mPackageInfo != <span class="hljs-literal">null</span> ?<br>            mPackageInfo.getClassLoader() : ClassLoader.getSystemClassLoader();<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>此时mPackageInfo不为空走<code>mPackageInfo.getClassLoader()</code>.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public ClassLoader getClassLoader() &#123;</span><br><span class="line">    synchronized (this) &#123;</span><br><span class="line">        if (mClassLoader == null) &#123;</span><br><span class="line">            createOrUpdateClassLoaderLocked(null /*addedPaths*/);</span><br><span class="line">        &#125;</span><br><span class="line">        return mClassLoader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs aspectj"><span class="hljs-keyword">public</span> <span class="hljs-function">ClassLoader <span class="hljs-title">getClassLoader</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;<br>        <span class="hljs-keyword">if</span> (mClassLoader == <span class="hljs-keyword">null</span>) &#123;<br>            createOrUpdateClassLoaderLocked(<span class="hljs-keyword">null</span> <span class="hljs-comment">/*addedPaths*/</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span> mClassLoader;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>正常走到这里因为我们的应用报名肯定不是”android”，因为packageName.equals(“android”)是系统本身，所以我们最终只能走到<code>createOrUpdateClassLoaderLocked()</code>方法：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">private void createOrUpdateClassLoaderLocked(List&lt;String&gt; addedPaths) &#123;</span><br><span class="line">    if (mPackageName.equals(&quot;android&quot;)) &#123;</span><br><span class="line">        // 系统的情况不看，我们走不到</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    if (!mIncludeCode) &#123;</span><br><span class="line">        if (mClassLoader == null) &#123;</span><br><span class="line">            StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();</span><br><span class="line">            // 创建ClassLoader</span><br><span class="line">            mClassLoader = ApplicationLoaders.getDefault().getClassLoader(</span><br><span class="line">                &quot;&quot; /* codePath */, mApplicationInfo.targetSdkVersion, isBundledApp,</span><br><span class="line">                librarySearchPath, libraryPermittedPath, mBaseClassLoader);</span><br><span class="line">            StrictMode.setThreadPolicy(oldPolicy);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    if (mClassLoader == null) &#123;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        mClassLoader = ApplicationLoaders.getDefault().getClassLoader(zip,</span><br><span class="line">                mApplicationInfo.targetSdkVersion, isBundledApp, librarySearchPath,</span><br><span class="line">                libraryPermittedPath, mBaseClassLoader);</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if (addedPaths != null &amp;&amp; addedPaths.size() &gt; 0) &#123;</span><br><span class="line">        final String add = TextUtils.join(File.pathSeparator, addedPaths);</span><br><span class="line">        // 添加主工程的源码路径</span><br><span class="line">        ApplicationLoaders.getDefault().addPath(mClassLoader, add);</span><br><span class="line">        // Setup the new code paths for profiling.</span><br><span class="line">        needToSetupJitProfiles = true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs lasso"><span class="hljs-keyword">private</span> <span class="hljs-literal">void</span> createOrUpdateClassLoaderLocked(<span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; addedPaths) &#123;<br>    <span class="hljs-keyword">if</span> (mPackageName.<span class="hljs-keyword">equals</span>(<span class="hljs-string">&quot;android&quot;</span>)) &#123;<br>        <span class="hljs-comment">// 系统的情况不看，我们走不到</span><br>        <span class="hljs-params">...</span><br><br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-params">...</span><br>    <span class="hljs-keyword">if</span> (!mIncludeCode) &#123;<br>        <span class="hljs-keyword">if</span> (mClassLoader == <span class="hljs-built_in">null</span>) &#123;<br>            StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();<br>            <span class="hljs-comment">// 创建ClassLoader</span><br>            mClassLoader = ApplicationLoaders.getDefault().getClassLoader(<br>                <span class="hljs-string">&quot;&quot;</span> <span class="hljs-comment">/* codePath */</span>, mApplicationInfo.targetSdkVersion, isBundledApp,<br>                librarySearchPath, libraryPermittedPath, mBaseClassLoader);<br>            StrictMode.setThreadPolicy(oldPolicy);<br>        &#125;<br><br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-params">...</span><br>    <span class="hljs-keyword">if</span> (mClassLoader == <span class="hljs-built_in">null</span>) &#123;<br>        <span class="hljs-params">...</span><br><br>        mClassLoader = ApplicationLoaders.getDefault().getClassLoader(zip,<br>                mApplicationInfo.targetSdkVersion, isBundledApp, librarySearchPath,<br>                libraryPermittedPath, mBaseClassLoader);<br><br>        <span class="hljs-params">...</span><br>    &#125;<br>    <br>    <span class="hljs-keyword">if</span> (addedPaths != <span class="hljs-built_in">null</span> &amp;&amp; addedPaths.size() &gt; <span class="hljs-number">0</span>) &#123;<br>        final <span class="hljs-built_in">String</span> add = TextUtils.<span class="hljs-keyword">join</span>(File.pathSeparator, addedPaths);<br>        <span class="hljs-comment">// 添加主工程的源码路径</span><br>        ApplicationLoaders.getDefault().addPath(mClassLoader, add);<br>        <span class="hljs-comment">// Setup the new code paths for profiling.</span><br>        needToSetupJitProfiles = <span class="hljs-literal">true</span>;<br>    &#125;<br><br>    <span class="hljs-params">...</span><br>&#125;<br></code></pre></td></tr></table></figure>
 <p>最后的最后还是通过<code>ApplicationLoaders.getClassLoader()</code>来创建：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">public ClassLoader getClassLoader(String zip, int targetSdkVersion, boolean isBundled,</span><br><span class="line">                                  String librarySearchPath, String libraryPermittedPath,</span><br><span class="line">                                  ClassLoader parent) &#123;</span><br><span class="line">    // 传入的是系统ClassLoader，阅读源码其实是PathClassLoader，可以看ClassLoader.createSystemClassLoader()，其parent是BootClassLoader，所有此时baseParent = BootClassLoader</span><br><span class="line">    ClassLoader baseParent = ClassLoader.getSystemClassLoader().getParent();</span><br><span class="line"></span><br><span class="line">    synchronized (mLoaders) &#123;</span><br><span class="line">        if (parent == null) &#123;</span><br><span class="line">            parent = baseParent;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">        // 如果是lib库中的类返回的加载区域为lib目录的类加载器</span><br><span class="line">        if (parent == baseParent) &#123;</span><br><span class="line">            ClassLoader loader = mLoaders.get(zip);</span><br><span class="line">            if (loader != null) &#123;</span><br><span class="line">                return loader;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, zip);</span><br><span class="line"></span><br><span class="line">            PathClassLoader pathClassloader = PathClassLoaderFactory.createClassLoader(</span><br><span class="line">                                                  zip,</span><br><span class="line">                                                  librarySearchPath,</span><br><span class="line">                                                  libraryPermittedPath,</span><br><span class="line">                                                  parent,</span><br><span class="line">                                                  targetSdkVersion,</span><br><span class="line">                                                  isBundled);</span><br><span class="line"></span><br><span class="line">            Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);</span><br><span class="line"></span><br><span class="line">            Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, &quot;setupVulkanLayerPath&quot;);</span><br><span class="line">            setupVulkanLayerPath(pathClassloader, librarySearchPath);</span><br><span class="line">            Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);</span><br><span class="line"></span><br><span class="line">            mLoaders.put(zip, pathClassloader);</span><br><span class="line">            return pathClassloader;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, zip);</span><br><span class="line">        // 应用主工程中的类返回的是加载区域为apk的sourceDir所在目录的PathClassLoader</span><br><span class="line">        PathClassLoader pathClassloader = new PathClassLoader(zip, parent);</span><br><span class="line">        Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);</span><br><span class="line">        return pathClassloader;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> ClassLoader <span class="hljs-title function_">getClassLoader</span><span class="hljs-params">(String zip, <span class="hljs-type">int</span> targetSdkVersion, <span class="hljs-type">boolean</span> isBundled,</span><br><span class="hljs-params">                                  String librarySearchPath, String libraryPermittedPath,</span><br><span class="hljs-params">                                  ClassLoader parent)</span> &#123;<br>    <span class="hljs-comment">// 传入的是系统ClassLoader，阅读源码其实是PathClassLoader，可以看ClassLoader.createSystemClassLoader()，其parent是BootClassLoader，所有此时baseParent = BootClassLoader</span><br>    <span class="hljs-type">ClassLoader</span> <span class="hljs-variable">baseParent</span> <span class="hljs-operator">=</span> ClassLoader.getSystemClassLoader().getParent();<br><br>    <span class="hljs-keyword">synchronized</span> (mLoaders) &#123;<br>        <span class="hljs-keyword">if</span> (parent == <span class="hljs-literal">null</span>) &#123;<br>            parent = baseParent;<br>        &#125;<br><br>        <br>        <span class="hljs-comment">// 如果是lib库中的类返回的加载区域为lib目录的类加载器</span><br>        <span class="hljs-keyword">if</span> (parent == baseParent) &#123;<br>            <span class="hljs-type">ClassLoader</span> <span class="hljs-variable">loader</span> <span class="hljs-operator">=</span> mLoaders.get(zip);<br>            <span class="hljs-keyword">if</span> (loader != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-keyword">return</span> loader;<br>            &#125;<br><br>            Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, zip);<br><br>            <span class="hljs-type">PathClassLoader</span> <span class="hljs-variable">pathClassloader</span> <span class="hljs-operator">=</span> PathClassLoaderFactory.createClassLoader(<br>                                                  zip,<br>                                                  librarySearchPath,<br>                                                  libraryPermittedPath,<br>                                                  parent,<br>                                                  targetSdkVersion,<br>                                                  isBundled);<br><br>            Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);<br><br>            Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, <span class="hljs-string">&quot;setupVulkanLayerPath&quot;</span>);<br>            setupVulkanLayerPath(pathClassloader, librarySearchPath);<br>            Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);<br><br>            mLoaders.put(zip, pathClassloader);<br>            <span class="hljs-keyword">return</span> pathClassloader;<br>        &#125;<br><br>        Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, zip);<br>        <span class="hljs-comment">// 应用主工程中的类返回的是加载区域为apk的sourceDir所在目录的PathClassLoader</span><br>        <span class="hljs-type">PathClassLoader</span> <span class="hljs-variable">pathClassloader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathClassLoader</span>(zip, parent);<br>        Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);<br>        <span class="hljs-keyword">return</span> pathClassloader;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>最后可以得出结论：首先反正返回的肯定是PathClassLoader，调用getClassLoader()的类属于不同的位置（主工程或者lib工程)则创建的PathClassLoader对应的加载区域也是不同的，具体要看住工程的加载区域可以跟踪一下，在创建的时候传入的zip是””，则它是通过addPath()方法传入的，该方法在BaseDexClassLoader中，而创建出来的PathClassLoader调用这个方法的地方是在ApplicationLoader.addPath():</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void addPath(ClassLoader classLoader, String dexPath) &#123;</span><br><span class="line">    if (!(classLoader instanceof PathClassLoader)) &#123;</span><br><span class="line">        throw new IllegalStateException(&quot;class loader is not a PathClassLoader&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    final PathClassLoader baseDexClassLoader = (PathClassLoader) classLoader;</span><br><span class="line">    baseDexClassLoader.addDexPath(dexPath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">addPath</span><span class="hljs-params">(ClassLoader classLoader, String dexPath)</span> &#123;<br>    <span class="hljs-keyword">if</span> (!(classLoader <span class="hljs-keyword">instanceof</span> PathClassLoader)) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">&quot;class loader is not a PathClassLoader&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">PathClassLoader</span> <span class="hljs-variable">baseDexClassLoader</span> <span class="hljs-operator">=</span> (PathClassLoader) classLoader;<br>    baseDexClassLoader.addDexPath(dexPath);<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>该方法在刚才的<code>LoadedApk.createOrUpdateClassLoaderLocked()</code>中：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (addedPaths != null &amp;&amp; addedPaths.size() &gt; 0) &#123;</span><br><span class="line">    final String add = TextUtils.join(File.pathSeparator, addedPaths);</span><br><span class="line">    ApplicationLoaders.getDefault().addPath(mClassLoader, add);</span><br><span class="line">    // Setup the new code paths for profiling.</span><br><span class="line">    needToSetupJitProfiles = true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-keyword">if</span> (addedPaths != null<span class="hljs-operator"> &amp;&amp; </span>addedPaths.size<span class="hljs-literal">()</span> &gt; <span class="hljs-number">0</span>) &#123;<br>    final String add = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">TextUtils</span>.</span></span>join(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">File</span>.</span></span>pathSeparator, addedPaths);<br>    <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ApplicationLoaders</span>.</span></span>get<span class="hljs-constructor">Default()</span>.add<span class="hljs-constructor">Path(<span class="hljs-params">mClassLoader</span>, <span class="hljs-params">add</span>)</span>;<br>    <span class="hljs-comment">// Setup the new code paths for profiling.</span><br>    needToSetupJitProfiles = <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>继续追溯add参数的来源是LoadedApk.makePaths(),最后的结论就是这个路径是ApplicationInfo的sourceDir。</p>
 <h2 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h2><p>在Activity中调用getClassLoader()返回的是PathClassLoader,它的父类加载器是系统的类加载器也是个PathClassLoader，再往上是BootClassLoader。</p>
 <p>温馨提示：</p>
 <p>要清楚明白的知道ActivityThread、Activity、Application、Context、LoadedApk、Instrumentation这些类的关系对阅读Android源码很有帮助。</p>
 
-      
-    </div>
-    
-    
-    
-
-    
-      <div>
-        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
-    <img id="wechat_subscriber_qcode" src="/images/wechat-qcode.jpeg" alt=" wechat" style="width: 200px; max-width: 100%;"/>
-    <div>如需指正或者有任何其他需求请扫码添加个人微信</div>
-</div>
-
-      </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/" rel="next" title="Android源码小记-LoadedApk">
-                <i class="fa fa-chevron-left"></i> Android源码小记-LoadedApk
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" rel="prev" title="java类加载原理(ClassLoader工作原理)">
-                java类加载原理(ClassLoader工作原理) <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-  <div class="comments" id="comments">
-    
-      <div id="disqus_thread">
-        <noscript>
-          Please enable JavaScript to view the
-          <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-        </noscript>
-      </div>
-    
-  </div>
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.jpeg"
-               alt="" />
-          <p class="site-author-name" itemprop="name"></p>
-           
-              <p class="site-description motion-element" itemprop="description"></p>
-          
-        </div>
-        <nav class="site-state motion-element">
-
-          
-            <div class="site-state-item site-state-posts">
-              <a href="/archives/">
-                <span class="site-state-item-count">13</span>
-                <span class="site-state-item-name">日志</span>
-              </a>
             </div>
-          
-
-          
-            
-            
-            <div class="site-state-item site-state-categories">
-              <a href="/categories/index.html">
-                <span class="site-state-item-count">2</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Android/">Android</a>
+                    
+                  </div>
+                
+                
+              </div>
               
-            
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">java类加载原理(ClassLoader工作原理)</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/">
+                        <span class="hidden-mobile">Android源码小记-LoadedApk</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">Android中的默认类加载器：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#app%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">app中的类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">小结：</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
+          </article>
+        </div>
+      </div>
     </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy; 
-  <span itemprop="copyrightYear">2022</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">lianwenhong</span>
-</div>
-
-
-<div class="powered-by">
-  由 <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
-  </a>
-</div>
-
-
-        
-
-        
-      </div>
-    </footer>
-
     
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
       </div>
     
-
   </div>
+</div>
 
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
+<!-- Custom -->
 
 
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
-
-
-
-  
-
-
-  
-
-    
-      <script id="dsq-count-scr" src="https://your-disqus-shortname.disqus.com/count.js" async></script>
     
 
     
-      <script type="text/javascript">
-        var disqus_config = function () {
-          this.page.url = 'http://example.com/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/';
-          this.page.identifier = '2022/04/14/Android源码小记-App的ClassLoader/';
-          this.page.title = 'Android源码解析-App的ClassLoader';
-        };
-        var d = document, s = d.createElement('script');
-        s.src = 'https://your-disqus-shortname.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', '' + +new Date());
-        (d.head || d.body).appendChild(s);
-      </script>
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
     
 
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
   
 
 
 
 
-	
 
 
-
-
-
-  
-
-
-
-
-
-
-
-
-  
-
-  <script type="text/javascript">
-    // Popup Window;
-    var isfetched = false;
-    var isXml = true;
-    // Search DB path;
-    var search_path = "search.xml";
-    if (search_path.length === 0) {
-      search_path = "search.xml";
-    } else if (/json$/i.test(search_path)) {
-      isXml = false;
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
-
-    var onPopupClose = function (e) {
-      $('.popup').hide();
-      $('#local-search-input').val('');
-      $('.search-result-list').remove();
-      $('#no-result').remove();
-      $(".local-search-pop-overlay").remove();
-      $('body').css('overflow', '');
-    }
-
-    function proceedsearch() {
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
-        .css('overflow', 'hidden');
-      $('.search-popup-overlay').click(onPopupClose);
-      $('.popup').toggle();
-      var $localSearchInput = $('#local-search-input');
-      $localSearchInput.attr("autocapitalize", "none");
-      $localSearchInput.attr("autocorrect", "off");
-      $localSearchInput.focus();
-    }
-
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-
-      // start loading animation
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
-          '<div id="search-loading-icon">' +
-          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
-          '</div>' +
-          '</div>')
-        .css('overflow', 'hidden');
-      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
-
-      $.ajax({
-        url: path,
-        dataType: isXml ? "xml" : "json",
-        async: true,
-        success: function(res) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = isXml ? $("entry", res).map(function() {
-            return {
-              title: $("title", this).text(),
-              content: $("content",this).text(),
-              url: $("url" , this).text()
-            };
-          }).get() : res;
-          var input = document.getElementById(search_id);
-          var resultContent = document.getElementById(content_id);
-          var inputEventFunction = function() {
-            var searchText = input.value.trim().toLowerCase();
-            var keywords = searchText.split(/[\s\-]+/);
-            if (keywords.length > 1) {
-              keywords.push(searchText);
-            }
-            var resultItems = [];
-            if (searchText.length > 0) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var hitCount = 0;
-                var searchTextCount = 0;
-                var title = data.title.trim();
-                var titleInLowerCase = title.toLowerCase();
-                var content = data.content.trim().replace(/<[^>]+>/g,"");
-                var contentInLowerCase = content.toLowerCase();
-                var articleUrl = decodeURIComponent(data.url);
-                var indexOfTitle = [];
-                var indexOfContent = [];
-                // only match articles with not empty titles
-                if(title != '') {
-                  keywords.forEach(function(keyword) {
-                    function getIndexByWord(word, text, caseSensitive) {
-                      var wordLen = word.length;
-                      if (wordLen === 0) {
-                        return [];
-                      }
-                      var startPosition = 0, position = [], index = [];
-                      if (!caseSensitive) {
-                        text = text.toLowerCase();
-                        word = word.toLowerCase();
-                      }
-                      while ((position = text.indexOf(word, startPosition)) > -1) {
-                        index.push({position: position, word: word});
-                        startPosition = position + wordLen;
-                      }
-                      return index;
-                    }
-
-                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
-                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
-                  });
-                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
-                    isMatch = true;
-                    hitCount = indexOfTitle.length + indexOfContent.length;
-                  }
-                }
-
-                // show search results
-
-                if (isMatch) {
-                  // sort index by position of keyword
-
-                  [indexOfTitle, indexOfContent].forEach(function (index) {
-                    index.sort(function (itemLeft, itemRight) {
-                      if (itemRight.position !== itemLeft.position) {
-                        return itemRight.position - itemLeft.position;
-                      } else {
-                        return itemLeft.word.length - itemRight.word.length;
-                      }
-                    });
-                  });
-
-                  // merge hits into slices
-
-                  function mergeIntoSlice(text, start, end, index) {
-                    var item = index[index.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    var hits = [];
-                    var searchTextCountInSlice = 0;
-                    while (position + word.length <= end && index.length != 0) {
-                      if (word === searchText) {
-                        searchTextCountInSlice++;
-                      }
-                      hits.push({position: position, length: word.length});
-                      var wordEnd = position + word.length;
-
-                      // move to next position of hit
-
-                      index.pop();
-                      while (index.length != 0) {
-                        item = index[index.length - 1];
-                        position = item.position;
-                        word = item.word;
-                        if (wordEnd > position) {
-                          index.pop();
-                        } else {
-                          break;
-                        }
-                      }
-                    }
-                    searchTextCount += searchTextCountInSlice;
-                    return {
-                      hits: hits,
-                      start: start,
-                      end: end,
-                      searchTextCount: searchTextCountInSlice
-                    };
-                  }
-
-                  var slicesOfTitle = [];
-                  if (indexOfTitle.length != 0) {
-                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
-                  }
-
-                  var slicesOfContent = [];
-                  while (indexOfContent.length != 0) {
-                    var item = indexOfContent[indexOfContent.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    // cut out 100 characters
-                    var start = position - 20;
-                    var end = position + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if (end < position + word.length) {
-                      end = position + word.length;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
-                  }
-
-                  // sort slices in content by search text's count and hits' count
-
-                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
-                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
-                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
-                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
-                      return sliceRight.hits.length - sliceLeft.hits.length;
-                    } else {
-                      return sliceLeft.start - sliceRight.start;
-                    }
-                  });
-
-                  // select top N slices in content
-
-                  var upperBound = parseInt('1');
-                  if (upperBound >= 0) {
-                    slicesOfContent = slicesOfContent.slice(0, upperBound);
-                  }
-
-                  // highlight title and content
-
-                  function highlightKeyword(text, slice) {
-                    var result = '';
-                    var prevEnd = slice.start;
-                    slice.hits.forEach(function (hit) {
-                      result += text.substring(prevEnd, hit.position);
-                      var end = hit.position + hit.length;
-                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-                      prevEnd = end;
-                    });
-                    result += text.substring(prevEnd, slice.end);
-                    return result;
-                  }
-
-                  var resultItem = '';
-
-                  if (slicesOfTitle.length != 0) {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
-                  } else {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
-                  }
-
-                  slicesOfContent.forEach(function (slice) {
-                    resultItem += "<a href='" + articleUrl + "'>" +
-                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
-                      "...</p>" + "</a>";
-                  });
-
-                  resultItem += "</li>";
-                  resultItems.push({
-                    item: resultItem,
-                    searchTextCount: searchTextCount,
-                    hitCount: hitCount,
-                    id: resultItems.length
-                  });
-                }
-              })
-            };
-            if (keywords.length === 1 && keywords[0] === "") {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
-            } else if (resultItems.length === 0) {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
-            } else {
-              resultItems.sort(function (resultLeft, resultRight) {
-                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
-                  return resultRight.searchTextCount - resultLeft.searchTextCount;
-                } else if (resultLeft.hitCount !== resultRight.hitCount) {
-                  return resultRight.hitCount - resultLeft.hitCount;
-                } else {
-                  return resultRight.id - resultLeft.id;
-                }
-              });
-              var searchResultList = '<ul class=\"search-result-list\">';
-              resultItems.forEach(function (result) {
-                searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
   </script>
 
 
 
 
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
 
 </body>
 </html>
