@@ -1,7 +1,7 @@
 ---
-title: linux名词解释
+title: binder（一）Linux必备知识篇
 date: 2022-04-18 11:56:05
-tags:
+tags: binder
 categories: Android
 ---
 对linux操作系统中某些概念做简单预习，旨在为后续Android学习提供前提铺垫。例如学习binder、锁机制等等。

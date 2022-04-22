@@ -76,7 +76,7 @@ private Context createBaseContextForActivity(ActivityClientRecord r, final Activ
     return baseContext;
 }
 ```
-这个**r.packageInfo**其实就是在应用刚启动时在**ActivityThread.handleBindApplication()**方法中的**data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo);**这里创建的，这时候创建出一个表示本应用的LoadedApk,正常情况下全局都共用这个LoadedApk对象，创建Activity的ContextImpl时也不例外。
+这个**r.packageInfo**其实就是在应用刚启动时在**ActivityThread.handleBindApplication()**方法中的**data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo);** 这里创建的，这时候创建出一个表示本应用的LoadedApk,正常情况下全局都共用这个LoadedApk对象，创建Activity的ContextImpl时也不例外。
 
 回到ContextImpl.getClassLoader()中，mPackageInfo已经知道怎么来了，那再来看代码：
 

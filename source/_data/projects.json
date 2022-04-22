@@ -1,0 +1,12 @@
+[
+  {
+    "name":"CustomTinker",
+    "url":"https://github.com/lianwenhong/CustomTinker",
+    "desc":"简单热修复原理demo，仅实现关键技术用于学习理解，未做适配，无法用于项目中"
+  },
+  {
+    "name":"AspectJDemo",
+    "url":"https://github.com/lianwenhong/AspectJDemo",
+    "desc":"简单AspectJ demo，用于学习理解AspectJ，demo实现的是利用AspectJ实现简单AOP"
+  }
+]
