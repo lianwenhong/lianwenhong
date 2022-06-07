@@ -1,714 +1,418 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-Hans" data-default-color-scheme=auto>
-
-
-
+<html lang=zh>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="lianwenhong">
-  <meta name="keywords" content="">
-  
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta property="og:type" content="website">
 <meta property="og:title" content="连文弘的学习笔记">
 <meta property="og:url" content="http://example.com/index.html">
 <meta property="og:site_name" content="连文弘的学习笔记">
-<meta property="og:locale">
+<meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="lianwenhong">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-  <title>连文弘的学习笔记</title>
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>连文弘的学习笔记</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 5.4.1"></head>
 
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4">
+        
+          <header id="header">
+  <a href="/">
+  
+    
+      <div id="logo" style="background-image: url(/images/logo.png);"></div>
+    
+  
+    <div id="title">
+      <h1>连文弘的学习笔记</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">首页</a></li><!--
+   --><!--
+     --><li><a href="/categories/">分类</a></li><!--
+   --><!--
+     --><li><a href="/archives/">归档</a></li><!--
+   --><!--
+     --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
 
-<body>
-  <header style="height: 100vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
-    </a>
+        
+        <section id="about">
+  
+  
+    <p>
+      在这里找到我：
+      
+      
+      
+        
+          <a class="icon" target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories" aria-label="github">
+            <i class="fab fa-github"></i><!--
+      ---></a><!--
+    ---><!--
+    --->   
+        
+      
+        
+          <a class="icon" target="_blank" rel="noopener" href="mailto:lianwenhong92@163.com" aria-label="mail">
+            <i class="fas fa-envelope"></i><!--
+      ---></a>
+        <!--
+    --->.
+        
+      
+    </p>
+  
+</section>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
+<section id="writing">
+  <span class="h1"><a href="/archives/">文章</a></span>
+  
+  <ul class="post-list">
+    
+    
+      
+    
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-06-07T19:41:11.000Z" itemprop="datePublished">2022-06-07</time>
+        
+      
+    </div>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+
+        <span>
+    
+        <a class="" href="/2022/06/08/Android%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BParcel/">Android序列化之Parcel</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                Home
-              </a>
-            </li>
-          
+    <div class="meta">
+      
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                Archives
-              </a>
-            </li>
-          
+          <time datetime="2022-04-18T11:56:05.000Z" itemprop="datePublished">2022-04-18</time>
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                Categories
-              </a>
-            </li>
-          
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/18/binder%EF%BC%88%E4%B8%80%EF%BC%89Linux%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E7%AF%87/">binder（一）Linux必备知识篇</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                Tags
-              </a>
-            </li>
-          
+    <div class="meta">
+      
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                About
-              </a>
-            </li>
-          
+          <time datetime="2022-04-15T18:51:47.000Z" itemprop="datePublished">2022-04-15</time>
         
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">java类加载原理(ClassLoader工作原理)</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-14T15:36:02.000Z" itemprop="datePublished">2022-04-14</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/">Android源码解析-App的ClassLoader</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-14T15:35:23.000Z" itemprop="datePublished">2022-04-14</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/">Android源码小记-LoadedApk</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-13T09:40:10.000Z" itemprop="datePublished">2022-04-13</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/">System.load()与System.loadLibrary()实现及so热修复</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-12T17:55:47.000Z" itemprop="datePublished">2022-04-12</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/">android热修复小记</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-11T21:50:37.000Z" itemprop="datePublished">2022-04-11</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/">gradle插件开发</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-04-02T15:03:51.000Z" itemprop="datePublished">2022-04-02</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/04/02/Android-Resource%E8%A7%A3%E6%9E%90/">Android-Resource解析</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2022-03-28T20:09:07.000Z" itemprop="datePublished">2022-03-28</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/">Android版本号对应关系</a>
+    
+
+
+</span>
+      </li>
+    
+  </ul>
+  
+    
+    <div class="pagination">
+        
+        <span class="page-number">第 1 页，共 2 页</span>
+        
+            <a href="/page/2/"><i class="fas fa-angle-right"></i>
             </a>
-          </li>
         
+    </div>
+
+
+  
+</section>
+
+
+<section id="projects">
+  <span class="h1"><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></span>
+  <ul class="project-list">
+    
+      <li class="project-item">
+        <a target="_blank" rel="noopener" href="https://github.com/lianwenhong/CustomTinker">CustomTinker</a>: <p>简单热修复原理demo，仅实现关键技术用于学习理解，未做适配，无法用于项目中</p>
+
+      </li>
+    
+      <li class="project-item">
+        <a target="_blank" rel="noopener" href="https://github.com/lianwenhong/AspectJDemo">AspectJDemo</a>: <p>简单AspectJ demo，用于学习理解AspectJ，demo实现的是利用AspectJ实现简单AOP</p>
+
+      </li>
+    
+  </ul>
+</section>
+
+
         
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022
+    lianwenhong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
       </ul>
-    </div>
+    </nav>
   </div>
-</nav>
-
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="An elegant Material-Design theme for Hexo">
-              
-            </span>
-
-            
-          </div>
-
-          
-            <div class="scroll-down-bar">
-              <i class="iconfont icon-arrowdown"></i>
-            </div>
-          
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    
-      <div class="container nopadding-x-md">
-        <div class="py-5" id="board"
-          style=margin-top:0>
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/18/linux%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/" target="_self">
-          linux名词解释
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/18/linux%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/" target="_self">
-          
-          对linux操作系统中的一些名词或者方法做简单记录，旨在为后续Android学习提供前提铺垫。例如学习binder时，学习多线程时。  在Linux中，一切皆对象。也就是说皆可以通过一套统一的接口来控制。
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-18 11:56" pubdate>
-              2022-04-18
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" target="_self">
-          java类加载原理(ClassLoader工作原理)
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" target="_self">
-          
-          什么是类加载在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。 当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&gt; javac -&gt; MainActivity.class。当我们程序
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-15 18:51" pubdate>
-              2022-04-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Java/">Java</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/" target="_self">
-          Android源码解析-App的ClassLoader
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/" target="_self">
-          
-          Android中的默认类加载器：Android虚拟机就是一个特殊的JVM，不管是以前的dalvik还是现在的ART。所以其类加载流程一样遵循jvm的规则（双亲委托机制） 如果对jvm的类加载流程不熟悉可以阅读另一篇文章：java类加载原理(ClassLoader工作原理) Android类加载器之相较于Java类加载器的最大区别在于： java类加载器是从某个目录中去直接加载.class文件或者是
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-14 15:36" pubdate>
-              2022-04-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/" target="_self">
-          Android源码小记-LoadedApk
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-LoadedApk/" target="_self">
-          
-          文章基于API25分析，源码地址：http:&#x2F;&#x2F;androidxref.com&#x2F;7.1.1_r6&#x2F; 什么是LoadedApk看下源码中对LoadedApk的注释： 12345&#x2F;** * Local state maintained about a currently loaded .apk. * @hide *&#x2F;public final class LoadedApk &amp;#123;&amp;#125; 翻
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-14 15:35" pubdate>
-              2022-04-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/" target="_self">
-          System.load()与System.loadLibrary()实现及so热修复
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/13/Android%E4%B8%A4%E7%A7%8Dso%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E5%8F%8Aso%E7%83%AD%E4%BF%AE%E5%A4%8D/" target="_self">
-          
-          文章基于API25分析，源码地址：http:&#x2F;&#x2F;androidxref.com&#x2F;7.1.1_r6&#x2F; ClassLoader简单复习（必要前提）在分析System类之前，先简单复习一下ClassLoader的类加载机制。
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-13 09:40" pubdate>
-              2022-04-13
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/" target="_self">
-          android热修复小记
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/13/android%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%B0%8F%E8%AE%B0/" target="_self">
-          
-          认识热修复由于Android应用程序需要手动安装apk包的特性，如果应用发布上线之后发现有bug只能再下载新包来修复。这样一来影响用户体验，二来是否下载新包的主动权在用户，所以开发者对bug无法把控。 主流热修复方案 腾讯Tinker 腾讯QZone 阿里sophix 美团Robust
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-12 17:55" pubdate>
-              2022-04-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" target="_self">
-          gradle插件开发
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/12/gradle%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" target="_self">
-          
-          gradle插件开发的方式123apply plugin: &amp;#x27;com.android.application&amp;#x27;apply plugin: &amp;#x27;com.android.library&amp;#x27;     方式 说明    Build script脚本 把插件写在build.gradle文件中，一般用于简单逻辑，作用范围为build.gradle文件   buildSrc
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-11 21:50" pubdate>
-              2022-04-11
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/02/Android-Resource%E8%A7%A3%E6%9E%90/" target="_self">
-          Android-Resource解析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/04/02/Android-Resource%E8%A7%A3%E6%9E%90/" target="_self">
-          
-          
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-02 15:03" pubdate>
-              2022-04-02
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/" target="_self">
-          Android版本号对应关系
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/" target="_self">
-          
-          Android系统版本对应API   API版本号 版本名称（英&#x2F;汉） 发布时间    API 31 android 12.0 Snow Cone 2021.10   API 30 android 11.0 R 2020.9   API 29 android 10.0 Q 2019.8   API 28 android 9.0 Pie&#x2F;馅饼 2018.8   API 27 an
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-28 20:09" pubdate>
-              2022-03-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/" target="_self">
-          Android源码小记-Context解析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/" target="_self">
-          
-          Context的使用对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是： startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务 正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-28 17:55" pubdate>
-              2022-03-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Android/">Android</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-
-
-  <nav aria-label="navigation">
-    <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
-    </span>
-  </nav>
-
-
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-    
-
-    
-  </main>
-
-  <footer class="text-center mt-5 py-3">
-  <div class="footer-content">
-     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
-  </div>
-  
-
-  
-
-  
 </footer>
 
-
-  <!-- SCRIPTS -->
-  
-  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-<!-- Plugins -->
-
-
-  <script  src="/js/local-search.js" ></script>
+    </div>
+    <!-- styles -->
 
 
 
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
 
 
-
-  
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
 
 
 
 
+<!-- clipboard -->
 
 
+<script src="/js/main.js"></script>
 
+<!-- search -->
 
-  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var title = document.getElementById('subtitle').title;
-      
-        typing(title);
-      
-    })(window, document);
-  </script>
+<!-- Google Analytics -->
 
+<!-- Baidu Analytics -->
 
+<!-- Cloudflare Analytics -->
 
+<!-- Umami Analytics -->
 
+<!-- Disqus Comments -->
 
-
-
-
-
-
-
-
-
-
-
-<!-- 主题的启动项 保持在最底部 -->
-<script  src="/js/boot.js" ></script>
-
+<!-- utterances Comments -->
 
 </body>
 </html>

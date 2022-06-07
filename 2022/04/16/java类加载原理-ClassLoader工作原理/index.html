@@ -1,251 +1,166 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-Hans" data-default-color-scheme=auto>
-
-
-
+<html lang=zh>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="lianwenhong">
-  <meta name="keywords" content="">
-  
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="description" content="什么是类加载在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。 当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&gt; javac -&gt; MainActivity.class。当我们程序">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java类加载原理(ClassLoader工作原理)">
 <meta property="og:url" content="http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="连文弘的学习笔记">
 <meta property="og:description" content="什么是类加载在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。 当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&gt; javac -&gt; MainActivity.class。当我们程序">
-<meta property="og:locale">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86.png">
 <meta property="og:image" content="http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg">
 <meta property="og:image" content="http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6.jpg">
 <meta property="article:published_time" content="2022-04-15T18:51:47.000Z">
 <meta property="article:modified_time" content="2022-04-15T16:39:51.645Z">
 <meta property="article:author" content="lianwenhong">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86.png">
-  
-  
-  <title>java类加载原理(ClassLoader工作原理) - 连文弘的学习笔记</title>
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
-
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
-
-  
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
     
-  
+    <!-- title -->
+    <title>java类加载原理(ClassLoader工作原理)</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
-  
-    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
-  
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 5.4.1"></head>
 
-
-<body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                Home
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                Archives
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                Categories
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                Tags
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                About
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/04/18/binder%EF%BC%88%E4%B8%80%EF%BC%89Linux%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E7%AF%87/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&text=java类加载原理(ClassLoader工作原理)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&is_video=false&description=java类加载原理(ClassLoader工作原理)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java类加载原理(ClassLoader工作原理)&body=Check out this article: http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&name=java类加载原理(ClassLoader工作原理)&description=&lt;h2 id=&#34;什么是类加载&#34;&gt;&lt;a href=&#34;#什么是类加载&#34; class=&#34;headerlink&#34; title=&#34;什么是类加载&#34;&gt;&lt;/a&gt;什么是类加载&lt;/h2&gt;&lt;p&gt;在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。&lt;/p&gt;
+&lt;p&gt;当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&amp;gt; javac -&amp;gt; MainActivity.class。当我们程序中要使用MainActivity的时候，肯定要将这个文件加载到内存中来变成一个类对象这样才能去使用它。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&t=java类加载原理(ClassLoader工作原理)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</nav>
-
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="java类加载原理(ClassLoader工作原理)">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-04-15 18:51" pubdate>
-        April 15, 2022 pm
-      </time>
-    </span>
-  
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.</span> <span class="toc-text">什么是类加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">类加载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%831-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E9%AA%8C%E8%AF%81%E9%98%B6%E6%AE%B5%EF%BC%9F"><span class="toc-number">2.0.1.</span> <span class="toc-text">思考1:为什么要有验证阶段？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%832-%E9%93%BE%E6%8E%A5%E4%B8%AD%E7%9A%84%E5%87%86%E5%A4%87%E8%BF%87%E7%A8%8B%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">2.0.2.</span> <span class="toc-text">思考2:链接中的准备过程和初始化过程有什么区别？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%B1%BB%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9F"><span class="toc-number">2.0.3.</span> <span class="toc-text">什么情况会导致类的初始化？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E4%B8%BA%E6%88%91%E4%BB%AC%E6%8F%90%E4%BE%9B%E4%BA%862%E7%A7%8D%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="toc-number">2.0.4.</span> <span class="toc-text">系统为我们提供了2种类加载方式：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">2.0.5.</span> <span class="toc-text">类加载器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%833-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%B9%9F%E6%98%AF%E7%B1%BB%EF%BC%8C%E9%82%A3%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A2%AB%E8%B0%81%E5%8A%A0%E8%BD%BD%EF%BC%9F"><span class="toc-number">2.0.6.</span> <span class="toc-text">思考3:类加载也是类，那类加载器被谁加载？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">双亲委托机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%9A%84%E7%88%B6%E5%AD%90%E7%BB%93%E6%9E%84"><span class="toc-number">3.0.1.</span> <span class="toc-text">类加载器的父子结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.0.2.</span> <span class="toc-text">双亲委托机制工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%834-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9D%99%E6%80%81%E5%85%83%E7%B4%A0%E5%92%8C%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A7%8D%E5%8F%AA%E4%BC%9A%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1%EF%BC%9F"><span class="toc-number">3.0.3.</span> <span class="toc-text">思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%8A%E5%AE%9A2%E4%B8%AA%E7%B1%BB%E6%98%AF%E4%B8%8D%E6%98%AF%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.0.4.</span> <span class="toc-text">届定2个类是不是同一个类对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Class-forName-clzName-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">3.0.5.</span> <span class="toc-text">Class.forName(clzName)的原理</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
 </div>
 
-<div class="mt-1">
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      4.4k 字
-    </span>
-  
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        java类加载原理(ClassLoader工作原理)
+    </h1>
 
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
       
+    <div class="postdate">
       
-      37 分钟
-    </span>
-  
+        <time datetime="2022-04-15T18:51:47.000Z" itemprop="datePublished">2022-04-15</time>
+        
+      
+    </div>
 
-  
-  
-</div>
 
-            
-          </div>
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Java/">Java</a>
+    </div>
 
-          
-        </div>
-      </div>
+
+      
+
     </div>
   </header>
+  
 
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">java类加载原理(ClassLoader工作原理)</h1>
-            
-            <div class="markdown-body">
-              <h2 id="什么是类加载"><a href="#什么是类加载" class="headerlink" title="什么是类加载"></a>什么是类加载</h2><p>在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。</p>
+  <div class="content" itemprop="articleBody">
+    <h2 id="什么是类加载"><a href="#什么是类加载" class="headerlink" title="什么是类加载"></a>什么是类加载</h2><p>在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。</p>
 <p>当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&gt; javac -&gt; MainActivity.class。当我们程序中要使用MainActivity的时候，肯定要将这个文件加载到内存中来变成一个类对象这样才能去使用它。</p>
 <span id="more"></span>
 
-<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86.png" srcset="/img/loading.gif" lazyload class="" title="类加载原理">
+<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86.png" class="" title="类加载原理">
 
 <p><strong>具体来说类加载就是将类的.class文件转为二进制数据读取到虚拟机内存的方法区中，当对象实例进行创建的时候会在堆内存中创建这个类的class对象，用来封装类在方法区中的数据结构。</strong></p>
 <p><strong>类加载最终的产物就是这个类对应的Class对象，它封装了方法区中的类的数据结构，并向程序员提供了访问接口。</strong></p>
@@ -261,7 +176,7 @@
 <li>准备：为类的静态变量分配内存并初始化为默认值（这个初始化与初始化流程中的初始化不一样，这里是初始化为默认值，下一个流程中是初始化为指定值）</li>
 <li>解析：把类中的符号引用转换为直接引用</li>
 </ol>
-<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg" srcset="/img/loading.gif" lazyload class="" title="java类加载过程">
+<img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.jpg" class="" title="java类加载过程">
 
 <h4 id="思考1-为什么要有验证阶段？"><a href="#思考1-为什么要有验证阶段？" class="headerlink" title="思考1:为什么要有验证阶段？"></a>思考1:为什么要有验证阶段？</h4><p>由Java编译器编译生成的.class文件一定是符合JVM字节码格式的，由JVM加载并运行，为了避免人为写一个.class文件，用于恶意用途，就需要有验证，不符合格式的不让它继续运行，确保安全。</p>
 <h4 id="思考2-链接中的准备过程和初始化过程有什么区别？"><a href="#思考2-链接中的准备过程和初始化过程有什么区别？" class="headerlink" title="思考2:链接中的准备过程和初始化过程有什么区别？"></a>思考2:链接中的准备过程和初始化过程有什么区别？</h4><p>准备过程是初始化为默认值，而初始化过程是将变量赋予正确的值。</p>
@@ -287,7 +202,7 @@
 </ul>
 <p><strong>归根结底其实类加载器就是一个加载类的工具，而不同类加载器的区别就是加载的类所处的目录不同而已</strong>，具体原因后续讲双亲委托机制时详述。</p>
 <h4 id="思考3-类加载也是类，那类加载器被谁加载？"><a href="#思考3-类加载也是类，那类加载器被谁加载？" class="headerlink" title="思考3:类加载也是类，那类加载器被谁加载？"></a>思考3:类加载也是类，那类加载器被谁加载？</h4><p>BootStrap不是java类，它是c&#x2F;c++写的，是jvm内核的组成部分，它主要用于加载jvm运行必须的类。而ExtClassLoader和AppClassLoadeer是java类，他们是被BootStrap所加载。BootStrap是无法被java程序直接引用的。</p>
-<h2 id="双亲委托机制"><a href="#双亲委托机制" class="headerlink" title="双亲委托机制"></a>双亲委托机制</h2><img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6.jpg" srcset="/img/loading.gif" lazyload class="" title="双亲委托机制">
+<h2 id="双亲委托机制"><a href="#双亲委托机制" class="headerlink" title="双亲委托机制"></a>双亲委托机制</h2><img src="/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6.jpg" class="" title="双亲委托机制">
 
 <h4 id="类加载器的父子结构"><a href="#类加载器的父子结构" class="headerlink" title="类加载器的父子结构"></a>类加载器的父子结构</h4><p>jvm所有的类加载器都采用父子关系的树形结构进行组织（但是注意不是java语法上的父子关系，不是继承），它的原理是在实例化每个类加载器的时候都得为其指定一个父类加载器对象或者默认采用系统类加载器为其父类加载器。（类加载器中有一个parent属性，组织父子结构是通过为parent赋值来实现的）</p>
 <p>每个类加载器都有自己的加载区域，它只能在自己的加载区域中寻找类。</p>
@@ -299,212 +214,153 @@
 <li>保证了类加载的安全性（例如假如有人自己创建了一个java.lang.String类也无法替换掉系统中的java.lang.String类，因为类加载会最终委托到父类加载器中，所以系统中的java.lang.String一定是先被找到的）</li>
 </ol>
 <p><strong>类加载器加载一个类的时候会首先从缓存中找，如果找到了就直接返回类，如果没找到才会继续向上委托。当成功加载到某个类的时候，会将得到的Class对象缓存起来用于下次加载这个类的时候直接返回。</strong><br>不信可以看看java ClassLoader类的loadClass()实现：</p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></div></td><td class="code"><pre><code class="hljs reasonml">protected Class&lt;?&gt; load<span class="hljs-constructor">Class(String <span class="hljs-params">name</span>, <span class="hljs-params">boolean</span> <span class="hljs-params">resolve</span>)</span><br>        throws ClassNotFoundException<br>&#123;<br>    synchronized (get<span class="hljs-constructor">ClassLoadingLock(<span class="hljs-params">name</span>)</span>) &#123;<br>        <span class="hljs-comment">// First, check if the class has already been loaded</span><br>        <span class="hljs-comment">// 找缓存</span><br>        Class&lt;?&gt; c = find<span class="hljs-constructor">LoadedClass(<span class="hljs-params">name</span>)</span>;<br>        <span class="hljs-comment">// 缓存中没有，则开始双亲委托机制</span><br>        <span class="hljs-keyword">if</span> (c<span class="hljs-operator"> == </span>null) &#123;<br>            long t0 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>nano<span class="hljs-constructor">Time()</span>;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-keyword">if</span> (parent != null) &#123;<br>                    <span class="hljs-comment">// 从父类加载器加载</span><br>                    c = parent.load<span class="hljs-constructor">Class(<span class="hljs-params">name</span>, <span class="hljs-params">false</span>)</span>;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-comment">// 没有父说明这个已经是Bootstrap</span><br>                    c = find<span class="hljs-constructor">BootstrapClassOrNull(<span class="hljs-params">name</span>)</span>;<br>                &#125;<br>            &#125; catch (ClassNotFoundException e) &#123;<br>                <span class="hljs-comment">// ClassNotFoundException thrown if class not found</span><br>                <span class="hljs-comment">// from the non-null parent class loader</span><br>            &#125;<br>            <br>            <span class="hljs-comment">// 没有加载到，则在自己的区域中寻找类</span><br>            <span class="hljs-keyword">if</span> (c<span class="hljs-operator"> == </span>null) &#123;<br>                <span class="hljs-comment">// If still not found, then invoke findClass in order</span><br>                <span class="hljs-comment">// to find the class.</span><br>                long t1 = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>nano<span class="hljs-constructor">Time()</span>;<br>                c = find<span class="hljs-constructor">Class(<span class="hljs-params">name</span>)</span>;<br><br>                <span class="hljs-comment">// this is the defining class loader; record the stats</span><br>                sun.misc.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PerfCounter</span>.</span></span>get<span class="hljs-constructor">ParentDelegationTime()</span>.add<span class="hljs-constructor">Time(<span class="hljs-params">t1</span> - <span class="hljs-params">t0</span>)</span>;<br>                sun.misc.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PerfCounter</span>.</span></span>get<span class="hljs-constructor">FindClassTime()</span>.add<span class="hljs-constructor">ElapsedTimeFrom(<span class="hljs-params">t1</span>)</span>;<br>                sun.misc.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PerfCounter</span>.</span></span>get<span class="hljs-constructor">FindClasses()</span>.increment<span class="hljs-literal">()</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (resolve) &#123;<br>            resolve<span class="hljs-constructor">Class(<span class="hljs-params">c</span>)</span>;<br>        &#125;<br>        return c;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">protected Class&lt;?&gt; loadClass(String name, boolean resolve)</span><br><span class="line">        throws ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    synchronized (getClassLoadingLock(name)) &#123;</span><br><span class="line">        // First, check if the class has already been loaded</span><br><span class="line">        // 找缓存</span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">        // 缓存中没有，则开始双亲委托机制</span><br><span class="line">        if (c == null) &#123;</span><br><span class="line">            long t0 = System.nanoTime();</span><br><span class="line">            try &#123;</span><br><span class="line">                if (parent != null) &#123;</span><br><span class="line">                    // 从父类加载器加载</span><br><span class="line">                    c = parent.loadClass(name, false);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    // 没有父说明这个已经是Bootstrap</span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">                // ClassNotFoundException thrown if class not found</span><br><span class="line">                // from the non-null parent class loader</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            // 没有加载到，则在自己的区域中寻找类</span><br><span class="line">            if (c == null) &#123;</span><br><span class="line">                // If still not found, then invoke findClass in order</span><br><span class="line">                // to find the class.</span><br><span class="line">                long t1 = System.nanoTime();</span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                // this is the defining class loader; record the stats</span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        return c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="思考4-为什么静态元素和静态代码块在虚拟机种只会执行一次？"><a href="#思考4-为什么静态元素和静态代码块在虚拟机种只会执行一次？" class="headerlink" title="思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？"></a>思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？</h4><p>因为默认情况下赋值静态域的过程（初始化）或者是执行静态代码块是在类加载流程中执行的，而同一个类根据双亲委托机制只会被加载一次，如果第二次加载它会直接从缓存中取。当然如果你自己定义了一个类加载器再去手动加载它的话就另当别论了（假设加载类A，正常代码中类在AppClassLoader中被加载成功，此时你自定义一个类加载器并且它的加载区域中也有类A一样的class，并且把它的父类加载器设置成ExtClassLoader，那么肯定这时候通过自定义类加载器去加载那也能加载出一个类A，此时类A中的静态代码也会执行，<strong>但是，但是，但是这个但是很重要，但是此时加载出来的这俩类A不是同一个类</strong>）。</p>
 <h4 id="届定2个类是不是同一个类对象"><a href="#届定2个类是不是同一个类对象" class="headerlink" title="届定2个类是不是同一个类对象"></a>届定2个类是不是同一个类对象</h4><p><strong>这也就是思考4中的但是，2个类对象是否是同一个取决于：类的全类名、加载它的类加载器以及类加载器的实例这三个条件，这三个条件中只要有一个不相同，加载后生成的Class对象就不是同一个，最终生成的类的实例的类型也不相同。</strong></p>
 <p>所以即使是同一个类，用不同的类加载器去加载的话产生的对象也是不同的，不能进行互相赋值否则会出现类转换异常。</p>
 <h4 id="Class-forName-clzName-的原理"><a href="#Class-forName-clzName-的原理" class="headerlink" title="Class.forName(clzName)的原理"></a>Class.forName(clzName)的原理</h4><p>直接上代码：</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">Class</span>&lt;?&gt; forName(String className)<br>            <span class="hljs-keyword">throws</span> ClassNotFoundException &#123;<br>    <span class="hljs-keyword">Class</span>&lt;?&gt; caller = Reflection.getCallerClass();<br>    <span class="hljs-comment">// 内部也是使用ClassLoader进行类加载，只是加载完成之后会自动执行初始化，同时forName0()的initialize参数决定</span><br>    <span class="hljs-keyword">return</span> forName0(className, <span class="hljs-keyword">true</span>, ClassLoader.getClassLoader(caller), caller);<br>&#125;<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">native</span> <span class="hljs-keyword">Class</span>&lt;?&gt; forName0(String name, <span class="hljs-keyword">boolean</span> initialize,<br>                                    ClassLoader loader,<br>                                    <span class="hljs-keyword">Class</span>&lt;?&gt; caller)<br><span class="hljs-keyword">throws</span> ClassNotFoundException;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public static Class&lt;?&gt; forName(String className)</span><br><span class="line">            throws ClassNotFoundException &#123;</span><br><span class="line">    Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">    // 内部也是使用ClassLoader进行类加载，只是加载完成之后会自动执行初始化，同时forName0()的initialize参数决定</span><br><span class="line">    return forName0(className, true, ClassLoader.getClassLoader(caller), caller);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static native Class&lt;?&gt; forName0(String name, boolean initialize,</span><br><span class="line">                                    ClassLoader loader,</span><br><span class="line">                                    Class&lt;?&gt; caller)</span><br><span class="line">throws ClassNotFoundException;</span><br></pre></td></tr></table></figure>
 <p>所以Class.forName(clzName)本质上也是通过ClassLoader.loadClass(clzName)进行类加载，只是它会执行初始化，而直接通过ClassLoader.loadClass(clzName) 加载的类只有达到上面说的几个条件才会执行初始化流程。</p>
 <p>下一章我们讲一下Android中的类加载器：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/#more">Android源码解析-App的ClassLoader</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                  <div class="post-meta mr-3">
-                    <i class="iconfont icon-category"></i>
-                    
-                      <a class="hover-with-bg" href="/categories/Java/">Java</a>
-                    
-                  </div>
-                
-                
-              </div>
-              
-                <p class="note note-warning">
-                  
-                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
-                  
-                </p>
-              
-              
-                <div class="post-prevnext">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2022/04/18/linux%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">linux名词解释</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2022/04/14/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-App%E7%9A%84ClassLoader/">
-                        <span class="hidden-mobile">Android源码解析-App的ClassLoader</span>
-                        <span class="visible-mobile">Next</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+  </div>
+</article>
 
-            
-          </article>
-        </div>
-      </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
     </div>
-    
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
-
-<!-- Custom -->
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.</span> <span class="toc-text">什么是类加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">类加载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%831-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E9%AA%8C%E8%AF%81%E9%98%B6%E6%AE%B5%EF%BC%9F"><span class="toc-number">2.0.1.</span> <span class="toc-text">思考1:为什么要有验证阶段？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%832-%E9%93%BE%E6%8E%A5%E4%B8%AD%E7%9A%84%E5%87%86%E5%A4%87%E8%BF%87%E7%A8%8B%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">2.0.2.</span> <span class="toc-text">思考2:链接中的准备过程和初始化过程有什么区别？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%B1%BB%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9F"><span class="toc-number">2.0.3.</span> <span class="toc-text">什么情况会导致类的初始化？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E4%B8%BA%E6%88%91%E4%BB%AC%E6%8F%90%E4%BE%9B%E4%BA%862%E7%A7%8D%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="toc-number">2.0.4.</span> <span class="toc-text">系统为我们提供了2种类加载方式：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">2.0.5.</span> <span class="toc-text">类加载器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%833-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%B9%9F%E6%98%AF%E7%B1%BB%EF%BC%8C%E9%82%A3%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A2%AB%E8%B0%81%E5%8A%A0%E8%BD%BD%EF%BC%9F"><span class="toc-number">2.0.6.</span> <span class="toc-text">思考3:类加载也是类，那类加载器被谁加载？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">双亲委托机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%9A%84%E7%88%B6%E5%AD%90%E7%BB%93%E6%9E%84"><span class="toc-number">3.0.1.</span> <span class="toc-text">类加载器的父子结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%89%98%E6%9C%BA%E5%88%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">3.0.2.</span> <span class="toc-text">双亲委托机制工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%834-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9D%99%E6%80%81%E5%85%83%E7%B4%A0%E5%92%8C%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A7%8D%E5%8F%AA%E4%BC%9A%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1%EF%BC%9F"><span class="toc-number">3.0.3.</span> <span class="toc-text">思考4:为什么静态元素和静态代码块在虚拟机种只会执行一次？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%8A%E5%AE%9A2%E4%B8%AA%E7%B1%BB%E6%98%AF%E4%B8%8D%E6%98%AF%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.0.4.</span> <span class="toc-text">届定2个类是不是同一个类对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Class-forName-clzName-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">3.0.5.</span> <span class="toc-text">Class.forName(clzName)的原理</span></a></li></ol></li></ol></li></ol>
     </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&text=java类加载原理(ClassLoader工作原理)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&is_video=false&description=java类加载原理(ClassLoader工作原理)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java类加载原理(ClassLoader工作原理)&body=Check out this article: http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&title=java类加载原理(ClassLoader工作原理)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&name=java类加载原理(ClassLoader工作原理)&description=&lt;h2 id=&#34;什么是类加载&#34;&gt;&lt;a href=&#34;#什么是类加载&#34; class=&#34;headerlink&#34; title=&#34;什么是类加载&#34;&gt;&lt;/a&gt;什么是类加载&lt;/h2&gt;&lt;p&gt;在java开发中我们在.java文件中编写代码，之后通过javac指令编译成.class文件。当然如果是编写的Android应用后续又会经过dx工具将.class变为.dex文件(这不是本章重点)。&lt;/p&gt;
+&lt;p&gt;当javac编译成.class文件之后，它是以文件的形式存在的。比如MainActivity.java -&amp;gt; javac -&amp;gt; MainActivity.class。当我们程序中要使用MainActivity的时候，肯定要将这个文件加载到内存中来变成一个类对象这样才能去使用它。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/04/16/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8E%9F%E7%90%86-ClassLoader%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/&t=java类加载原理(ClassLoader工作原理)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
   </div>
 </div>
-    
 
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
     
-  </main>
-
-  <footer class="text-center mt-5 py-3">
-  <div class="footer-content">
-     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    
+    2022
+    lianwenhong
   </div>
-  
-
-  
-
-  
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
 </footer>
 
+    </div>
+    <!-- styles -->
 
-  <!-- SCRIPTS -->
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
   
-  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
     })
+  })
   </script>
 
 
-<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
+<script src="/js/main.js"></script>
 
-<!-- Plugins -->
+<!-- search -->
 
+<!-- Google Analytics -->
 
-  <script  src="/js/local-search.js" ></script>
+<!-- Baidu Analytics -->
 
+<!-- Cloudflare Analytics -->
 
+<!-- Umami Analytics -->
 
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
+<!-- Disqus Comments -->
 
-
-
-  
-
-
-
-  
-    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
-  
-  
-    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
-  
-
-
-
-
-
-
-  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var title = document.getElementById('subtitle').title;
-      
-        typing(title);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 主题的启动项 保持在最底部 -->
-<script  src="/js/boot.js" ></script>
-
+<!-- utterances Comments -->
 
 </body>
 </html>

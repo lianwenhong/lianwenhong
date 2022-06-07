@@ -1,247 +1,164 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-Hans" data-default-color-scheme=auto>
-
-
-
+<html lang=zh>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="lianwenhong">
-  <meta name="keywords" content="">
-  
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="description" content="Context的使用对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是： startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务 正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android源码小记-Context解析">
 <meta property="og:url" content="http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="连文弘的学习笔记">
 <meta property="og:description" content="Context的使用对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是： startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务 正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context">
-<meta property="og:locale">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg">
 <meta property="og:image" content="http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Application%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B.jpg">
 <meta property="og:image" content="http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Activity%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.jpg">
 <meta property="article:published_time" content="2022-03-28T17:55:47.000Z">
 <meta property="article:modified_time" content="2022-04-14T07:39:38.601Z">
 <meta property="article:author" content="lianwenhong">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg">
-  
-  
-  <title>Android源码小记-Context解析 - 连文弘的学习笔记</title>
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
-
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
-
-  
     
     
       
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
     
-  
+    <!-- title -->
+    <title>Android源码小记-Context解析</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
-  
-    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
-  
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <meta name="generator" content="Hexo 5.4.1"></head>
 
-
-<body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                Home
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                Archives
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                Categories
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                Tags
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                About
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&text=Android源码小记-Context解析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&is_video=false&description=Android源码小记-Context解析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android源码小记-Context解析&body=Check out this article: http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&name=Android源码小记-Context解析&description=&lt;h2 id=&#34;Context的使用&#34;&gt;&lt;a href=&#34;#Context的使用&#34; class=&#34;headerlink&#34; title=&#34;Context的使用&#34;&gt;&lt;/a&gt;Context的使用&lt;/h2&gt;&lt;p&gt;对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：&lt;/p&gt;
+&lt;p&gt;startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务&lt;/p&gt;
+&lt;p&gt;正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context对象才能满足编码需求，所以又牵扯出了内存泄漏等问题（比如传入了Activity当成Context，在页面生命周期已经结束时由于某些耗时等操作导致引用仍被持有导致无法及时被回收）。&lt;/p&gt;
+&lt;p&gt;既然Context是如此重要，那我们就有必要对它做个深入了解。&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&t=Android源码小记-Context解析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</nav>
-
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Android源码小记-Context解析">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-03-28 17:55" pubdate>
-        March 28, 2022 pm
-      </time>
-    </span>
-  
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Context的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">2.</span> <span class="toc-text">Context的设计思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.</span> <span class="toc-text">装饰者模式是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">2.2.</span> <span class="toc-text">Context类关系图以及装饰者模式的应用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">Context源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Application%E7%9A%84Context%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">Application的Context构建流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Activity%E7%9A%84Context%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">Activity的Context构建流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">4.</span> <span class="toc-text">Context注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number">4.0.1.</span> <span class="toc-text">内存泄漏问题：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Context%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%9A"><span class="toc-number">4.0.2.</span> <span class="toc-text">Context的使用：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
 </div>
 
-<div class="mt-1">
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      14k 字
-    </span>
-  
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Android源码小记-Context解析
+    </h1>
 
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
       
+    <div class="postdate">
       
-      120 分钟
-    </span>
-  
+        <time datetime="2022-03-28T17:55:47.000Z" itemprop="datePublished">2022-03-28</time>
+        
+      
+    </div>
 
-  
-  
-</div>
 
-            
-          </div>
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Android/">Android</a>
+    </div>
 
-          
-        </div>
-      </div>
+
+      
+
     </div>
   </header>
+  
 
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">Android源码小记-Context解析</h1>
-            
-            <div class="markdown-body">
-              <h2 id="Context的使用"><a href="#Context的使用" class="headerlink" title="Context的使用"></a>Context的使用</h2><p>对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：</p>
+  <div class="content" itemprop="articleBody">
+    <h2 id="Context的使用"><a href="#Context的使用" class="headerlink" title="Context的使用"></a>Context的使用</h2><p>对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：</p>
 <p>startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务</p>
 <p>正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context对象才能满足编码需求，所以又牵扯出了内存泄漏等问题（比如传入了Activity当成Context，在页面生命周期已经结束时由于某些耗时等操作导致引用仍被持有导致无法及时被回收）。</p>
 <p>既然Context是如此重要，那我们就有必要对它做个深入了解。</p>
@@ -276,7 +193,7 @@
 <p>基类还是衣服，需求一样是生产防水、透气、速干三种功能衣服。此时需要拓展出三个子类：防水衣服、透气衣服、速干衣服。此时要新增防水速干衣服时，只需要将防水衣服和速干衣服两者进行组合即可这样就不需要再生成新的子类，同理当需要生产保暖又速干衣服时只需要拓展一个保暖衣服即可，然后将保暖衣服和速干衣服进行组合便能满足需求。</p>
 </blockquote>
 <p>通过上面说明我们明白了装饰者设计模式的妙处了，具体装饰者设计模式的编码实现我会再出一篇文章详细阐述。当然通过这个例子我们回归正题其实Context的实现也是使用了装饰者模式。</p>
-<h3 id="Context类关系图以及装饰者模式的应用"><a href="#Context类关系图以及装饰者模式的应用" class="headerlink" title="Context类关系图以及装饰者模式的应用"></a>Context类关系图以及装饰者模式的应用</h3><img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" srcset="/img/loading.gif" lazyload class="" title="Context类关系图">
+<h3 id="Context类关系图以及装饰者模式的应用"><a href="#Context类关系图以及装饰者模式的应用" class="headerlink" title="Context类关系图以及装饰者模式的应用"></a>Context类关系图以及装饰者模式的应用</h3><img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE.jpg" class="" title="Context类关系图">
 
 <p>从Context的类关系我们可以看出，这是一个典型的装饰者模式。</p>
 <p>基类Context定义了各种基础功能接口，ContextImpl则负责实现接口的具体功能。</p>
@@ -289,7 +206,7 @@
 </ul>
 <p>它们分别对Context进行了不同维度的拓展，同时也可以将它们当成Context来使用。这就可以解释为什么你在Application中也可以启动页面，在Service中也可以启动页面。</p>
 <p>那么既然四大组件中2大都使用的装饰者设计模式都设计成Context的装饰类，为什么<strong>BroadcastReceiver</strong>和<strong>ContentProvider</strong>不是Context的子类呢？</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-comment">//ContentProvider的构造方法:</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ContentProvider</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        Context context,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">String</span> readPermission,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">String</span> writePermission,</span></span><br><span class="hljs-params"><span class="hljs-function">        PathPermission[] pathPermissions)</span> </span>&#123;<br>    mContext = context;<br>    mReadPermission = readPermission;<br>    mWritePermission = writePermission;<br>    mPathPermissions = pathPermissions;<br>&#125;<br><br><span class="hljs-comment">//BroadCastReceiver的onReceiver()方法：</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> abstract <span class="hljs-type">void</span> <span class="hljs-title">onReceive</span><span class="hljs-params">(Context var1, Intent var2)</span></span>;<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//ContentProvider的构造方法:</span><br><span class="line">public ContentProvider(</span><br><span class="line">        Context context,</span><br><span class="line">        String readPermission,</span><br><span class="line">        String writePermission,</span><br><span class="line">        PathPermission[] pathPermissions) &#123;</span><br><span class="line">    mContext = context;</span><br><span class="line">    mReadPermission = readPermission;</span><br><span class="line">    mWritePermission = writePermission;</span><br><span class="line">    mPathPermissions = pathPermissions;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//BroadCastReceiver的onReceiver()方法：</span><br><span class="line">public abstract void onReceive(Context var1, Intent var2);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>看代码可以看出，它们内部都需要传入一个Context，其实换个角度看它们也是装饰类，内部也包装了Context。只是因为这两大组件的使用上和Activity和Service有较大的差别，并且它们内部并不没有很复杂的生命周期控制流程等，所以它们就用了最简单的实现方式。</p>
 <blockquote>
@@ -315,47 +232,47 @@
 <li><strong>IApplicationThread</strong>: 作为系统进程请求应用进程的接口</li>
 <li><strong>IActivityManager</strong>: 作为应用进程请求系统进程的接口</li>
 </ul>
-<h3 id="Application的Context构建流程"><a href="#Application的Context构建流程" class="headerlink" title="Application的Context构建流程"></a>Application的Context构建流程</h3><img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Application%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B.jpg" srcset="/img/loading.gif" lazyload class="" title="Application的ContextImpl创建流程">
+<h3 id="Application的Context构建流程"><a href="#Application的Context构建流程" class="headerlink" title="Application的Context构建流程"></a>Application的Context构建流程</h3><img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Application%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B.jpg" class="" title="Application的ContextImpl创建流程">
 
 <p>整个流程分为几大块来讲解：</p>
 <ol>
 <li>Android开启一个进程时最终是从java层的<code>ActivityThread.main()</code> 方法开始的，然后调用<code>ActivityThread.attach()</code> 方法。该方法内部会调用<code>ActivityManagerService.attachApplication(IApplicationThread)</code>，了解过Binder的就能明白<strong>ActivityManagerService(AMS)</strong> 其实就是Binder通信的实现，此时调用<code>attachApplication()</code> 之后就进入系统进程对应用做了一系列的初始化，然后通过传入的<code>ApplicationThread.bindApplication()</code> 将初始化的信息回调给用户进程</li>
 </ol>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">String</span>[] args)</span> </span>&#123;<br>    ...<br>    <span class="hljs-comment">// 主线程Lopper  </span><br>    Looper.<span class="hljs-built_in">prepareMainLooper</span>();<br><br>    ActivityThread thread = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ActivityThread</span>();<br>    <span class="hljs-comment">// 进入attach()方法中，传入false表示非系统应用</span><br>    thread.<span class="hljs-built_in">attach</span>(<span class="hljs-literal">false</span>);<br><br>    <span class="hljs-keyword">if</span> (sMainThreadHandler == null) &#123;<br>        sMainThreadHandler = thread.<span class="hljs-built_in">getHandler</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span>) &#123;<br>        Looper.<span class="hljs-built_in">myLooper</span>().<span class="hljs-built_in">setMessageLogging</span>(<span class="hljs-keyword">new</span><br>                <span class="hljs-built_in">LogPrinter</span>(Log.DEBUG, <span class="hljs-string">&quot;ActivityThread&quot;</span>));<br>    &#125;<br>    ...<br>    Looper.<span class="hljs-built_in">loop</span>();<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    ...</span><br><span class="line">    // 主线程Lopper  </span><br><span class="line">    Looper.prepareMainLooper();</span><br><span class="line"></span><br><span class="line">    ActivityThread thread = new ActivityThread();</span><br><span class="line">    // 进入attach()方法中，传入false表示非系统应用</span><br><span class="line">    thread.attach(false);</span><br><span class="line"></span><br><span class="line">    if (sMainThreadHandler == null) &#123;</span><br><span class="line">        sMainThreadHandler = thread.getHandler();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (false) &#123;</span><br><span class="line">        Looper.myLooper().setMessageLogging(new</span><br><span class="line">                LogPrinter(Log.DEBUG, &quot;ActivityThread&quot;));</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    Looper.loop();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>在attach()方法中，通过以下代码进入AMS进程对应用进行初始化</p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">final IActivityManager mgr = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ActivityManagerNative</span>.</span></span>get<span class="hljs-constructor">Default()</span>;<br><span class="hljs-keyword">try</span> &#123;<br>    mgr.attach<span class="hljs-constructor">Application(<span class="hljs-params">mAppThread</span>)</span>;<br>&#125; catch (RemoteException ex) &#123;<br>    throw ex.rethrow<span class="hljs-constructor">FromSystemServer()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">final IActivityManager mgr = ActivityManagerNative.getDefault();</span><br><span class="line">try &#123;</span><br><span class="line">    mgr.attachApplication(mAppThread);</span><br><span class="line">&#125; catch (RemoteException ex) &#123;</span><br><span class="line">    throw ex.rethrowFromSystemServer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>此时会回调到<strong>ActivityManagerService</strong>类中，循着方法进入最终调用到<code>ActivityManagerService.attachApplicationLocked()</code>方法，对应用做了一系列的初始化赋值并回调给<strong>IApplicationThread</strong> 对象从而进入应用进程</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs stata">thread.bindApplication(processName, appInfo, providers, <span class="hljs-keyword">app</span>.instrumentationClass,<br>        profilerInfo, <span class="hljs-keyword">app</span>.instrumentationArguments, <span class="hljs-keyword">app</span>.instrumentationWatcher,<br>        <span class="hljs-keyword">app</span>.instrumentationUiAutomationConnection, testMode,<br>        mBinderTransactionTrackingEnabled, enableTrackAllocation,<br>        isRestrictedBackupMode || !normalMode, <span class="hljs-keyword">app</span>.persistent,<br>        new Configuration(mConfiguration), <span class="hljs-keyword">app</span>.compat,<br>        getCommonServicesLocked(<span class="hljs-keyword">app</span>.isolated),<br>        mCoreSettingsObserver.getCoreSettingsLocked());<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">thread.bindApplication(processName, appInfo, providers, app.instrumentationClass,</span><br><span class="line">        profilerInfo, app.instrumentationArguments, app.instrumentationWatcher,</span><br><span class="line">        app.instrumentationUiAutomationConnection, testMode,</span><br><span class="line">        mBinderTransactionTrackingEnabled, enableTrackAllocation,</span><br><span class="line">        isRestrictedBackupMode || !normalMode, app.persistent,</span><br><span class="line">        new Configuration(mConfiguration), app.compat,</span><br><span class="line">        getCommonServicesLocked(app.isolated),</span><br><span class="line">        mCoreSettingsObserver.getCoreSettingsLocked());</span><br></pre></td></tr></table></figure>
 
 <ol start="2">
 <li>应用进程收到<strong>AMS</strong>的初始化结果之后生成一个临时的存储对象<strong>AppBindData</strong>并最终通过H这个Handler调用到<code>handleBindApplication()</code>方法。</li>
 </ol>
-<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs haskell"><span class="hljs-title">public</span> final void bindApplication(<span class="hljs-type">String</span> processName, <span class="hljs-type">ApplicationInfo</span> appInfo,<br>        <span class="hljs-type">List</span>&lt;<span class="hljs-type">ProviderInfo</span>&gt; providers, <span class="hljs-type">ComponentName</span> instrumentationName,<br>        <span class="hljs-type">ProfilerInfo</span> profilerInfo, <span class="hljs-type">Bundle</span> instrumentationArgs,<br>        <span class="hljs-type">IInstrumentationWatcher</span> instrumentationWatcher,<br>        <span class="hljs-type">IUiAutomationConnection</span> instrumentationUiConnection, int debugMode,<br>        boolean enableBinderTracking, boolean trackAllocation,<br>        boolean isRestrictedBackupMode, boolean persistent, <span class="hljs-type">Configuration</span> config,<br>        <span class="hljs-type">CompatibilityInfo</span> compatInfo, <span class="hljs-type">Map</span>&lt;<span class="hljs-type">String</span>, <span class="hljs-type">IBinder</span>&gt; services, <span class="hljs-type">Bundle</span> coreSettings) &#123;<br><br>    ...<br><br>    <span class="hljs-type">AppBindData</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = new <span class="hljs-type">AppBindData</span>();</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.processName = processName;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.appInfo = appInfo;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.providers = providers;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.instrumentationName = instrumentationName;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.instrumentationArgs = instrumentationArgs;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.instrumentationWatcher = instrumentationWatcher;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.instrumentationUiAutomationConnection = instrumentationUiConnection;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.debugMode = debugMode;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.enableBinderTracking = enableBinderTracking;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.trackAllocation = trackAllocation;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.restrictedBackupMode = isRestrictedBackupMode;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.persistent = persistent;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.config = config;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.compatInfo = compatInfo;</span><br>    <span class="hljs-class"><span class="hljs-keyword">data</span>.initProfilerInfo = profilerInfo;</span><br>    sendMessage(<span class="hljs-type">H</span>.<span class="hljs-type">BIND_APPLICATION</span>, <span class="hljs-class"><span class="hljs-keyword">data</span>);</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public final void bindApplication(String processName, ApplicationInfo appInfo,</span><br><span class="line">        List&lt;ProviderInfo&gt; providers, ComponentName instrumentationName,</span><br><span class="line">        ProfilerInfo profilerInfo, Bundle instrumentationArgs,</span><br><span class="line">        IInstrumentationWatcher instrumentationWatcher,</span><br><span class="line">        IUiAutomationConnection instrumentationUiConnection, int debugMode,</span><br><span class="line">        boolean enableBinderTracking, boolean trackAllocation,</span><br><span class="line">        boolean isRestrictedBackupMode, boolean persistent, Configuration config,</span><br><span class="line">        CompatibilityInfo compatInfo, Map&lt;String, IBinder&gt; services, Bundle coreSettings) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    AppBindData data = new AppBindData();</span><br><span class="line">    data.processName = processName;</span><br><span class="line">    data.appInfo = appInfo;</span><br><span class="line">    data.providers = providers;</span><br><span class="line">    data.instrumentationName = instrumentationName;</span><br><span class="line">    data.instrumentationArgs = instrumentationArgs;</span><br><span class="line">    data.instrumentationWatcher = instrumentationWatcher;</span><br><span class="line">    data.instrumentationUiAutomationConnection = instrumentationUiConnection;</span><br><span class="line">    data.debugMode = debugMode;</span><br><span class="line">    data.enableBinderTracking = enableBinderTracking;</span><br><span class="line">    data.trackAllocation = trackAllocation;</span><br><span class="line">    data.restrictedBackupMode = isRestrictedBackupMode;</span><br><span class="line">    data.persistent = persistent;</span><br><span class="line">    data.config = config;</span><br><span class="line">    data.compatInfo = compatInfo;</span><br><span class="line">    data.initProfilerInfo = profilerInfo;</span><br><span class="line">    sendMessage(H.BIND_APPLICATION, data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ol start="3">
 <li><code>handleBindApplication()</code>中首先调用<code>getPackageInfoNoCheck()</code>创建出一个<strong>LoadedApk</strong>并将其缓存起来。该对象表示一个已经加载解析过的APK文件。紧接着通过PMS构造出一个<strong>InstrumentationInfo</strong>对象紧接着通过它使用类加载器构建出一个<strong>Instrumentation</strong>对象，该对象其实是对Activity或者Application方法调用的一个统一收口(简单说就是将ActivityThread对Activity和Application的通信都统一规范到这一个类中进行)，期间的通信介质就是<strong>LoadedApk</strong>。</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleBindApplication</span><span class="hljs-params">(AppBindData data)</span> &#123;<br>    ...<br>    <span class="hljs-comment">// 构建一个LoadedApk对象，该对象其实是应用在内存中的表现形式。</span><br>    data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo);<br><br>    ...<br>  <br>    <span class="hljs-keyword">final</span> InstrumentationInfo ii;<br>    <span class="hljs-keyword">if</span> (data.instrumentationName != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 内部是通过PackageManagerService(PMS)来创建一个InstrumentationInfo对象，用于后续生成Instrumentation</span><br>            ii = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ApplicationPackageManager</span>(<span class="hljs-literal">null</span>, getPackageManager())<br>                    .getInstrumentationInfo(data.instrumentationName, <span class="hljs-number">0</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (PackageManager.NameNotFoundException e) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<br>                    <span class="hljs-string">&quot;Unable to find instrumentation info for: &quot;</span> + data.instrumentationName);<br>        &#125;<br><br>        mInstrumentationPackageName = ii.packageName;<br>        mInstrumentationAppDir = ii.sourceDir;<br>        mInstrumentationSplitAppDirs = ii.splitSourceDirs;<br>        mInstrumentationLibDir = getInstrumentationLibrary(data.appInfo, ii);<br>        mInstrumentedAppDir = data.info.getAppDir();<br>        mInstrumentedSplitAppDirs = data.info.getSplitAppDirs();<br>        mInstrumentedLibDir = data.info.getLibDir();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        ii = <span class="hljs-literal">null</span>;<br>    &#125;<br><br>    ...<br>    <span class="hljs-keyword">if</span> (ii != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-comment">// 这个Context不是Application的Context，本次关注Application的context的创建所以这边咱不关心</span><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ContextImpl</span> <span class="hljs-variable">instrContext</span> <span class="hljs-operator">=</span> ContextImpl.createAppContext(<span class="hljs-built_in">this</span>, pi);<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">final</span> <span class="hljs-type">ClassLoader</span> <span class="hljs-variable">cl</span> <span class="hljs-operator">=</span> instrContext.getClassLoader();<br>            <span class="hljs-comment">// 创建出Instrumentation对象</span><br>            mInstrumentation = (Instrumentation)<br>                cl.loadClass(data.instrumentationName.getClassName()).newInstance();<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<br>                <span class="hljs-string">&quot;Unable to instantiate instrumentation &quot;</span><br>                + data.instrumentationName + <span class="hljs-string">&quot;: &quot;</span> + e.toString(), e);<br>        &#125;<br>    <br>        <span class="hljs-keyword">final</span> <span class="hljs-type">ComponentName</span> <span class="hljs-variable">component</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ComponentName</span>(ii.packageName, ii.name);<br>        mInstrumentation.init(<span class="hljs-built_in">this</span>, instrContext, appContext, component,<br>                data.instrumentationWatcher, data.instrumentationUiAutomationConnection);<br>        ...<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        mInstrumentation = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Instrumentation</span>();<br>    &#125;<br><br>    ...<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// 调用LoadedApk的makeApplication()开始了Application的创建流程以及将其与ContextImpl绑定</span><br>        <span class="hljs-type">Application</span> <span class="hljs-variable">app</span> <span class="hljs-operator">=</span> data.info.makeApplication(data.restrictedBackupMode, <span class="hljs-literal">null</span>);<br>        mInitialApplication = app;<br><br>        ...<br>        <span class="hljs-keyword">try</span> &#123;<br>            mInstrumentation.onCreate(data.instrumentationArgs);<br>        &#125;<br>        <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<br>                <span class="hljs-string">&quot;Exception thrown in onCreate() of &quot;</span><br>                + data.instrumentationName + <span class="hljs-string">&quot;: &quot;</span> + e.toString(), e);<br>        &#125;<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 执行Application.onCreate()</span><br>            mInstrumentation.callApplicationOnCreate(app);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            <span class="hljs-keyword">if</span> (!mInstrumentation.onException(app, e)) &#123;<br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<br>                    <span class="hljs-string">&quot;Unable to create application &quot;</span> + app.getClass().getName()<br>                    + <span class="hljs-string">&quot;: &quot;</span> + e.toString(), e);<br>            &#125;<br>        &#125;<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        StrictMode.setThreadPolicy(savedPolicy);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">private void handleBindApplication(AppBindData data) &#123;</span><br><span class="line">    ...</span><br><span class="line">    // 构建一个LoadedApk对象，该对象其实是应用在内存中的表现形式。</span><br><span class="line">    data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">  </span><br><span class="line">    final InstrumentationInfo ii;</span><br><span class="line">    if (data.instrumentationName != null) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 内部是通过PackageManagerService(PMS)来创建一个InstrumentationInfo对象，用于后续生成Instrumentation</span><br><span class="line">            ii = new ApplicationPackageManager(null, getPackageManager())</span><br><span class="line">                    .getInstrumentationInfo(data.instrumentationName, 0);</span><br><span class="line">        &#125; catch (PackageManager.NameNotFoundException e) &#123;</span><br><span class="line">            throw new RuntimeException(</span><br><span class="line">                    &quot;Unable to find instrumentation info for: &quot; + data.instrumentationName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mInstrumentationPackageName = ii.packageName;</span><br><span class="line">        mInstrumentationAppDir = ii.sourceDir;</span><br><span class="line">        mInstrumentationSplitAppDirs = ii.splitSourceDirs;</span><br><span class="line">        mInstrumentationLibDir = getInstrumentationLibrary(data.appInfo, ii);</span><br><span class="line">        mInstrumentedAppDir = data.info.getAppDir();</span><br><span class="line">        mInstrumentedSplitAppDirs = data.info.getSplitAppDirs();</span><br><span class="line">        mInstrumentedLibDir = data.info.getLibDir();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        ii = null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    if (ii != null) &#123;</span><br><span class="line">        // 这个Context不是Application的Context，本次关注Application的context的创建所以这边咱不关心</span><br><span class="line">        final ContextImpl instrContext = ContextImpl.createAppContext(this, pi);</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            final ClassLoader cl = instrContext.getClassLoader();</span><br><span class="line">            // 创建出Instrumentation对象</span><br><span class="line">            mInstrumentation = (Instrumentation)</span><br><span class="line">                cl.loadClass(data.instrumentationName.getClassName()).newInstance();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            throw new RuntimeException(</span><br><span class="line">                &quot;Unable to instantiate instrumentation &quot;</span><br><span class="line">                + data.instrumentationName + &quot;: &quot; + e.toString(), e);</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        final ComponentName component = new ComponentName(ii.packageName, ii.name);</span><br><span class="line">        mInstrumentation.init(this, instrContext, appContext, component,</span><br><span class="line">                data.instrumentationWatcher, data.instrumentationUiAutomationConnection);</span><br><span class="line">        ...</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        mInstrumentation = new Instrumentation();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    try &#123;</span><br><span class="line">        // 调用LoadedApk的makeApplication()开始了Application的创建流程以及将其与ContextImpl绑定</span><br><span class="line">        Application app = data.info.makeApplication(data.restrictedBackupMode, null);</span><br><span class="line">        mInitialApplication = app;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        try &#123;</span><br><span class="line">            mInstrumentation.onCreate(data.instrumentationArgs);</span><br><span class="line">        &#125;</span><br><span class="line">        catch (Exception e) &#123;</span><br><span class="line">            throw new RuntimeException(</span><br><span class="line">                &quot;Exception thrown in onCreate() of &quot;</span><br><span class="line">                + data.instrumentationName + &quot;: &quot; + e.toString(), e);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            // 执行Application.onCreate()</span><br><span class="line">            mInstrumentation.callApplicationOnCreate(app);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            if (!mInstrumentation.onException(app, e)) &#123;</span><br><span class="line">                throw new RuntimeException(</span><br><span class="line">                    &quot;Unable to create application &quot; + app.getClass().getName()</span><br><span class="line">                    + &quot;: &quot; + e.toString(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        StrictMode.setThreadPolicy(savedPolicy);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>通过上面代码可以看到我们有了<strong>LoadedApk(代表整个APK)、Instrumentation(ActivityThread与Application和Activity的通信收口)</strong> 这俩对象，主要创建流程都是在这俩类中进行的。<br>LoadedApk中：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Application <span class="hljs-title function_">makeApplication</span><span class="hljs-params">(<span class="hljs-type">boolean</span> forceDefaultAppClass,</span><br><span class="hljs-params">        Instrumentation instrumentation)</span> &#123;<br>    ...<br><br>    <span class="hljs-type">Application</span> <span class="hljs-variable">app</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><br>    <span class="hljs-type">String</span> <span class="hljs-variable">appClass</span> <span class="hljs-operator">=</span> mApplicationInfo.className;<br>    <span class="hljs-keyword">if</span> (forceDefaultAppClass || (appClass == <span class="hljs-literal">null</span>)) &#123;<br>        <span class="hljs-comment">// 没有自定义Application或者规定了使用默认Application，则初始化的是android.app.Application</span><br>        appClass = <span class="hljs-string">&quot;android.app.Application&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// 获取类加载器</span><br>        java.lang.<span class="hljs-type">ClassLoader</span> <span class="hljs-variable">cl</span> <span class="hljs-operator">=</span> getClassLoader();<br>        ...<br>        <span class="hljs-comment">// 创建出应用Context</span><br>        <span class="hljs-type">ContextImpl</span> <span class="hljs-variable">appContext</span> <span class="hljs-operator">=</span> ContextImpl.createAppContext(mActivityThread, <span class="hljs-built_in">this</span>);<br>        <span class="hljs-comment">// 执行Instrumentation的newApplication()创建一个Application</span><br>        app = mActivityThread.mInstrumentation.newApplication(<br>                cl, appClass, appContext);<br>        appContext.setOuterContext(app);<br>    &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>        ...<br>    &#125;<br>    ...<br>    <span class="hljs-keyword">return</span> app;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public Application makeApplication(boolean forceDefaultAppClass,</span><br><span class="line">        Instrumentation instrumentation) &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    Application app = null;</span><br><span class="line"></span><br><span class="line">    String appClass = mApplicationInfo.className;</span><br><span class="line">    if (forceDefaultAppClass || (appClass == null)) &#123;</span><br><span class="line">        // 没有自定义Application或者规定了使用默认Application，则初始化的是android.app.Application</span><br><span class="line">        appClass = &quot;android.app.Application&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        // 获取类加载器</span><br><span class="line">        java.lang.ClassLoader cl = getClassLoader();</span><br><span class="line">        ...</span><br><span class="line">        // 创建出应用Context</span><br><span class="line">        ContextImpl appContext = ContextImpl.createAppContext(mActivityThread, this);</span><br><span class="line">        // 执行Instrumentation的newApplication()创建一个Application</span><br><span class="line">        app = mActivityThread.mInstrumentation.newApplication(</span><br><span class="line">                cl, appClass, appContext);</span><br><span class="line">        appContext.setOuterContext(app);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    return app;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>必要的类都创建完毕之后就该开始使用它们了，调用<code>LoadedApk.makeApplication()</code>方法来创建出一个<strong>Application</strong>对象(该对象之后再传递给Instrumentation来执行onCreate()等方法从而走到Application的生命周期)，创建Application的过程概括来讲就是调用类加载器将我们AndroidManifest中生命的Application加载进内存，如果我们没有指定自己的Application的话就默认会加载”<strong>android.app.Application</strong>“。<br>具体的Application创建流程是首先生成一个ClassLoader，然后通过<code>ContextImpl.createAppContext()</code>构造了一个appContext(<strong>应用级别的Context</strong>)，构造时保存了LoadedApk，进程的ActivityThread以及初始化了Resource资源，ApplicationContentResolver对数据库的操作类等等。</p>
 <p>4.然后将这两个对象传入应用的<code>Instrumentation.newApplication()</code>，其内部使用类加载器+反射生成一个Application，紧接着调用<code>Application.attach()</code>将appContext设置给Application这个装饰类</p>
-<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs haxe"><span class="hljs-keyword">static</span> <span class="hljs-keyword">public</span> Application <span class="hljs-keyword">new</span><span class="hljs-type">Application</span>(Class&lt;?&gt; clazz, Context context)<br>        throws InstantiationException, IllegalAccessException, <br>        ClassNotFoundException &#123;<br>    <span class="hljs-comment">// 反射生成Application对象</span><br>    Application app = (Application)clazz.<span class="hljs-keyword">new</span><span class="hljs-type">Instance</span>();<br>    <span class="hljs-comment">// 将应用Context设置给Application，此时其实就是设置给了ContextWrapper的mBase属性，而Application是ContextWrapper子类所以自然它也就和Context关联起来了。</span><br>    app.attach(context);<br>    <span class="hljs-keyword">return</span> app;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static public Application newApplication(Class&lt;?&gt; clazz, Context context)</span><br><span class="line">        throws InstantiationException, IllegalAccessException, </span><br><span class="line">        ClassNotFoundException &#123;</span><br><span class="line">    // 反射生成Application对象</span><br><span class="line">    Application app = (Application)clazz.newInstance();</span><br><span class="line">    // 将应用Context设置给Application，此时其实就是设置给了ContextWrapper的mBase属性，而Application是ContextWrapper子类所以自然它也就和Context关联起来了。</span><br><span class="line">    app.attach(context);</span><br><span class="line">    return app;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这整个流程下来就完成了Application中Context的构建，也就是Application这个装饰类对ContextImpl的装饰。</p>
 <h3 id="Activity的Context构建流程"><a href="#Activity的Context构建流程" class="headerlink" title="Activity的Context构建流程"></a>Activity的Context构建流程</h3><p>如果从Activity的启动流程来讲解那将是一篇遥遥无期的文章，这里省去了Activity启动流程中前半部分复杂的逻辑，具体可以参考另外一个文章我会贴链接。</p>
-<img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Activity%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.jpg" srcset="/img/loading.gif" lazyload class="" title="Activity的ContextImpl创建过程">
+<img src="/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/Activity%E7%9A%84ContextImpl%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.jpg" class="" title="Activity的ContextImpl创建过程">
 
 <p>我们通过Activity启动流程中可以知道最终会调用到<code>ActivityThread.handleLaunchActivity()</code>方法中来，紧接着在其内部会执行<code>Activity a = performLaunchActivity(r, customIntent);</code> 用于创建Activity，然后调用<code>handleResumeActivity(...);</code>开始页面的测绘流程等。本篇只为探究Activity的Context创建过程，所以只关心performLaunchActivity()流程。</p>
 <p>Activity的Context创建过程比Application中Context流程简单很多。主要分为几步(<strong>以下代码均摘抄自performLaunchActivity()方法</strong>)：</p>
 <ol>
-<li>通过ActivityThread中的mInstrumentation对象调用newActivity()生成对应的Activity对象，其内部生成原理就是通过反射创建。而这个mInstrumentation其实在应用启动过程中已经创建完毕，也就是在Application的Context创建流程中。<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-comment">// 通过LoadedApk获取ClassLoader</span><br>java.lang.ClassLoader cl = r.packageInfo.get<span class="hljs-constructor">ClassLoader()</span>;<br><span class="hljs-comment">// 创建出所需启动的Activity对象，内部是使用反射</span><br>activity = mInstrumentation.<span class="hljs-keyword">new</span><span class="hljs-constructor">Activity(<span class="hljs-params">cl</span>, <span class="hljs-params">component</span>.<span class="hljs-params">getClassName</span>()</span>, r.intent);<br></code></pre></td></tr></table></figure></li>
-<li>调用createBaseContextForActivity()方法去创建一个Activity对应的ContextImpl，其内部也是调用的ContextImpl的构造方法创建。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Context</span> <span class="hljs-variable">appContext</span> <span class="hljs-operator">=</span> createBaseContextForActivity(r, activity);<br><br><span class="hljs-keyword">private</span> Context <span class="hljs-title function_">createBaseContextForActivity</span><span class="hljs-params">(ActivityClientRecord r, <span class="hljs-keyword">final</span> Activity activity)</span> &#123;<br>    ...<br>    <span class="hljs-comment">// 创建Activity对应的ContextImpl</span><br>    <span class="hljs-type">ContextImpl</span> <span class="hljs-variable">appContext</span> <span class="hljs-operator">=</span> ContextImpl.createActivityContext(<br>            <span class="hljs-built_in">this</span>, r.packageInfo, r.token, displayId, r.overrideConfig);<br>    appContext.setOuterContext(activity);<br>    <span class="hljs-type">Context</span> <span class="hljs-variable">baseContext</span> <span class="hljs-operator">=</span> appContext;<br><br>    ...<br>    <span class="hljs-keyword">return</span> baseContext;<br>&#125;<br></code></pre></td></tr></table></figure></li>
-<li>调用activity.attach(…)方法将创建出来的ContextImpl与Activity绑定起来，当然传递的参数有很多，比如也会将Application传递进去，当然这时候这个对象也已经存在了。紧接着内部还是老配方：执行attachBaseContext(context);将ContextImpl设置给父类ContextWrapper的mBase属性。<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-comment">// 将创建出来的ContextImpl关联给Activity，其内部是调用了attachBaseContext(context);将其设置给ContextWrapper.mBase</span><br><span class="hljs-comment">// 当然这个方法做了很多很多事，这里不研究别的我们只关心Context的创建流程</span><br>activity.attach(appContext, <span class="hljs-keyword">this</span>, getInstrumentation(), r.token,<br>        r.ident, app, r.<span class="hljs-built_in">int</span>ent, r.activityInfo, title, r.parent,<br>        r.embeddedID, r.lastNonConfigurationInstances, config,<br>        r.<span class="hljs-built_in">ref</span>errer, r.voiceInteractor, window);<br></code></pre></td></tr></table></figure></li>
+<li>通过ActivityThread中的mInstrumentation对象调用newActivity()生成对应的Activity对象，其内部生成原理就是通过反射创建。而这个mInstrumentation其实在应用启动过程中已经创建完毕，也就是在Application的Context创建流程中。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 通过LoadedApk获取ClassLoader</span><br><span class="line">java.lang.ClassLoader cl = r.packageInfo.getClassLoader();</span><br><span class="line">// 创建出所需启动的Activity对象，内部是使用反射</span><br><span class="line">activity = mInstrumentation.newActivity(cl, component.getClassName(), r.intent);</span><br></pre></td></tr></table></figure></li>
+<li>调用createBaseContextForActivity()方法去创建一个Activity对应的ContextImpl，其内部也是调用的ContextImpl的构造方法创建。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Context appContext = createBaseContextForActivity(r, activity);</span><br><span class="line"></span><br><span class="line">private Context createBaseContextForActivity(ActivityClientRecord r, final Activity activity) &#123;</span><br><span class="line">    ...</span><br><span class="line">    // 创建Activity对应的ContextImpl</span><br><span class="line">    ContextImpl appContext = ContextImpl.createActivityContext(</span><br><span class="line">            this, r.packageInfo, r.token, displayId, r.overrideConfig);</span><br><span class="line">    appContext.setOuterContext(activity);</span><br><span class="line">    Context baseContext = appContext;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    return baseContext;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>调用activity.attach(…)方法将创建出来的ContextImpl与Activity绑定起来，当然传递的参数有很多，比如也会将Application传递进去，当然这时候这个对象也已经存在了。紧接着内部还是老配方：执行attachBaseContext(context);将ContextImpl设置给父类ContextWrapper的mBase属性。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 将创建出来的ContextImpl关联给Activity，其内部是调用了attachBaseContext(context);将其设置给ContextWrapper.mBase</span><br><span class="line">// 当然这个方法做了很多很多事，这里不研究别的我们只关心Context的创建流程</span><br><span class="line">activity.attach(appContext, this, getInstrumentation(), r.token,</span><br><span class="line">        r.ident, app, r.intent, r.activityInfo, title, r.parent,</span><br><span class="line">        r.embeddedID, r.lastNonConfigurationInstances, config,</span><br><span class="line">        r.referrer, r.voiceInteractor, window);</span><br></pre></td></tr></table></figure></li>
 </ol>
 <p>至此流程结束</p>
 <h2 id="Context注意事项"><a href="#Context注意事项" class="headerlink" title="Context注意事项"></a>Context注意事项</h2><h4 id="内存泄漏问题："><a href="#内存泄漏问题：" class="headerlink" title="内存泄漏问题："></a>内存泄漏问题：</h4><p><strong>内存泄漏的本质是长生命周期的对象持有了短生命周期对象的引用导致短生命周期对象在无用的情况下不能及时被GC</strong></p>
@@ -377,202 +294,145 @@
 <p>在Context的使用中要十分注意避免出现内存泄漏问题。_</p>
 <hr>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                  <div class="post-meta mr-3">
-                    <i class="iconfont icon-category"></i>
-                    
-                      <a class="hover-with-bg" href="/categories/Android/">Android</a>
-                    
-                  </div>
-                
-                
-              </div>
-              
-                <p class="note note-warning">
-                  
-                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
-                  
-                </p>
-              
-              
-                <div class="post-prevnext">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2022/03/29/Android%E7%89%88%E6%9C%AC%E5%8F%B7%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Android版本号对应关系</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/">
-                        <span class="hidden-mobile">Android中多线程通信：Handler的理解</span>
-                        <span class="visible-mobile">Next</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+  </div>
+</article>
 
-            
-          </article>
-        </div>
-      </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
     </div>
-    
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
-
-<!-- Custom -->
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Context的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">2.</span> <span class="toc-text">Context的设计思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.1.</span> <span class="toc-text">装饰者模式是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Context%E7%B1%BB%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%BB%A5%E5%8F%8A%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">2.2.</span> <span class="toc-text">Context类关系图以及装饰者模式的应用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">Context源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Application%E7%9A%84Context%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">Application的Context构建流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Activity%E7%9A%84Context%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">Activity的Context构建流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Context%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">4.</span> <span class="toc-text">Context注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number">4.0.1.</span> <span class="toc-text">内存泄漏问题：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Context%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%9A"><span class="toc-number">4.0.2.</span> <span class="toc-text">Context的使用：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
     </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&text=Android源码小记-Context解析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&is_video=false&description=Android源码小记-Context解析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android源码小记-Context解析&body=Check out this article: http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&title=Android源码小记-Context解析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&name=Android源码小记-Context解析&description=&lt;h2 id=&#34;Context的使用&#34;&gt;&lt;a href=&#34;#Context的使用&#34; class=&#34;headerlink&#34; title=&#34;Context的使用&#34;&gt;&lt;/a&gt;Context的使用&lt;/h2&gt;&lt;p&gt;对于Context的使用大家并不陌生，因为在Android开发的方方面面都需要使用到Context，比如说是：&lt;/p&gt;
+&lt;p&gt;startActivity()：启动Activity、getResource():获取资源、getColor():获取色值、startService():启动服务&lt;/p&gt;
+&lt;p&gt;正是由于Context是如此的重要，所以我们在很多情况下比如自定义View，都需要传入一个Context对象才能满足编码需求，所以又牵扯出了内存泄漏等问题（比如传入了Activity当成Context，在页面生命周期已经结束时由于某些耗时等操作导致引用仍被持有导致无法及时被回收）。&lt;/p&gt;
+&lt;p&gt;既然Context是如此重要，那我们就有必要对它做个深入了解。&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/03/29/Android%E6%BA%90%E7%A0%81%E5%B0%8F%E8%AE%B0-Context%E8%A7%A3%E6%9E%90/&t=Android源码小记-Context解析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
   </div>
 </div>
-    
 
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
     
-  </main>
-
-  <footer class="text-center mt-5 py-3">
-  <div class="footer-content">
-     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    
+    2022
+    lianwenhong
   </div>
-  
-
-  
-
-  
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
 </footer>
 
+    </div>
+    <!-- styles -->
 
-  <!-- SCRIPTS -->
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
   
-  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
     })
+  })
   </script>
 
 
-<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
+<script src="/js/main.js"></script>
 
-<!-- Plugins -->
+<!-- search -->
 
+<!-- Google Analytics -->
 
-  <script  src="/js/local-search.js" ></script>
+<!-- Baidu Analytics -->
 
+<!-- Cloudflare Analytics -->
 
+<!-- Umami Analytics -->
 
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
+<!-- Disqus Comments -->
 
-
-
-  
-
-
-
-  
-    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
-  
-  
-    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
-  
-
-
-
-
-
-
-  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var title = document.getElementById('subtitle').title;
-      
-        typing(title);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 主题的启动项 保持在最底部 -->
-<script  src="/js/boot.js" ></script>
-
+<!-- utterances Comments -->
 
 </body>
 </html>
