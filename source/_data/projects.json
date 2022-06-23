@@ -8,5 +8,10 @@
     "name":"AspectJDemo",
     "url":"https://github.com/lianwenhong/AspectJDemo",
     "desc":"简单AspectJ demo，用于学习理解AspectJ，demo实现的是利用AspectJ实现简单AOP"
+  },
+  {
+    "name":"FilterFastClick",
+    "url":"https://github.com/lianwenhong/FilterFastClick",
+    "desc":"通过javassist动态注入代码实现AOP，屏蔽某个按钮连续快速点击导致页面弹出多个问题"
   }
 ]
