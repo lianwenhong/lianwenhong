@@ -1,8 +1,8 @@
 ---
 title: binder（二）MMU内存管理单元浅析
 date: 2022-06-27 17:02:00
-tags:
-categories:
+tags: binder
+categories: Android
 ---
 ## 什么是虚拟内存
 在现代的操作系统中，当你对内存地址进行操作时其实操作的并不是物理内存地址，而是系统虚拟出来的一个虚拟内存地址。
