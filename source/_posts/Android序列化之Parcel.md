@@ -1,8 +1,8 @@
 ---
 title: Android序列化之Parcel
 date: 2022-06-07 19:41:11
-tags:
-categories:
+tags: binder
+categories: Android
 ---
 Android操作系统的底层数据传输形式是简单的字节序列形式进行传递。用通俗的话说就是系统不认识对象，只认识字节序列。而我们为了达到通信或者存储的目的，需要先将数据序列化传递，要使用时再进行反序列化还原。
 
