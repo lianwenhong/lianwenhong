@@ -594,6 +594,7 @@ ON_CREATE、ON_START、ON_RESUME、ON_PAUSE、ON_STOP
 
 我们从这个对象其实早在应用刚启动时进行过初始化了，是在Androidx的startup-runtime中完成的：
 {% asset_img startup-runtime.png startup-runtime %}
+[Jetpack-Startup源码解析](https://wenku.baidu.com/view/e99e212ddd80d4d8d15abe23482fb4daa58d1dac.html)
 ```
 public final class ProcessLifecycleInitializer implements Initializer<LifecycleOwner> {
 
