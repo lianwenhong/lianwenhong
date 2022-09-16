@@ -82,9 +82,9 @@ class MainActivity : AppCompatActivity() {
 - 在页面中使用observe()方法传入Observer观察者对象和LifecycleOwner对象使得userName内数据发生变化时或者页面生命周期发生变化时会将userName最新的值回调到Observer的onChanged()方法中。
 
 ## LiveData原理解析
-讲解LiveData之前最好是先对Lifecycle和ViewModel的实现原理有足够的了解否则对本文阅读可能有点不知所云，特别是对了解《页面生命周期变化时如何将最新的LiveData数据通知给数据观察者以达到更新UI的目的》这部分会比较难理解。
+讲解LiveData之前最好是先对**Lifecycle** 和**ViewModel** 的实现原理有足够的了解否则对本文阅读可能有点不知所云，特别是对了解《页面生命周期变化时如何将最新的LiveData数据通知给数据观察者以达到更新UI的目的》这部分会比较难理解。
 
-如果不了解可以看我前面2篇文章：[Jetpack-Lifecycle]()，[Jetpack-ViewModel]()
+如果不了解可以看我前面2篇文章：[Jetpack-Lifecycle](https://lianwenhong.top/2022/08/23/Jetpack-Lifecycle/)，[Jetpack-ViewModel](https://lianwenhong.top/2022/09/06/Jetpack-ViewModel/)
 
 从2个角度来分析LiveData的运行原理：LiveData观察者绑定**LiveData->observe()** 和LiveData数据发生改变 **LiveData->setValue()**
 
@@ -267,66 +267,55 @@ private void considerNotify(ObserverWrapper observer) {
 **dispatchingValue(@Nullable ObserverWrapper initiator)的2种取值**
 - 页面生命周期回调中通知数据观察者时传入的是this，通过内部的代码逻辑可以看出当initiator有值时只通知给initiator这个观察者，这很好理解，当某个页面生命周期发生变化时，肯定我们只想通知在该页面中监听LiveData的数据观察者去刷新页面，没必要把这个LiveData的全部数据观察者都刷新一遍，因为其他页面中注册的数据观察者完全会在它自己所属的页面从非活跃到活跃状态切换时得到通知。
 - 而当setValue(null)时是因为数据源发生了变更而发出的通知，肯定要让所有数据观察者都知道这个数据的变化，即使某些页面处于非活跃状态本次更新并不会立马被渲染到页面上那也得通知以便更新数据观察者内部的数据源以及mVersion版本号。
+- dispatchingValue()处理过程是先判断当前是否有正在分发的通知，如果有则将mDispatchInvalidated置为true表示将正在分发的通知置为无效，下面的动do-while循环会继续通过判断mDispatchInvalidated的值来确保最新的值能通知给数据观察者。当然，这一过程是一个多线程下可能发生的场景，所以正常使用的情况下其实不需要关心这一套逻辑，只需要知道dispatchingValue()方法最终调用了considerNotify()方法去最终通知数据观察者。
 
+considerNotify()处理过程只要熬过了3个if那么就能真正通知到数据观察者(onChanged)。1、先判断当前数据观察者绑定的页面还是否处于活跃状态，2、再重新获取一次数据观察者绑定的页面生命周期状态值避免多线程情况下页面生命周期已经发生变化并且数据观察者内部还没及时更新这个状态，因为毕竟observer.mActive是在别的方法写的。3、判断数据观察者最后一次收到通知时数据的版本号，只有版本号小于数据当前的版本号才说明数据有更新。满足这三个if之后最终onChanged()才能得到执行，流程完毕。
 
-
-我们来看一下：
+### LiveData->postValue()如何保证线程安全?
 ```
-@MainThread
-protected void setValue(T value) {
-    必须是主线程
-}
+final Object mDataLock = new Object();
+
+private final Runnable mPostValueRunnable = new Runnable() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public void run() {
+        Object newValue;
+        synchronized (mDataLock) {
+            newValue = mPendingData;
+            mPendingData = NOT_SET;
+        }
+        setValue((T) newValue);
+    }
+};
 
 protected void postValue(T value) {
-    ... 最终也是回调到setValue()所以也是必须主线程
+    boolean postTask;
+    synchronized (mDataLock) {
+        postTask = mPendingData == NOT_SET;
+        mPendingData = value;
+    }
+    if (!postTask) {
+        return;
+    }
     ArchTaskExecutor.getInstance().postToMainThread(mPostValueRunnable);
 }
-
-@MainThread
-public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
-    必须是主线程
-}
-
-@MainThread
-public void observeForever(@NonNull Observer<? super T> observer) {
-    必须是主线程
-}
 ```
-**照理说LiveData的所有值更新操作和设置监听都必须在主线程进行操作，那在触发通知的过程中哪里来的多线程呢？答案在于LifecycleBoundObserver这个类。**
-我们知道当页面生命周期发生变化时Lifecycle会将页面的生命周期回调给LifecycleBoundObserver.onStateChanged()这个回调。通过之前[Jetpack-Lifecycle]()我们可以知道它是通过LifecycleOwner中的LifecycleRegistry来实现的页面观察者模式，正常情况下LifecycleRegistry的创建过程都是`LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);`所以其内部有个变量mEnforceMainThread = enforceMainThread;会被置为true，所以生命周期变化的通知都会在主线程中执行也就是说LifecycleBoundObserver.onStateChanged()回调也会在主线程中执行。但是LifecycleRegistry中也有个方法可以实现对象创建：
-```
+首先postValue()是通过Handler将LiveData数据源更新的逻辑从子线程发送到主线程中去执行，并且通过同步锁的方式实现线程安全。具体实现是将newValue和mPendingData的赋值过程加锁保证当主线程正在执行newValue数据更新之前如果子线程再次调用postValue()会被直接过滤掉后面这次postValue()然后主线程会使用最新的newValue去执行setValue()。即保证了性能上的优化过滤掉了不必要的setValue()流程又保证了值的准确性。
 
-    /**
-     * Creates a new LifecycleRegistry for the given provider, that doesn't check
-     * that its methods are called on the threads other than main.
-     * <p>
-     * LifecycleRegistry is not synchronized: if multiple threads access this {@code
-     * LifecycleRegistry}, it must be synchronized externally.
-     * <p>
-     * Another possible use-case for this method is JVM testing, when main thread is not present.
-     */
-    @VisibleForTesting
-    @NonNull
-    public static LifecycleRegistry createUnsafe(@NonNull LifecycleOwner owner) {
-        return new LifecycleRegistry(owner, false);
-    }
-```
-通过这个方法创建的LifecycleRegistry对象不会强制Lifecycle机制必须在主线程中执行，所以就有可能导致LifecycleBoundObserver.onStateChanged()在子线程中被回调。当然这个方法并不建议我们普通开发者使用，通常是JVM用于测试使用。
+## 使用总结
+1. LiveData->observer(lifecycleOwner,observer)时不要把同一个observer对象和不同的lifecycleOwner绑定否则会抛出异常
+2. 在Fragment中使用LiveData时请使用viewLifecycleOwner而不要使用Fragment或者Activity实例
+3. 也可以通过observeForever()来设置一个不在乎页面生命周期的数据观察者，此时不管设置监听时处于什么页面也不管页面是否活跃都会收到LiveData数据变化的通知，但是这种监听需要我们手动去解除绑定
+
+随便说说LiveData存储结构：
+{% asset_img LiveData存储结构.jpg LiveData存储结构 %}
 
 
+遗留问题：
+**LiveData粘性事件**
 
-3. 
+**Fragment中使用LiveData为什么要传入viewLifecycleOwner?**
 
+**为什么LiveData->setValue()->dispatchingValue()过程中会有多线程的场景兼容？**
 
-
-
-
-
-1.void activeStateChanged(boolean newActive)判断当前观察者对应的LifecycleOwner是否处于活跃状态，如果处于活跃状态则分发事件通知观察者，changeActiveCounter(mActive ? 1 : -1)只是检测LiveData的当前活跃观察者数量从0到1以及从1到0这两种情况的回调。
-
-
-当页面的生命周期状态发生变化时会回调到每一个封装起来的观察者Wrapper的onStateChanged()，Wrapper内部会判断当前这个页面的生命周期是否是活跃状态，如果是则根据mVersion判断是否需要更新值，如果需要则调用onChanged。如果是DESTROY则移除该观察者，这就是Fragment为什么要使用viewLifecycleOwner的原因所在，并且当一个页面变化时，所对应的每个LiveData可能有n多个观察者，每个观察者都是这么实现。
-
-
-
-[为什么Fragment中要使用viewLifecycleOwner代替this](https://juejin.cn/post/6915222252506054663)
+还有一些关于LiveData的知识点由于篇幅原因放在下一篇文章中：[Jetpack-LiveData 原理补充](https://lianwenhong.top/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/)
