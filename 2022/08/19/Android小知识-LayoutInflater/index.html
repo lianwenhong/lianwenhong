@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="报错引发的LayoutInflater使用上的思考今天在开发过程中无意间收获了这么一个崩溃： 123456789101112131415161718java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child&amp;#x27;s pare">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android小知识- LayoutInflater">
+<meta property="og:url" content="http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/index.html">
+<meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="报错引发的LayoutInflater使用上的思考今天在开发过程中无意间收获了这么一个崩溃： 123456789101112131415161718java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child&amp;#x27;s pare">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-19T10:49:17.000Z">
+<meta property="article:modified_time" content="2022-09-30T14:31:24.924Z">
+<meta property="article:author" content="lianwenhong">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Android小知识- LayoutInflater</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/08/23/Jetpack-Lifecycle/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&text=Android小知识- LayoutInflater"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&is_video=false&description=Android小知识- LayoutInflater"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android小知识- LayoutInflater&body=Check out this article: http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&name=Android小知识- LayoutInflater&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&t=Android小知识- LayoutInflater"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%BC%95%E5%8F%91%E7%9A%84LayoutInflater%E4%BD%BF%E7%94%A8%E4%B8%8A%E7%9A%84%E6%80%9D%E8%80%83"><span class="toc-number">1.</span> <span class="toc-text">报错引发的LayoutInflater使用上的思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LayoutInflater%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">LayoutInflater原理解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fragment%E4%B8%AD%E4%BD%BF%E7%94%A8InflaterLayout%E6%8A%A5%E9%94%99%E5%A4%8D%E7%9B%98"><span class="toc-number">3.</span> <span class="toc-text">Fragment中使用InflaterLayout报错复盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LayoutInflater%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">LayoutInflater总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Android小知识- LayoutInflater
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-08-19T10:49:17.000Z" itemprop="datePublished">2022-08-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="报错引发的LayoutInflater使用上的思考"><a href="#报错引发的LayoutInflater使用上的思考" class="headerlink" title="报错引发的LayoutInflater使用上的思考"></a>报错引发的LayoutInflater使用上的思考</h3><p>今天在开发过程中无意间收获了这么一个崩溃：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child&#x27;s parent first.</span><br><span class="line">        at android.view.ViewGroup.addViewInner(ViewGroup.java:4937)</span><br><span class="line">        at android.view.ViewGroup.addView(ViewGroup.java:4768)</span><br><span class="line">        at android.view.ViewGroup.addView(ViewGroup.java:4708)</span><br><span class="line">        at androidx.fragment.app.FragmentStateManager.addViewToContainer(FragmentStateManager.java:840)</span><br><span class="line">        at androidx.fragment.app.FragmentStateManager.createView(FragmentStateManager.java:529)</span><br><span class="line">        at androidx.fragment.app.FragmentStateManager.moveToExpectedState(FragmentStateManager.java:261)</span><br><span class="line">        at androidx.fragment.app.FragmentManager.executeOpsTogether(FragmentManager.java:1890)</span><br><span class="line">        at androidx.fragment.app.FragmentManager.removeRedundantOperationsAndExecute(FragmentManager.java:1808)</span><br><span class="line">        at androidx.fragment.app.FragmentManager.execPendingActions(FragmentManager.java:1751)</span><br><span class="line">        at androidx.fragment.app.FragmentManager$5.run(FragmentManager.java:538)</span><br><span class="line">        at android.os.Handler.handleCallback(Handler.java:790)</span><br><span class="line">        at android.os.Handler.dispatchMessage(Handler.java:99)</span><br><span class="line">        at android.os.Looper.loop(Looper.java:164)</span><br><span class="line">        at android.app.ActivityThread.main(ActivityThread.java:6494)</span><br><span class="line">        at java.lang.reflect.Method.invoke(Native Method)</span><br><span class="line">        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:438)</span><br><span class="line">        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:807)</span><br></pre></td></tr></table></figure>
+<p>崩溃的意思是某个View已经存在父View，如果要重复添加的话就得先执行<code>removeView()把</code>它从父View中移除，这是一个很常见的错误，一个View只能存在一个父View。同理：同一个鸡蛋不可能同时被放在两个篮子中。</p>
+<p>报错代码在一个<code>Fragment-&gt;onCreateView()</code>声明周期回调中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">override fun onCreateView(</span><br><span class="line">    inflater: LayoutInflater,</span><br><span class="line">    container: ViewGroup?,</span><br><span class="line">    savedInstanceState: Bundle?</span><br><span class="line">): View? &#123;</span><br><span class="line">    return inflater.inflate(R.layout.fragment_me, container)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只需要将<code> inflater.inflate(R.layout.fragment_me, container)</code>这行改成<code> inflater.inflate(R.layout.fragment_me, container, false)</code>即可正常运行。</p>
+<h3 id="LayoutInflater原理解析"><a href="#LayoutInflater原理解析" class="headerlink" title="LayoutInflater原理解析"></a>LayoutInflater原理解析</h3><p><strong>这个inflate方法旨在获取某个指定的View</strong></p>
+<p><strong>进去翻了翻这段代码的源码，简单记录一下，如果不感兴趣可直接翻到末尾总结中查看使用时的注意事项：</strong></p>
+<p>首先不管它如何创建，直接从报错代码切入，inflate方法总共有4个重载：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 方法1</span><br><span class="line">public View inflate(@LayoutRes int resource, @Nullable ViewGroup root) &#123;</span><br><span class="line">    return inflate(resource, root, root != null);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 方法2</span><br><span class="line">public View inflate(XmlPullParser parser, @Nullable ViewGroup root) &#123;</span><br><span class="line">    return inflate(parser, root, root != null);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 方法3</span><br><span class="line">// attachToRoot表示是否将resource解析出来的View添加到root容器中</span><br><span class="line">public View inflate(@LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot) &#123;</span><br><span class="line">    ...</span><br><span class="line">    return inflate(parser, root, attachToRoot);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 方法4</span><br><span class="line">public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean attachToRoot) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在日常业务开发中比较常用的是方法1和方法3这两个</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public View inflate(@LayoutRes int resource, @Nullable ViewGroup root) &#123;</span><br><span class="line">    // 如果root容器是null，那肯定不能将获得的view添加到一个空容器中</span><br><span class="line">    // 如果root容器不是空，那直接将获取到的view添加到该容器中</span><br><span class="line">    return inflate(resource, root, root != null);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 方法3</span><br><span class="line">// attachToRoot表示是否将resource解析出来的View添加到root容器中</span><br><span class="line">public View inflate(@LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot) &#123;</span><br><span class="line">    final Resources res = getContext().getResources();</span><br><span class="line">    // 这个方法是Android10新增的一个编译优化，可将xml预编译成dex，然后通过反射生成对应的View，从而减少XmlPullParser解析Xml的时间。无需关心，因为目前开关都关着，即使开起来目前来看也是一段有bug的代码！！！</span><br><span class="line">    View view = tryInflatePrecompiled(resource, res, root, attachToRoot);</span><br><span class="line">    if (view != null) &#123;</span><br><span class="line">        // 如果开启了预编译并且解析成功了，直接返回对应的view</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line">    // 通过Resources获取xml解析器，可见方法2区别其实就是在外部获取完这个xml解析器传进来而已</span><br><span class="line">    XmlResourceParser parser = res.getLayout(resource);</span><br><span class="line">    try &#123;</span><br><span class="line">        // 执行解析并生成view</span><br><span class="line">        return inflate(parser, root, attachToRoot);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        parser.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>public View inflate(@LayoutRes int resource, @Nullable ViewGroup root) </code>表示解析并生成resource这个id对应的view，如果传入的父容器不是空的就顺带将这个view添加到父容器中。</p>
+<p><code>public View inflate(@LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot)</code>这就让开发者可以更灵活的控制view是否被添加到父容器，当然前提是root不是空的才能被添加进去。毕竟鸡蛋放在一个没有底的篮子里最终的结果就是蛋碎。</p>
+<p>所以最终的重担还是落到方法4中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean attachToRoot) &#123;</span><br><span class="line">    synchronized (mConstructorArgs) &#123;</span><br><span class="line">        ...</span><br><span class="line">        // 把root赋值给result，这里涉及到后续应该给调用方返回什么结果，后面说</span><br><span class="line">        View result = root;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            advanceToRootNode(parser);</span><br><span class="line">            // 取到制定resource id对应的最根view的名称</span><br><span class="line">            final String name = parser.getName();</span><br><span class="line">            </span><br><span class="line">            // merge标签处理逻辑</span><br><span class="line">            if (TAG_MERGE.equals(name)) &#123;</span><br><span class="line">                // merge标签的意义在于减少层级，而减少层级的实现是将merge标签下的子view直接加到父容器中以此减少一个层级，否则的话每个xml是不是还得写个容器来承载xml中的所有view，所以如果此时指定的xml根布局是个merge标签那就必然需要指定root并且指定其将其加入root容器，否则它将无所依附，所以此处抛出异常警告开发者</span><br><span class="line">                if (root == null || !attachToRoot) &#123;</span><br><span class="line">                    throw new InflateException(&quot;&lt;merge /&gt; can be used only with a valid &quot;</span><br><span class="line">                            + &quot;ViewGroup root and attachToRoot=true&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                // 如果是merge标签，解析其所有一级标签并将其添加到root中，然后对所有一级标签再递归解析出所有子view最终行程一个正确的view树</span><br><span class="line">                rInflate(parser, root, inflaterContext, attrs, false);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // 非merge标签处理逻辑</span><br><span class="line">                // 获取到xml布局中的根视图，内部是通过反射来生成对应的view对象</span><br><span class="line">                final View temp = createViewFromTag(root, name, inflaterContext, attrs);</span><br><span class="line"></span><br><span class="line">                ViewGroup.LayoutParams params = null;</span><br><span class="line">                </span><br><span class="line">                //如果root不为空则解析布局参数，这个布局参数将作用给temp(也就是xml布局中的根视图)，如果root为空则调用方获取到的是一个干净的不带layoutparam的view。</span><br><span class="line">                if (root != null) &#123;</span><br><span class="line">                    // Create layout params that match root, if supplied</span><br><span class="line">                    params = root.generateLayoutParams(attrs);</span><br><span class="line">                    if (!attachToRoot) &#123;</span><br><span class="line">                        // 设置布局参数</span><br><span class="line">                        temp.setLayoutParams(params);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // xml的根布局生成出来之后就该逐个解析并生成它内部的所有子view以构成一个正确的view树，内部其实是一个递归的过程</span><br><span class="line">                rInflateChildren(parser, temp, attrs, true);</span><br><span class="line"></span><br><span class="line">                // 如果root不为空并且调用时attachToRoot指定为true，则意思是需要将view加入root中，do it</span><br><span class="line">                if (root != null &amp;&amp; attachToRoot) &#123;</span><br><span class="line">                    root.addView(temp, params);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // 从这里可以看出，当调用方并没有指定父容器或者指定了父容器但是不将xml布局加入父容器中，则将xml解析出来的view返回给调用房，否则的话xml解析出来的view其实已经被加入父容器了，所以直接将父容器返回。有时候我们调用inflate时会指定root是非空，attachToRoot是false其实就是为了给xml解析出来的view设置布局参数而已。</span><br><span class="line">                if (root == null || !attachToRoot) &#123;</span><br><span class="line">                    result = temp;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; catch (XmlPullParserException e) &#123;</span><br><span class="line">           ...</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">           ...</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从方法4实现来看，其主要逻辑是解析xml布局文件并生成对应的view。如果xml是个merge标签的布局则进行merge对应的处理（将一级视图添加到root中以减少一个层级）。<strong>需要注意的是调用inflate时所传入参数不同而获取到的结果就有可能是不同含义：最终如果xml解析出来的布局被成功添加到root中的话则直接返回root容器，否则返回xml解析出来的view。我不知道为什么要这么设计，总感觉这种设计会给开发过程徒增不必要的麻烦</strong></p>
+<p>在我们日常使用中除了<code>Fragment-&gt;onCreateView()</code>回调中会给我们提供已经创建好的<code>LayoutInflater</code>对象之外，我们往往需要自己创建，来看下它的创建过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mLayoutInflater = LayoutInflater.from(context);</span><br><span class="line"></span><br><span class="line">public static LayoutInflater from(@UiContext Context context) &#123;</span><br><span class="line">    LayoutInflater LayoutInflater =</span><br><span class="line">            (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);</span><br><span class="line">    if (LayoutInflater == null) &#123;</span><br><span class="line">        throw new AssertionError(&quot;LayoutInflater not found.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return LayoutInflater;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>LayoutInflater是通过context获取系统服务得到的。</p>
+<p>在Activity中往往不需要自己手动创建，因为Activity中已经提供了LayoutInflater对象：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Activity.java</span><br><span class="line"></span><br><span class="line">@NonNull</span><br><span class="line">public LayoutInflater getLayoutInflater() &#123;</span><br><span class="line">    // 调用PhoneWindow.getLayoutInflater()</span><br><span class="line">    return getWindow().getLayoutInflater();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PhoneWindow.java</span><br><span class="line"></span><br><span class="line">@UnsupportedAppUsage</span><br><span class="line">public PhoneWindow(Context context) &#123;</span><br><span class="line">    super(context);</span><br><span class="line">    // 此时传入的就是Activity</span><br><span class="line">    mLayoutInflater = LayoutInflater.from(context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public LayoutInflater getLayoutInflater() &#123;</span><br><span class="line">    return mLayoutInflater;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在使用<code>RecyclerView</code>时经常需要使用到LayoutInflater，设置Adapter时有这么个回调：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到这里LayoutInflater基本上介绍完了，但是在方法3时有个<code>tryInflatePrecompiled()</code>方法顺带提一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">private @Nullable</span><br><span class="line">View tryInflatePrecompiled(@LayoutRes int resource, Resources res, @Nullable ViewGroup root,</span><br><span class="line">    boolean attachToRoot) &#123;</span><br><span class="line">    if (!mUseCompiledView) &#123;</span><br><span class="line">        // 未开启预编译则直接返回空，后续会去走xml解析</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    // Try to inflate using a precompiled layout.</span><br><span class="line">    String pkg = res.getResourcePackageName(resource);</span><br><span class="line">    String layout = res.getResourceEntryName(resource);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        Class clazz = Class.forName(&quot;&quot; + pkg + &quot;.CompiledView&quot;, false, mPrecompiledClassLoader);</span><br><span class="line">        Method inflater = clazz.getMethod(layout, Context.class, int.class);</span><br><span class="line">        // 反射获取到view</span><br><span class="line">        View view = (View) inflater.invoke(null, mContext, resource);</span><br><span class="line"></span><br><span class="line">        // 如果root存在，则解析布局参数并且判断是否应该将view添加到root，只有root存在时这个布局参数才有意义，否则直接就是返回一个单纯不带布局参数的view给调用方</span><br><span class="line">        if (view != null &amp;&amp; root != null) &#123;</span><br><span class="line">            XmlResourceParser parser = res.getLayout(resource);</span><br><span class="line">            try &#123;</span><br><span class="line">                AttributeSet attrs = Xml.asAttributeSet(parser);</span><br><span class="line">                advanceToRootNode(parser);</span><br><span class="line">                ViewGroup.LayoutParams params = root.generateLayoutParams(attrs);</span><br><span class="line">                if (attachToRoot) &#123;</span><br><span class="line">                    // 将view添加到root容器</span><br><span class="line">                    root.addView(view, params);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    // 给view设置布局参数，此时view还未有任何父容器</span><br><span class="line">                    view.setLayoutParams(params);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                parser.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return view;</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        if (DEBUG) &#123;</span><br><span class="line">            Log.e(TAG, &quot;Failed to use precompiled view&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        Trace.traceEnd(Trace.TRACE_TAG_VIEW);</span><br><span class="line">    &#125;</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是Android10开始的一个编译优化，可将可将xml预编译成dex，然后通过反射生成对应的View，从而减少XmlPullParser解析Xml的时间。截止到目前Android版本33为止预编译这段都是废话，因为追溯<code>mUseCompiledView</code>这个开关发现一直都是关着的。即使是打开了也将是个坑，本来inflater的返回值因为root和attachToRoot参数就已经可能产生返回父view和返回xml对应的布局view这两种情况了，而如果加入了预编译选项就不关心root和attachToRoot直接返回xml对应的布局view，更是增加的开发者使用时的不确定性。所以等后续功能放开时再来关注。</p>
+<h3 id="Fragment中使用InflaterLayout报错复盘"><a href="#Fragment中使用InflaterLayout报错复盘" class="headerlink" title="Fragment中使用InflaterLayout报错复盘"></a>Fragment中使用InflaterLayout报错复盘</h3><p>知识点介绍完了来看看刚才在<code>Fragment-&gt;onCreateView</code>中使用<code>inflater.inflate(R.layout.fragment_me, container)</code>为什么会报错吧。<br>首先我们知道了<code>inflater.inflate(R.layout.fragment_me, container)</code>的话container不为空，则默认fragment_me对应的布局是需要加入到container中的，此时返回的是父view。此时这个父view正是我们在Activity中指定的Fragment的容器，比如我这边指的是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transaction.add(R.id.f_me, meFragment)//动态添加</span><br></pre></td></tr></table></figure>
+<p>此时这个f_me已经存在父view了，所以我们看下<code>Fragment-&gt;onCreateView</code>返回的这个父view在哪里被使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Fragment.java</span><br><span class="line"></span><br><span class="line">void performCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,</span><br><span class="line">        @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">    ...</span><br><span class="line">    mView = onCreateView(inflater, container, savedInstanceState);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Fragment源码中，<code>performCreateView</code>时会将<code>onCreateView</code>的返回值赋值给<code>mView</code>对象。</p>
+<p>再回到报错的堆栈中<code>at androidx.fragment.app.FragmentStateManager.addViewToContainer(FragmentStateManager.java:840)</code>,查看源码可以看出来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">void addViewToContainer() &#123;</span><br><span class="line">    int index = mFragmentStore.findFragmentIndexInContainer(mFragment);</span><br><span class="line">    mFragment.mContainer.addView(mFragment.mView, index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时mFragment.mView就是我们在Activity中指定的Fragment容器f_me,它已经存在父容器了所以再被添加的话就报错了！</p>
+<h3 id="LayoutInflater总结"><a href="#LayoutInflater总结" class="headerlink" title="LayoutInflater总结"></a>LayoutInflater总结</h3><ol>
+<li>infalte()中root为空则返回的是xml布局对应的view，此时view没有任何布局参数，也并未被添加到容器中</li>
+<li>infalte()中root不为空，则判断attachToRoot&#x3D;&#x3D;true返回的是root，attachToRoot&#x3D;&#x3D;false返回的是xml布局对应的view，和第1点一样</li>
+<li>如果inflate传递的资源id是个merge标签，则root不能为空，attachToParent必须是true，对应的merge下的view会被添加到root容器中</li>
+<li>Activity、Fragment、Service中系统已经为你提供了一个LayoutInflater对象，不需自己创建。并且Activity-&gt;setContentView()方法最终也是通过InflaterLayout来实现的布局加载</li>
+<li>牢记方法2的实现：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> public View inflate(@LayoutRes int resource, @Nullable ViewGroup root) &#123;</span><br><span class="line">    return inflate(resource, root, root != null);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E5%BC%95%E5%8F%91%E7%9A%84LayoutInflater%E4%BD%BF%E7%94%A8%E4%B8%8A%E7%9A%84%E6%80%9D%E8%80%83"><span class="toc-number">1.</span> <span class="toc-text">报错引发的LayoutInflater使用上的思考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LayoutInflater%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">LayoutInflater原理解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fragment%E4%B8%AD%E4%BD%BF%E7%94%A8InflaterLayout%E6%8A%A5%E9%94%99%E5%A4%8D%E7%9B%98"><span class="toc-number">3.</span> <span class="toc-text">Fragment中使用InflaterLayout报错复盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LayoutInflater%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">LayoutInflater总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&text=Android小知识- LayoutInflater"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&is_video=false&description=Android小知识- LayoutInflater"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android小知识- LayoutInflater&body=Check out this article: http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&title=Android小知识- LayoutInflater"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&name=Android小知识- LayoutInflater&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/&t=Android小知识- LayoutInflater"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022-2023
+    lianwenhong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

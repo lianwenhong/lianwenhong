@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="FilterFastClick首先声明：本库的编写是被QA逼出来的。 在开发过程中经常被QA提一类恶心的bug（快速点击控件出现多个页面或多个弹窗等） 我司QA拿到包之后第一件事就爱测快速点击的场景，他们认为同一个按钮快速点击可能是误操作不应该得到响应。比如某个按钮点击之后应该弹出一个dialog，QA双击控件就出现2个dialog。这原本应该是个正常的场景，但是奈何抵不过他们一直提，所以就做了这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最讨厌QA提按钮快速点击的bug了">
+<meta property="og:url" content="http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/index.html">
+<meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="FilterFastClick首先声明：本库的编写是被QA逼出来的。 在开发过程中经常被QA提一类恶心的bug（快速点击控件出现多个页面或多个弹窗等） 我司QA拿到包之后第一件事就爱测快速点击的场景，他们认为同一个按钮快速点击可能是误操作不应该得到响应。比如某个按钮点击之后应该弹出一个dialog，QA双击控件就出现2个dialog。这原本应该是个正常的场景，但是奈何抵不过他们一直提，所以就做了这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-23T19:48:26.000Z">
+<meta property="article:modified_time" content="2022-09-30T14:31:24.929Z">
+<meta property="article:author" content="lianwenhong">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>最讨厌QA提按钮快速点击的bug了</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/06/28/binder%EF%BC%88%E4%BA%8C%EF%BC%89MMU%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%85%E6%9E%90/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/06/08/Android%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BParcel/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&text=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&is_video=false&description=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=最讨厌QA提按钮快速点击的bug了&body=Check out this article: http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&name=最讨厌QA提按钮快速点击的bug了&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&t=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FilterFastClick"><span class="toc-number">1.</span> <span class="toc-text">FilterFastClick</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%9C%89%E6%9C%8B%E5%8F%8B%E6%83%B3%E6%8E%A5%E5%85%A5%EF%BC%8C%E9%82%A3%E4%B9%88%E5%8F%AF%E4%BB%A5%E6%8F%90%E4%BE%9B2%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8F%AF%E6%8E%A5%E5%85%A5%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">如果有朋友想接入，那么可以提供2种方式可接入：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%951%EF%BC%88%E9%BB%91%E7%9B%92%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">使用方法1（黑盒方式）:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F2%EF%BC%88%E7%99%BD%E7%9B%92%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">使用方式2（白盒方式）:</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        最讨厌QA提按钮快速点击的bug了
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-06-23T19:48:26.000Z" itemprop="datePublished">2022-06-23</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="FilterFastClick"><a href="#FilterFastClick" class="headerlink" title="FilterFastClick"></a>FilterFastClick</h1><p><strong>首先声明：本库的编写是被QA逼出来的。</strong></p>
+<p>在开发过程中经常被QA提一类恶心的bug（快速点击控件出现多个页面或多个弹窗等）</p>
+<p>我司QA拿到包之后第一件事就爱测快速点击的场景，他们认为同一个按钮快速点击可能是误操作不应该得到响应。比如某个按钮点击之后应该弹出一个dialog，QA双击控件就出现2个dialog。这原本应该是个正常的场景，但是奈何抵不过他们一直提，所以就做了这个小功能加以限制。</p>
+<p>其实这就是个典型的AOP编程了。</p>
+<p>屏蔽快速点击最常见的操作是做一个工具类:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Utils&#123;</span><br><span class="line">    // 检测以避免重复多次点击</span><br><span class="line">    private static long lastClickTime;</span><br><span class="line"></span><br><span class="line">    public static boolean isFastDoubleClick() &#123;</span><br><span class="line">        long time = System.currentTimeMillis();</span><br><span class="line">        long timeD = time - lastClickTime;</span><br><span class="line">        if (0 &lt; timeD &amp;&amp; timeD &lt; 500) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        lastClickTime = time;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就能解决90%问题。</p>
+<p>奈何我司QA测得又比较细，某天提了一个更让人心烦的问题：<br>某个页面上有多个按钮，点击button1的时候紧接着在500毫秒以内又点击了button2，这时候预期应该是button1和button2都应该得到响应。但是因为button1和button2的点击事件都加上了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(Utils.isFastDoubleClick())&#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>的限制，由于全局都使用的同一个静态lastClickTime变量，就导致这两个控件之间的点击相互屏蔽了。如果是点击button1之后的500毫秒以内点击了button2将会导致button2点击事件中的<code>Utils.isFastDoubleClick()</code>这句代码为true而走了return。</p>
+<p>那么解决的途径只能是不使用全局的lastClickTime这个变量来做上一次点击时间戳的判断，而是对每个控件都单独使用一个变量来记录。</p>
+<p>那么最简单的做法就是实现一个自己的OnClickListener类，然后在每个控件设置点击事件的时候都使用这个类来屏蔽快速点击：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public abstract class FilterFastClickListener implements View.OnClickListener &#123;</span><br><span class="line"></span><br><span class="line">    private long lastClickTime;</span><br><span class="line"></span><br><span class="line">    private boolean isFastDoubleClick() &#123;</span><br><span class="line">        long time = System.currentTimeMillis();</span><br><span class="line">        long timeD = time - lastClickTime;</span><br><span class="line">        if (0 &lt; timeD &amp;&amp; timeD &lt; 500) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        lastClickTime = time;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View v) &#123;</span><br><span class="line">        if (isFastDoubleClick()) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        onNoDoubleClick(v);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public abstract void onNoDoubleClick(final View v);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//使用时：</span><br><span class="line">button.setOnClickListener(new FilterFastClickListener() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onNoDoubleClick(View v) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样基本就能解决同一页面之间多个控件快速点击的相互干扰问题。但是我又不喜欢这么做，因为这将导致每个控件都得单独设置一个新的<code>FilterFastClickListener</code>对象。这样即占用内存代码又不太优雅，我不爱。</p>
+<p>所以就接着想，想过使用动态代理模式来实现AOP编程，但是明显这种方式写出来的代码看着更蠢，不仅要改变原有的代码写法而且上述的问题一个它也逃不脱。不过还是写出来玩玩：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">View.OnClickListener onClickListener = new View.OnClickListener() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View v) &#123;</span><br><span class="line">        doClickNoFilter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">btnNoFilter.setOnClickListener((View.OnClickListener) Proxy.newProxyInstance(onClickListener.getClass().getClassLoader(), onClickListener.getClass().getInterfaces(), new InvocationHandler() &#123;</span><br><span class="line"></span><br><span class="line">    private long lastClickTime;</span><br><span class="line"></span><br><span class="line">    private boolean isFastDoubleClick() &#123;</span><br><span class="line">        long time = System.currentTimeMillis();</span><br><span class="line">        long timeD = time - lastClickTime;</span><br><span class="line">        if (0 &lt; timeD &amp;&amp; timeD &lt; 500) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        lastClickTime = time;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">        if (isFastDoubleClick()) return null;</span><br><span class="line">        return method.invoke(onClickListener, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<p>最终其实还有很多种方案来实现，比如将系统源码中的<code>mOnClickListener</code>进行接管，但是又得考虑系统版本升级万一要是哪一天系统源码发生变化没有及时适配这可能会是个大雷就放弃了。</p>
+<p>因为之前有了解过一些例如AspectJ，ASM，APT，javassist等相关知识，我觉得正好借着这个契机使用一下。</p>
+<p>一开始考虑使用类似ButterKnife的实现方案，写个注解然后解析注解再进行动态注入代码，也可以搭配JavaPoet一起，但是由于我是要在原有函数内部实现代码注入而APT和javaPoet搭配一般都是用于生成新的类所以这种方式不合适。用AspectJ这种较为成熟的方案比较麻烦，所以最终我选择用Javassist来对class文件进行动态代码注入来实现功能。</p>
+<p>我的思路是：</p>
+<p>既然每个点击要互不干扰又能实现单个控件屏蔽快速点击，那就必须每个控件都有一个记录上次点击时间的变量，我选择把这个区分标准转移给方法。这样就能实现每个控件的点击调用一个单独方法，针对每个单独方法我生成一个唯一的类变量，各个控件调用对应方法也就互不影响了。但是生成的类变量要保证唯一，所以我创建了一个注解，给注解指定值来保证每个生成的类变量都可控。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.annotation.ElementType;</span><br><span class="line">import java.lang.annotation.Retention;</span><br><span class="line">import java.lang.annotation.RetentionPolicy;</span><br><span class="line">import java.lang.annotation.Target;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * value属性是标记方法的唯一标识，同一类中的value属性不可相同</span><br><span class="line"> * 否则可能出现2个方法直接互相过滤点击</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * 注解保留时机必须持续到RUNTIME，因为javassist处理的就是class文件</span><br><span class="line"> * 如果是SOURCE或CLASS时本注解已被去除所以会导致在解析类时找不到该注解</span><br><span class="line"> */</span><br><span class="line">@Target(ElementType.METHOD)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface FastClick &#123;</span><br><span class="line">    int value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样在javassist工作的时候我只需要扫描出所有类中的所有方法，如果方法中带有@FastClick这个注解我就拿注解的value值拼接生成对应该方法的类变量，并对该方法注入屏蔽快速点击的业务代码。</p>
+<p>这样在要屏蔽快速点击时，只需给每个控件对应的点击方法加一个注解，在注解中指定一个在本类中唯一的标识值即可。这样在使用的时候十分方便。</p>
+<p>使用示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity implements View.OnClickListener &#123;</span><br><span class="line"></span><br><span class="line">    private Button btnFilter, btnNoFilter;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        btnFilter = findViewById(R.id.id_tv_btn1);</span><br><span class="line">        btnNoFilter = findViewById(R.id.id_tv_btn2);</span><br><span class="line">        btnFilter.setOnClickListener(this);</span><br><span class="line">        btnNoFilter.setOnClickListener(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View view) &#123;</span><br><span class="line">        switch (view.getId()) &#123;</span><br><span class="line">            case R.id.id_tv_btn1:</span><br><span class="line">                doClickFilter();</span><br><span class="line">                break;</span><br><span class="line">            case R.id.id_tv_btn2:</span><br><span class="line">                doClickNoFilter();</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @FastClick(value = 1)</span><br><span class="line">    public void doClickFilter() &#123;</span><br><span class="line">        Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; 我点击了,时间戳:&quot; + System.currentTimeMillis());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void doClickNoFilter() &#123;</span><br><span class="line">        Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; 我点击了,时间戳:&quot; + System.currentTimeMillis());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码奉上：<a target="_blank" rel="noopener" href="https://github.com/lianwenhong/FilterFastClick">https://github.com/lianwenhong/FilterFastClick</a></p>
+<h3 id="如果有朋友想接入，那么可以提供2种方式可接入："><a href="#如果有朋友想接入，那么可以提供2种方式可接入：" class="headerlink" title="如果有朋友想接入，那么可以提供2种方式可接入："></a>如果有朋友想接入，那么可以提供2种方式可接入：</h3><p>假设您的主module名为app。</p>
+<h4 id="使用方法1（黑盒方式）"><a href="#使用方法1（黑盒方式）" class="headerlink" title="使用方法1（黑盒方式）:"></a>使用方法1（黑盒方式）:</h4><ol>
+<li>拷贝annotations库至自己工程中，放在与app模块同级目录下。</li>
+<li>修改settings.gradle文件将这两个工程加入编译<code>include &#39;:annotations&#39;</code></li>
+<li>拷贝javassist-jar文件夹至自己工程中，放在与annotations同级目录下。</li>
+<li>在工程-&gt;build.gradle文件中repositories{}中增加本地的javassist-jar路径为maven仓库路径（）<code>maven &#123; url(&quot;./javassist-jar&quot;) &#125;</code></li>
+<li>在工程-&gt;build.gradle文件中dependencies{}增加<code>classpath &quot;com.lianwenhong.clickfilter:modify:1.0.0&quot;</code>依赖</li>
+<li>在app-&gt;build.gradle文件增加plugin: ‘com.lianwenhong.clickfilter’代码</li>
+<li>然后Sync工程即可。此时可以直接在想要屏蔽的方法上增加@FastClick就可实现快速点击屏蔽</li>
+</ol>
+<h4 id="使用方式2（白盒方式）"><a href="#使用方式2（白盒方式）" class="headerlink" title="使用方式2（白盒方式）:"></a>使用方式2（白盒方式）:</h4><ol>
+<li>拷贝annotations库至自己工程中，放在与app模块同级目录下。</li>
+<li>拷贝lib库至自己工程中，放在与app模块同级目录下。</li>
+<li>修改settings.gradle文件将这两个工程加入编译<code>include &#39;:lib&#39; include &#39;:annotations&#39;</code></li>
+<li>先执行lib工程的publishing这个task让它生成javassist-jar下的jar包</li>
+<li>然后执行方法1中的4.5.6.7步骤即可。</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FilterFastClick"><span class="toc-number">1.</span> <span class="toc-text">FilterFastClick</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%9C%89%E6%9C%8B%E5%8F%8B%E6%83%B3%E6%8E%A5%E5%85%A5%EF%BC%8C%E9%82%A3%E4%B9%88%E5%8F%AF%E4%BB%A5%E6%8F%90%E4%BE%9B2%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8F%AF%E6%8E%A5%E5%85%A5%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">如果有朋友想接入，那么可以提供2种方式可接入：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%951%EF%BC%88%E9%BB%91%E7%9B%92%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">使用方法1（黑盒方式）:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F2%EF%BC%88%E7%99%BD%E7%9B%92%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">使用方式2（白盒方式）:</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&text=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&is_video=false&description=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=最讨厌QA提按钮快速点击的bug了&body=Check out this article: http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&title=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&name=最讨厌QA提按钮快速点击的bug了&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/06/24/%E6%9C%80%E8%AE%A8%E5%8E%8CQA%E6%8F%90%E6%8C%89%E9%92%AE%E5%BF%AB%E9%80%9F%E7%82%B9%E5%87%BB%E7%9A%84bug%E4%BA%86/&t=最讨厌QA提按钮快速点击的bug了"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022-2023
+    lianwenhong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

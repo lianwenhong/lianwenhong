@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本篇主要分析LiveData的三个问题，阅读本文需要实现对LiveData的原理有一定的了解，如果不了解可以参考上一篇文章：Jetpack-LiveData LiveData粘性事件可以尝试一下在LiveData数据更新之后再去注册数据观察者监听，你会发现数据观察者依然会收到最新值的通知： 12345btnChangeInMain?.setOnClickListener &amp;#123;    vie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetpack-LiveData原理补充">
+<meta property="og:url" content="http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/index.html">
+<meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="本篇主要分析LiveData的三个问题，阅读本文需要实现对LiveData的原理有一定的了解，如果不了解可以参考上一篇文章：Jetpack-LiveData LiveData粘性事件可以尝试一下在LiveData数据更新之后再去注册数据观察者监听，你会发现数据观察者依然会收到最新值的通知： 12345btnChangeInMain?.setOnClickListener &amp;#123;    vie">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/Fragment%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png">
+<meta property="article:published_time" content="2022-09-16T18:19:34.000Z">
+<meta property="article:modified_time" content="2022-09-30T14:31:24.926Z">
+<meta property="article:author" content="lianwenhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/Fragment%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Jetpack-LiveData原理补充</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/09/15/Jetpack-LiveData/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&text=Jetpack-LiveData原理补充"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&is_video=false&description=Jetpack-LiveData原理补充"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Jetpack-LiveData原理补充&body=Check out this article: http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&name=Jetpack-LiveData原理补充&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&t=Jetpack-LiveData原理补充"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#LiveData%E7%B2%98%E6%80%A7%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">LiveData粘性事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fragment%E4%B8%AD%E4%BD%BF%E7%94%A8LiveData%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BC%A0%E5%85%A5viewLifecycleOwner"><span class="toc-number">2.</span> <span class="toc-text">Fragment中使用LiveData为什么要传入viewLifecycleOwner?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88LiveData-gt-setValue-gt-dispatchingValue-%E8%BF%87%E7%A8%8B%E4%B8%AD%E4%BC%9A%E6%9C%89%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%9C%BA%E6%99%AF%E5%85%BC%E5%AE%B9%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">为什么LiveData-&gt;setValue()-&gt;dispatchingValue()过程中会有多线程的场景兼容？</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Jetpack-LiveData原理补充
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-09-16T18:19:34.000Z" itemprop="datePublished">2022-09-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>本篇主要分析LiveData的三个问题，阅读本文需要实现对LiveData的原理有一定的了解，如果不了解可以参考上一篇文章：<a target="_blank" rel="noopener" href="https://lianwenhong.top/2022/09/15/Jetpack-LiveData/">Jetpack-LiveData</a></p>
+<h3 id="LiveData粘性事件"><a href="#LiveData粘性事件" class="headerlink" title="LiveData粘性事件"></a>LiveData粘性事件</h3><p>可以尝试一下在LiveData数据更新之后再去注册数据观察者监听，你会发现数据观察者依然会收到最新值的通知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">btnChangeInMain?.setOnClickListener &#123;</span><br><span class="line">    viewModel?.userName?.value = &quot;MAIN&quot;</span><br><span class="line">    viewModel?.userName?.observe(this) &#123; txtName?.text = &quot;NAME:$it&quot; &#125;</span><br><span class="line">    // viewModel?.userName?.observeForever&#123;txtName?.text = &quot;NAME:$it&quot;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那是因为LiveData处理了这种粘性事件</p>
+<ul>
+<li>在observe()过程中因为<code>owner.getLifecycle().addObserver(wrapper);</code>会给observer和LifecycleOwner做页面生命周期绑定，而Lifecycle本身不管你在哪个生命周期中执行addObserver(wrapper)都会将所有生命周期状态回调通知给生命周期观察者（具体代码在LifecycleRegistry-&gt;sync()），也就是说Lifecycle本身就具备粘性观察的能力，所以不管时机注册数据观察者都会在其内部的onStateChanged()方法收到最新的生命周期回调并执行通知数据观察者的逻辑。</li>
+<li>observeForever()是因为其内部直接执行了<code>wrapper.activeStateChanged(true);</code>将最新的值通知给了数据观察者</li>
+</ul>
+<h3 id="Fragment中使用LiveData为什么要传入viewLifecycleOwner"><a href="#Fragment中使用LiveData为什么要传入viewLifecycleOwner" class="headerlink" title="Fragment中使用LiveData为什么要传入viewLifecycleOwner?"></a>Fragment中使用LiveData为什么要传入viewLifecycleOwner?</h3><p>在Fragment中对LiveData对象调用observe方法时，如果传递的LifecycleOwner参数为this即Fragment时，会收到Android Studio的红色波浪线提示建议我们使用viewLifecycleOwner。其实我们忽略这个报错直接运行也是没问题的因为Fragment和viewLifecycleOwner的类型FragmentViewLifecycleOwner都实现了LifecycleOwner接口。但是这个红色波浪线提示是Google有意为之，原因是因为viewLifecycleOwner的生命周期和Fragment的生命周期并不相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">void performCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,</span><br><span class="line">        @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">    ...</span><br><span class="line">    mPerformedCreateView = true;</span><br><span class="line">    mViewLifecycleOwner = new FragmentViewLifecycleOwner(this, getViewModelStore());</span><br><span class="line">    mView = onCreateView(inflater, container, savedInstanceState);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void performDestroyView() &#123;</span><br><span class="line">    mChildFragmentManager.dispatchDestroyView();</span><br><span class="line">    if (mView != null &amp;&amp; mViewLifecycleOwner.getLifecycle().getCurrentState()</span><br><span class="line">                    .isAtLeast(Lifecycle.State.CREATED)) &#123;</span><br><span class="line">        // 此处回调到LiveData-&gt;LifecycleBoundObserver-&gt;onStateChanged()时状态为DESTROYED所以LiveData会将绑定了mViewLifecycleOwner的数据观察者移除</span><br><span class="line">        mViewLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);</span><br><span class="line">    &#125;</span><br><span class="line">    mState = CREATED;</span><br><span class="line">    mCalled = false;</span><br><span class="line">    onDestroyView();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void performDestroy() &#123;</span><br><span class="line">    mChildFragmentManager.dispatchDestroy();</span><br><span class="line">    // Fragment在此时才会给生命周期观察者发送ON_DESTROY事件</span><br><span class="line">    // 如果此时LiveData使用Fragment执行observe()方法那么也就是到这里才会执行上述的移除数据观察者操作</span><br><span class="line">    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);</span><br><span class="line">    mState = ATTACHED;</span><br><span class="line">    mCalled = false;</span><br><span class="line">    mIsCreated = false;</span><br><span class="line">    onDestroy();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，mViewLifecycleOwner的创建时机在Fragment的onCreateView()，并且在Fragment的onDestroyView()生命周期之前就执行了<code>mViewLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);</code>通知生命周期观察者页面走到ON_DESTROY状态，对于LiveData来说就是接收到页面处于从活跃到非活跃状态变化的通知此时就会将该页面中绑定的数据观察者执行removeObserver()操作。而Fragment则是在performDestroy()方法中也就是onDestroyView()之后onDestroy()之前才执行<code>mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)</code>。</p>
+<p>在Fragment没有执行addToBackStack()操作的时候其实LiveData.observe(viewLifecycleOwner,observer)和LiveData.observe(this,observer)没有什么区别，只有在Fragment执行了addToBackStack()问题才会暴露出来，先了解一下Fragment的生命周期：</p>
+<img src="/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/Fragment%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" class="" title="Fragment生命周期">
+<p><strong>Fragment入back stack的过程会执行onDestroyView但不执行之后的onDestroy与onDetach，而出back stack是从onCreateView开始执行，而没有之前的onAttach与onCreate。</strong></p>
+<p>所以结合Fragment的生命周期就能看出区别了。</p>
+<p>假如我们在Fragment1的onCreateView()到onDestroyView()之间的任意生命周期执行如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// Fragment1.kt </span><br><span class="line"></span><br><span class="line">liveData.observe(this) &#123;</span><br><span class="line">    LogUtils.d(&quot;数据变化监听:$it&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当Fragment1被replace为Fragment2时执行了addToBackStack()将Fragment1加入回退栈back stack。此时执行的是Fragment1的入栈操作所以并不会走到onDestroy()生命周期所以LiveData收不到页面的DESTROY生命周期监听也就不会去执行removeObserver()操作。当Fragment2点击返回回到Fragment1时Fragment1又执行了onCreateView()生命周期，这样在onCreateView()到onDestroyView()之间执行的LiveData数据观察者绑定又被执行了一次，此时又由于每次observe时绑定的Observer对象都不是同一个就会导致同一个LiveData其实是被重复绑定了数据观察者。</p>
+<h3 id="为什么LiveData-gt-setValue-gt-dispatchingValue-过程中会有多线程的场景兼容？"><a href="#为什么LiveData-gt-setValue-gt-dispatchingValue-过程中会有多线程的场景兼容？" class="headerlink" title="为什么LiveData-&gt;setValue()-&gt;dispatchingValue()过程中会有多线程的场景兼容？"></a>为什么LiveData-&gt;setValue()-&gt;dispatchingValue()过程中会有多线程的场景兼容？</h3><p>我们来看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@MainThread</span><br><span class="line">protected void setValue(T value) &#123;</span><br><span class="line">    必须是主线程</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected void postValue(T value) &#123;</span><br><span class="line">    ... 最终也是回调到setValue()所以也是必须主线程</span><br><span class="line">    ArchTaskExecutor.getInstance().postToMainThread(mPostValueRunnable);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@MainThread</span><br><span class="line">public void observe(@NonNull LifecycleOwner owner, @NonNull Observer&lt;? super T&gt; observer) &#123;</span><br><span class="line">    必须是主线程</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@MainThread</span><br><span class="line">public void observeForever(@NonNull Observer&lt;? super T&gt; observer) &#123;</span><br><span class="line">    必须是主线程</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>照理说LiveData的所有值更新操作和设置监听都必须在主线程进行操作，那在触发通知的过程中哪里来的多线程呢？答案在于LifecycleBoundObserver这个类。</strong><br>我们知道当页面生命周期发生变化时Lifecycle会将页面的生命周期回调给LifecycleBoundObserver.onStateChanged()这个回调。通过之前<a href="">Jetpack-Lifecycle</a>我们可以知道它是通过LifecycleOwner中的LifecycleRegistry来实现的页面观察者模式，正常情况下LifecycleRegistry的创建过程都是<code>LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);</code>所以其内部有个变量mEnforceMainThread &#x3D; enforceMainThread;会被置为true，所以生命周期变化的通知都会在主线程中执行也就是说LifecycleBoundObserver.onStateChanged()回调也会在主线程中执行。但是LifecycleRegistry中也有个方法可以实现对象创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Creates a new LifecycleRegistry for the given provider, that doesn&#x27;t check</span><br><span class="line"> * that its methods are called on the threads other than main.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * LifecycleRegistry is not synchronized: if multiple threads access this &#123;@code</span><br><span class="line"> * LifecycleRegistry&#125;, it must be synchronized externally.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * Another possible use-case for this method is JVM testing, when main thread is not present.</span><br><span class="line"> */</span><br><span class="line">@VisibleForTesting</span><br><span class="line">@NonNull</span><br><span class="line">public static LifecycleRegistry createUnsafe(@NonNull LifecycleOwner owner) &#123;</span><br><span class="line">    return new LifecycleRegistry(owner, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这个方法创建的LifecycleRegistry对象不会强制Lifecycle机制必须在主线程中执行，所以就有可能导致LifecycleBoundObserver.onStateChanged()在子线程中被回调。当然这个方法并不建议我们普通开发者使用，通常是JVM用于测试使用。</p>
+<hr>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6915222252506054663">为什么Fragment中要使用viewLifecycleOwner代替this</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#LiveData%E7%B2%98%E6%80%A7%E4%BA%8B%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">LiveData粘性事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fragment%E4%B8%AD%E4%BD%BF%E7%94%A8LiveData%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BC%A0%E5%85%A5viewLifecycleOwner"><span class="toc-number">2.</span> <span class="toc-text">Fragment中使用LiveData为什么要传入viewLifecycleOwner?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88LiveData-gt-setValue-gt-dispatchingValue-%E8%BF%87%E7%A8%8B%E4%B8%AD%E4%BC%9A%E6%9C%89%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%9C%BA%E6%99%AF%E5%85%BC%E5%AE%B9%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">为什么LiveData-&gt;setValue()-&gt;dispatchingValue()过程中会有多线程的场景兼容？</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&text=Jetpack-LiveData原理补充"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&is_video=false&description=Jetpack-LiveData原理补充"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Jetpack-LiveData原理补充&body=Check out this article: http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&title=Jetpack-LiveData原理补充"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&name=Jetpack-LiveData原理补充&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/09/17/Jetpack-LiveData%E5%8E%9F%E7%90%86%E8%A1%A5%E5%85%85/&t=Jetpack-LiveData原理补充"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022-2023
+    lianwenhong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="线程间通信常规操作Android线程间通信主要方式是使用Handler相信没有一个做Android的人不知道。如果对Handler还不了解可以回顾一下我以前的文章：Android中多线程通信：Handler的理解 注： 后续称HandlerThread创建的线程为HandlerThread线程，调用HandlerThread.getLooper()的线程成为调用线程 HandlerThread用法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android小知识-HandlerThread">
+<meta property="og:url" content="http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/index.html">
+<meta property="og:site_name" content="连文弘的学习笔记">
+<meta property="og:description" content="线程间通信常规操作Android线程间通信主要方式是使用Handler相信没有一个做Android的人不知道。如果对Handler还不了解可以回顾一下我以前的文章：Android中多线程通信：Handler的理解 注： 后续称HandlerThread创建的线程为HandlerThread线程，调用HandlerThread.getLooper()的线程成为调用线程 HandlerThread用法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-26T17:11:15.000Z">
+<meta property="article:modified_time" content="2022-09-30T14:31:24.924Z">
+<meta property="article:author" content="lianwenhong">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/1c0ccb80f18de6871d3fd37b97cd3594?s=192" sizes="192x192">
+          
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Android小知识-HandlerThread</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/08/19/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-LayoutInflater/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/06/28/binder%EF%BC%88%E4%BA%8C%EF%BC%89MMU%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%8D%95%E5%85%83%E6%B5%85%E6%9E%90/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&text=Android小知识-HandlerThread"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&is_video=false&description=Android小知识-HandlerThread"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android小知识-HandlerThread&body=Check out this article: http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&name=Android小知识-HandlerThread&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&t=Android小知识-HandlerThread"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E5%B8%B8%E8%A7%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">线程间通信常规操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HandlerThread%E7%94%A8%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">HandlerThread用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HandlerThread%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">HandlerThread原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E5%87%A0%E4%B8%AA%E7%82%B9%E9%9C%80%E8%A6%81%E5%BC%BA%E8%B0%83%E7%9A%84%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">有几个点需要强调的：</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Android小知识-HandlerThread
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">lianwenhong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-07-26T17:11:15.000Z" itemprop="datePublished">2022-07-26</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="线程间通信常规操作"><a href="#线程间通信常规操作" class="headerlink" title="线程间通信常规操作"></a>线程间通信常规操作</h3><p>Android线程间通信主要方式是使用Handler相信没有一个做Android的人不知道。<br>如果对Handler还不了解可以回顾一下我以前的文章：<a target="_blank" rel="noopener" href="http://lianwenhong.top/2022/03/25/Android%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%EF%BC%9AHandler%E7%9A%84%E7%90%86%E8%A7%A3/">Android中多线程通信：Handler的理解</a></p>
+<p>注： 后续称HandlerThread创建的线程为<strong>HandlerThread线程</strong>，调用HandlerThread.getLooper()的线程成为<strong>调用线程</strong></p>
+<h3 id="HandlerThread用法"><a href="#HandlerThread用法" class="headerlink" title="HandlerThread用法"></a>HandlerThread用法</h3><p>如果你在开发android项目时想实现一个带消息队列的子线程，那我建议你不要重复造轮子，你可以看看HandlerThread这个类，它就是系统封装好的一个很好用的带消息队列的子线程。<br>HandlerThread能解决以下几件事情：</p>
+<ol>
+<li>实现带消息队列的子线程，可用它来做耗时操作。</li>
+<li>可实现线程间通信。</li>
+<li>可实现线程的线程的复用避免了线程频繁创建销毁带来的开销。</li>
+</ol>
+<p><strong>简单概括就是HandlerThread继承自Thread，在HandlerThread这个线程启动的时候其内部run()方法中创建并初始化了该线程的Looper，并且在初始化Looper和使用Looper的阶段通过synchronized同步锁的方式保证了Looper的准确性。该类通过系统的消息轮训器Looper来实现消息队列以及实现线程的复用，其内部也提供了关闭子线程的方法以便开发者可以在自己想要的场景下开启子线程或者关闭子线程。</strong></p>
+<p>其实HandlerThread只是系统对子线程开发需求的一个小封装而已，但是我个人觉得挺实用的。先来看它的使用方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity implements View.OnClickListener &#123;</span><br><span class="line"></span><br><span class="line">    private HandlerThread handlerThread;</span><br><span class="line">    Handler handler;</span><br><span class="line">    int count;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        Button start = findViewById(R.id.id_btn_begin);</span><br><span class="line">        start.setOnClickListener(this);</span><br><span class="line">        Button send = findViewById(R.id.id_btn_send);</span><br><span class="line">        send.setOnClickListener(this);</span><br><span class="line">        Button finish = findViewById(R.id.id_btn_finish);</span><br><span class="line">        finish.setOnClickListener(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 创建HandlerThread子线程和Handler消息处理器</span><br><span class="line">    public void startThread() &#123;</span><br><span class="line">        count = 0;</span><br><span class="line">        handlerThread = new HandlerThread(&quot;my-thread&quot;) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            protected void onLooperPrepared() &#123;</span><br><span class="line">                super.onLooperPrepared();</span><br><span class="line">                Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; onLooperPrepared &lt;&lt;&lt; &quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        handlerThread.start();// 必须先执行start()之后再来执行handlerThread.getLooper();，否则得到的Looper对象永远是null</span><br><span class="line">        // 创建handler时传入HandlerThread的Looper对象，后续通过这个handler对象发送的消息都会被放在handlerThread线程中执行</span><br><span class="line">        handler = new Handler(handlerThread.getLooper()) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void handleMessage(@NonNull Message msg) &#123;</span><br><span class="line">                super.handleMessage(msg);</span><br><span class="line">                switch (msg.what) &#123;</span><br><span class="line">                    case 1:</span><br><span class="line">                        Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; handle 1&quot;);</span><br><span class="line">                        break;</span><br><span class="line">                    case 2:</span><br><span class="line">                        Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; handle 2&quot;);</span><br><span class="line">                        break;</span><br><span class="line">                    default:</span><br><span class="line">                        Log.e(&quot;lianwenhong&quot;, &quot; &gt;&gt;&gt; handle default&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 当有需要在子线程中处理的逻辑就通过消息发送给子线程，此时消息会进入HanderThread线程中的消息队列</span><br><span class="line">    public void sendMessage() &#123;</span><br><span class="line">        Message msg1 = handler.obtainMessage(++count);</span><br><span class="line">        handler.sendMessage(msg1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void finishThread() &#123;</span><br><span class="line">        handlerThread.quit();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onClick(View v) &#123;</span><br><span class="line">        switch (v.getId()) &#123;</span><br><span class="line">            case R.id.id_btn_begin:</span><br><span class="line">                startThread();</span><br><span class="line">                break;</span><br><span class="line">            case R.id.id_btn_send:</span><br><span class="line">                sendMessage();</span><br><span class="line">                break;</span><br><span class="line">            case R.id.id_btn_finish:</span><br><span class="line">                finishThread();</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上是HanderThread的使用方式：</p>
+<ol>
+<li>创建一个HandlerThread对象，并且开启它。</li>
+<li>创建一个Handler，给Handler传入HandlerThread的Looper对象，复写handleMessage方法</li>
+<li>向2中的Handler对象发送Message时，该消息对应的事件会在HandlerThread线程中执行。</li>
+</ol>
+<h3 id="HandlerThread原理"><a href="#HandlerThread原理" class="headerlink" title="HandlerThread原理"></a>HandlerThread原理</h3><p>handlerThread原理不难，总的代码也才100多行，咱们来撸一遍：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">public class HandlerThread extends Thread &#123;</span><br><span class="line">    int mPriority;</span><br><span class="line">    int mTid = -1;</span><br><span class="line">    Looper mLooper;</span><br><span class="line">    private @Nullable</span><br><span class="line">    Handler mHandler;</span><br><span class="line"></span><br><span class="line">    public HandlerThread(String name) &#123;</span><br><span class="line">        super(name);</span><br><span class="line">        mPriority = Process.THREAD_PRIORITY_DEFAULT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 没什么特别，只是设置了一下线程的优先级为默认优先级</span><br><span class="line">     */</span><br><span class="line">    public HandlerThread(String name, int priority) &#123;</span><br><span class="line">        super(name);</span><br><span class="line">        mPriority = priority;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 这是一个回调表示该线程的Looper已经准备就绪，此时开发者可以在收到这个回调时做一些初始化工作</span><br><span class="line">     */</span><br><span class="line">    protected void onLooperPrepared() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        mTid = Process.myTid();</span><br><span class="line">        Looper.prepare();</span><br><span class="line">        // 此处使用synchronized加锁是确保调用线程执行handlerThread.getLooper()获取mLooper对象时mLooper已经被正确赋值了</span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">            mLooper = Looper.myLooper();</span><br><span class="line">            notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line">        Process.setThreadPriority(mPriority);</span><br><span class="line">        onLooperPrepared();</span><br><span class="line">        Looper.loop();</span><br><span class="line">        mTid = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 返回handlerThread所关联的Looper，如果handlerThread线程已经死亡则返回null</span><br><span class="line">     * 如果handlerThread线程未执行过start()方法的话就会阻塞调用线程</span><br><span class="line">     *</span><br><span class="line">     * @return The looper.</span><br><span class="line">     */</span><br><span class="line">    public Looper getLooper() &#123;</span><br><span class="line">        // 如果handlerThread线程未启动或已经死亡，则返回null</span><br><span class="line">        if (!isAlive()) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        boolean wasInterrupted = false;</span><br><span class="line"></span><br><span class="line">        // If the thread has been started, wait until the looper has been created.</span><br><span class="line">        // 获取Looper时首先要确保线程已经启动并且mLooper已经赋值成功，否则将会返回null导致传递给Handler时会抛出java.lang.NullPointerException:</span><br><span class="line">        // Attempt to read from field &#x27;android.os.MessageQueue android.os.Looper.mQueue&#x27; on a null object reference异常</span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">            while (isAlive() &amp;&amp; mLooper == null) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 调用线程与handlerThread并不处于同一个线程，所以并不能保证当执行handlerThread.getLooper时handlerThread线程中mLooper已经赋值完毕。</span><br><span class="line">                    // 所以如果mLooper还未赋值成功时就执行wait()阻塞调用线程并释放锁对象，直到handlerThread线程获取到执行权并且对mLooper赋值完成之后handlerThread线程</span><br><span class="line">                    // 会通过notifyAll()来通知正在wait()的调用线程，此时调用线程就可以得到正确的mLooper对象而不是空</span><br><span class="line">                    wait();</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    wasInterrupted = true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /*</span><br><span class="line">         * 如果线程还未来得及被notify就收到了中断请求则直接中断调用线程</span><br><span class="line">         */</span><br><span class="line">        if (wasInterrupted) &#123;</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return mLooper;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @NonNull</span><br><span class="line">    public Handler getThreadHandler() &#123;</span><br><span class="line">        if (mHandler == null) &#123;</span><br><span class="line">            mHandler = new Handler(getLooper());</span><br><span class="line">        &#125;</span><br><span class="line">        return mHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 退出Looper消息循环</span><br><span class="line">     * 如果队列中还有未执行的消息，那么不管是延时还是非延时的消息统一抛弃并停止Looper消息循环</span><br><span class="line">     */</span><br><span class="line">    public boolean quit() &#123;</span><br><span class="line">        Looper looper = getLooper();</span><br><span class="line">        if (looper != null) &#123;</span><br><span class="line">            looper.quit();</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 退出Looper消息循环</span><br><span class="line">     * 如果队列中还有延时任务未执行则将延时任务全部清除，也就是说延时任务直接被抛弃得不到执行</span><br><span class="line">     * 如果队列中还有非延时任务未执行则会一直等到所有非延时任务都得到执行之后才真正停止Looper消息循环</span><br><span class="line">     *</span><br><span class="line">     * @return True if the looper looper has been asked to quit or false if the</span><br><span class="line">     * thread had not yet started running.</span><br><span class="line">     */</span><br><span class="line">    public boolean quitSafely() &#123;</span><br><span class="line">        Looper looper = getLooper();</span><br><span class="line">        if (looper != null) &#123;</span><br><span class="line">            looper.quitSafely();</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 返回线程id</span><br><span class="line">     */</span><br><span class="line">    public int getThreadId() &#123;</span><br><span class="line">        return mTid;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中的注释已经很详细的说明了HandlerThread的原理，结合它的使用方式看源码应该是一目了然了。</p>
+<h4 id="有几个点需要强调的："><a href="#有几个点需要强调的：" class="headerlink" title="有几个点需要强调的："></a>有几个点需要强调的：</h4><ol>
+<li>必须先调用HandlerThread.start()再去获取HandlerThread线程所关联的Looper对象(getLooper())，否则在未调用HandlerThread.start()之前调用HandlerThread.getLooper()得到的永远是null</li>
+<li>从run()和getLooper()方法中的synchronized逻辑可以看出来，调用线程在执行HandlerThread.getLooper()时有可能会发生阻塞，不过这个阻塞时长应该很短，只需了解这一点就行。阻塞是因为如果是HandlerThread线程run()方法还没执行到synchronized代码块时HandlerThread线程就失去cpu执行权那么假设此时cpu执行权被调用线程拿到并且执行到HandlerThread.getLooper()中的同步代码块，那么调用线程将被阻塞知道run()中同步代码块执行完毕。</li>
+<li>因为Looper消息队列是串行一条一条执行的，所以太过耗时的消息势必会影响后续的消息处理（假设加入队列的消息有A、B两个，A消息历时10s才完成那么B消息得到执行必然是在10s之后）。这点在业务开发中要自行斟酌，例如网络请求是一种不可预测的大耗时操作，不建议放在HandlerThread中来执行，而简单的文件读写一般是毫秒级的，可以放在HandlerThraed中。其实不光是HandlerThread有这个问题，任何消息单任务执行的队列都有这个问题。</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E5%B8%B8%E8%A7%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">线程间通信常规操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HandlerThread%E7%94%A8%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">HandlerThread用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HandlerThread%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">HandlerThread原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E5%87%A0%E4%B8%AA%E7%82%B9%E9%9C%80%E8%A6%81%E5%BC%BA%E8%B0%83%E7%9A%84%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">有几个点需要强调的：</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&text=Android小知识-HandlerThread"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&is_video=false&description=Android小知识-HandlerThread"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android小知识-HandlerThread&body=Check out this article: http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&title=Android小知识-HandlerThread"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&name=Android小知识-HandlerThread&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2022/07/27/Android%E5%B0%8F%E7%9F%A5%E8%AF%86-HandlerThread/&t=Android小知识-HandlerThread"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022-2023
+    lianwenhong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/categories/">分类</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/lianwenhong?tab=repositories">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
